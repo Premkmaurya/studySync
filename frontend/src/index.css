@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+
+.mantine-RichTextEditor-controlIcon{
+    width:1.4rem;
+}
