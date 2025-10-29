@@ -1,6 +1,43 @@
 @import "tailwindcss";
 
 
-.mantine-RichTextEditor-controlIcon{
-    width:1.4rem;
+
+/* Tailwind ke Preflight ko override karna hai! */
+.ProseMirror ul,
+.ProseMirror ol {
+  /* Indentation wapas lao */
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ul {
+  /* Bullet dots wapas lao */
+  list-style-type: disc; 
+}
+
+.ProseMirror ol {
+  /* Numbering wapas lao */
+  list-style-type: decimal;
+}
+.text-editor-container{
+  width:100vw;
+  height:100vh;
+}
+.text-editor-container blockquote {
+  /* Blockquote ki styling wapas lao */
+  margin: 1.5rem 0; /* Top aur bottom margin dedo */
+  padding-left: 1em; /* Left padding for border */
+  border-left: 4px solid #ced4da; /* Ek halka gray border dedo */
+  color: #495057; /* Text ko thoda alag dikhao */
+  font-style: italic; /* Text ko thoda tedha (italic) kar do */
+}
+
+.text-editor-container .mantine-RichTextEditor-content {
+  /* Jo bhi min height chahiye, yahan set karo */
+  min-height: 80vh; 
+  width: 60%;
+  margin-left: 20%;
+  display: flex;
+  justify-content: center;
+  border-left: 1px solid rgba(114, 118, 122, 0.397);
+  border-right: 1px solid rgba(114, 118, 122, 0.397);
 }

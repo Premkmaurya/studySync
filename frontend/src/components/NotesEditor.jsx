@@ -5,9 +5,36 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
-import { FaBold } from "react-icons/fa";
+import {
+  TbClearFormatting,
+  TbH1,
+  TbH2,
+  TbH3,
+  TbH4,
+  TbH5,
+  TbH6,
+  TbBlockquote,
+} from "react-icons/tb";
+import {
+  FaBold,
+  FaItalic,
+  FaUnderline,
+  FaStrikethrough,
+  FaHighlighter,
+  FaCode,
+  FaLink,
+  FaUnlink,
+  FaAlignLeft,
+  FaAlignCenter,
+  FaAlignRight,
+  FaAlignJustify,
+} from "react-icons/fa";
+import { MdFormatListBulleted } from "react-icons/md";
+import { GoListOrdered } from "react-icons/go";
+import { LuUndo2, LuRedo2 } from "react-icons/lu";
 import "@mantine/core/styles.css";
-import axios from "axios"
+import "@mantine/tiptap/styles.css";
+import axios from "axios";
 
 const content =
   '<h2 style="text-align: center;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
@@ -27,21 +54,19 @@ export default function NotesEditor() {
   });
   const handleSave = async () => {
     if (!editor) return;
-    const html = editor.getHTML();
-    // const response = await axios.post("http://localhost:3000/api/notes/create",html,{
-    //   withCredentials:true
-    // })
-    // console.log(response)
-
-    const response = await axios.get("http://localhost:3000/api/auth/me",{
-      withCredentials:true
-    })
-
+    const content = editor.getHTML();
+    const response = await axios.post(
+      "http://localhost:3000/api/notes/create",
+      { content },
+      {
+        withCredentials: true,
+      }
+    );
     console.log(response);
   };
 
   return (
-    <>
+    <div className="text-editor-container relative">
       <RichTextEditor editor={editor}>
         <RichTextEditor.Toolbar
           style={{
@@ -53,110 +78,83 @@ export default function NotesEditor() {
           stickyOffset="var(--docs-header-height)"
         >
           <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Bold
-              icon={() => <FaBold size={18} />}
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.Italic
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.Underline
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.Bold icon={() => <FaBold size={14} />} />
+            <RichTextEditor.Italic icon={() => <FaItalic size={14} />} />
+            <RichTextEditor.Underline icon={() => <FaUnderline size={14} />} />
             <RichTextEditor.Strikethrough
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <FaStrikethrough size={14} />}
             />
             <RichTextEditor.ClearFormatting
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <TbClearFormatting size={14} />}
             />
             <RichTextEditor.Highlight
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <FaHighlighter size={14} />}
             />
-            <RichTextEditor.Code
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.Code icon={() => <FaCode size={14} />} />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
-            <RichTextEditor.H1
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.H2
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.H3
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.H4
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.H1 icon={() => <TbH1 size={18} />} />
+            <RichTextEditor.H2 icon={() => <TbH2 size={18} />} />
+            <RichTextEditor.H3 icon={() => <TbH3 size={18} />} />
+            <RichTextEditor.H4 icon={() => <TbH4 size={18} />} />
+            <RichTextEditor.H5 icon={() => <TbH5 size={18} />} />
+            <RichTextEditor.H6 icon={() => <TbH6 size={18} />} />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
             <RichTextEditor.Blockquote
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <TbBlockquote size={14} />}
             />
-            <RichTextEditor.Hr
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.Hr />
             <RichTextEditor.BulletList
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <MdFormatListBulleted size={14} />}
             />
             <RichTextEditor.OrderedList
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <GoListOrdered size={14} />}
             />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Link
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.Unlink
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.Link icon={() => <FaLink size={14} />} />
+            <RichTextEditor.Unlink icon={() => <FaUnlink size={14} />} />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
-            <RichTextEditor.AlignLeft
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.AlignLeft icon={() => <FaAlignLeft size={14} />} />
             <RichTextEditor.AlignCenter
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <FaAlignCenter size={14} />}
             />
             <RichTextEditor.AlignJustify
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <FaAlignJustify size={14} />}
             />
             <RichTextEditor.AlignRight
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
+              icon={() => <FaAlignRight size={14} />}
             />
           </RichTextEditor.ControlsGroup>
 
           <RichTextEditor.ControlsGroup>
-            <RichTextEditor.Undo
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
-            <RichTextEditor.Redo
-              style={{ width: "2rem", height: "2rem", fontSize: "1.3rem" }}
-            />
+            <RichTextEditor.Undo icon={() => <LuUndo2 size={14} />} />
+            <RichTextEditor.Redo icon={() => <LuRedo2 size={14} />} />
           </RichTextEditor.ControlsGroup>
         </RichTextEditor.Toolbar>
 
         <RichTextEditor.Content />
       </RichTextEditor>
+      <div className="absolute right-4 mt-4 flex gap-4">
+        <button
+        onClick={handleSave}
+        className="text-[#007bff] cursor-pointer px-3 py-2 border border-[#007bff] rounded-lg"
+      >
+        Cancel
+      </button>
       <button
         onClick={handleSave}
-        style={{
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          padding: "6px 12px",
-          borderRadius: "8px",
-          cursor: "pointer",
-          marginLeft: "10px",
-        }}
+        className="px-5 py-2 bg-[#007bff] cursor-pointer text-white rounded-lg"
       >
-        💾 Save
+        Save
       </button>
-    </>
+      </div>
+    </div>
   );
 }

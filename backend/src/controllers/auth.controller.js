@@ -38,7 +38,10 @@ async function registerUser(req, res) {
       expiresIn: "1d",
     }
   );
-  res.cookie("token", token);
+  res.cookie("token", token,{
+    httpOnly:true,
+    secure:true,
+  });
 
   return res.status(201).json({
     message: "user registered successfully",
@@ -75,7 +78,10 @@ async function loginUser(req, res) {
     }
   );
 
-  res.cookie("token",token);
+  res.cookie("token",token,{
+    httpOnly:true,
+    secure:true
+  });
 
   return res.status(200).json({
     message: "user logged in successfully",
