@@ -1,11 +1,10 @@
-
-import NotesEditor from "./components/NotesEditor";
+import AppRoutes from "./routes/AppRoutes"
 
 
 function App() {
   return (
     <> 
-      <NotesEditor />
+      <AppRoutes />
     </>
   )
 }

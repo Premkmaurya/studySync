@@ -4,7 +4,8 @@ const bcrypt = require("bcryptjs");
 
 async function registerUser(req, res) {
   const {
-    fullname: { firstname, lastname },
+    firstname, 
+    lastname ,
     email,
     password,
   } = req.body;
@@ -74,7 +75,7 @@ async function loginUser(req, res) {
     }
   );
 
-  res.cookie("token", token);
+  res.cookie("token",token);
 
   return res.status(200).json({
     message: "user logged in successfully",
@@ -83,10 +84,12 @@ async function loginUser(req, res) {
 }
 
 async function getMe(req, res) {
-  const userId = req.user.id;
-  const user = await userModel.findById(userId).select("-password");
+  const user = req.user;
+  console.log(user)
+  const userFind = await userModel.findById(user.id).select("-password");
   return res.status(200).json({
-    user,
+    message:"data fetched successfully.",
+    userFind,
   });
 }
 

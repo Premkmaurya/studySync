@@ -8,11 +8,7 @@ const noteSchema = new mongoose.Schema({
     content:{
         type:String,
         required:true
-    },
-    groupId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"group"
-    },
+    }
 },{timestamps:true});
 
 const noteModel = mongoose.model('note', noteSchema);

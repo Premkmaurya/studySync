@@ -105,4 +105,5 @@ module.exports = {
   deleteGroup,
   getAllGroups,
   updateGroup,
+  joinGroup
 };

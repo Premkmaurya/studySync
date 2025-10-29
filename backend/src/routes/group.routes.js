@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.get("/all", authMiddleware, groupController.getAllGroups)
 
-router.post("/join/:groupId",authMiddlewae,groupController.joinGroup)
+router.post("/join/:groupId",authMiddleware,groupController.joinGroup)
 
 router.post("/create",authMiddleware, groupCreateValidation, groupController.createGroup)
 
