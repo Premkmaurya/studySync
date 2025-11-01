@@ -28,7 +28,7 @@ export default function Sidebar() {
     <nav className="w-20 bg-[#121214] p-4 flex flex-col space-y-6 shadow-lg">
 
       <NavLink to="/" className={getNavLinkClass}>
-        <img src="/img/vite.svg" className='w-10 h-10 rounded-full' />
+        <img src="/vite.svg" className='w-8 h-8 rounded-full' />
       </NavLink>
 
       <NavLink to="/find-groups" className={getNavLinkClass}>

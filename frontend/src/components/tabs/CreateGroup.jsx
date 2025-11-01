@@ -13,13 +13,16 @@ export default function CreateGroup() {
   } = useForm();
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile,setImageFile]= useState(null)
 
   // Jab file select ho
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+    setImageFile(file)
       setImagePreview(URL.createObjectURL(file));
     }
+
   };
 
   // Jab form submit ho
@@ -33,16 +36,19 @@ export default function CreateGroup() {
 
     // TODO (Next Step): Jab backend ready hoga,
     // hum FormData use karke image bhi bhejenge.
-    // const formData = new FormData();
-    // formData.append('name', data.name);
-    // formData.append('description', data.description);
-    // formData.append('field', data.field);
-    // formData.append('image', data.image[0]);
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('description', data.description);
+    formData.append('image', imageFile);
+    
+    console.log(imageFile)
+
+
 
     try {
       const response = await axios.post(
         'http://localhost:3000/api/groups/create',
-        submissionData, // Abhi JSON bhej rahe hain
+        formData, // Abhi JSON bhej rahe hain
         // formData, // Baad mein yeh bhejenge
         {
           withCredentials: true,

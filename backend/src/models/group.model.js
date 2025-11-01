@@ -15,6 +15,9 @@ const groupSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
+    image:{
+      type:String,
+    },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +37,8 @@ const groupSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+groupSchema.index({name:"text"});
 
 const groupModel = mongoose.model("group", groupSchema);
 

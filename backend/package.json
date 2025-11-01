@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@imagekit/javascript": "^5.1.0",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
     "cookie-parser": "^1.4.7",
@@ -18,8 +19,11 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-validator": "^7.3.0",
+    "imagekit": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
-    "socket.io": "^4.8.1"
+    "multer": "^2.0.2",
+    "socket.io": "^4.8.1",
+    "uuid": "^13.0.0"
   }
 }

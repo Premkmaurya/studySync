@@ -1,19 +1,38 @@
 const groupModel = require("../models/group.model");
+const uploadImage = require("../services/image.service");
 
 async function getAllGroups(req, res) {
-  const groups = await groupModel.find();
+  const groups = await groupModel.find().skip(0).limit(10);
   return res.status(200).json({
     groups,
   });
 }
 
+async function searchGroup(req, res) {
+  const { q } = req.qurey;
+  let filter = {};
+  if (q) {
+    filter.$text = { $search: q };
+  }
+  try {
+    const products = await productModel.find(filter).skip(0);
+    return res.status(200).json({ products });
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching products", error });
+  }
+}
+
 async function createGroup(req, res) {
   const { name, description } = req.body;
+  const image = req.file;
   const user = req.user;
+  console.log(image);
 
+  const response = await uploadImage(image.buffer);
   const group = await groupModel.create({
     name,
     description,
+    image: response.url,
     owner: user.id,
   });
 
@@ -55,6 +74,7 @@ async function deleteGroup(req, res) {
 async function updateGroup(req, res) {
   const { groupId } = req.params;
   const { name, description } = req.body;
+  const image = req.file;
   const user = req.user;
   const group = await groupModel.findOneAndUpdate(
     {
@@ -96,7 +116,7 @@ async function joinGroup(req, res) {
   return res.status(200).json({
     message: "Joined group successfully",
     group,
-  }); 
+  });
 }
 
 module.exports = {
@@ -105,5 +125,6 @@ module.exports = {
   deleteGroup,
   getAllGroups,
   updateGroup,
-  joinGroup
+  joinGroup,
+  searchGroup
 };

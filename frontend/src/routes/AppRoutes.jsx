@@ -4,7 +4,8 @@ import NotesEditor from "../components/NotesEditor";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import MainLayout from "../pages/MainLayout";
-import CreateGroup from "../components/tabs/CreateGroup"
+import CreateGroup from "../components/tabs/CreateGroup";
+import AllGroups from "../components/tabs/AllGroups";
 
 const AppRoutes = () => {
   return (
@@ -14,7 +15,7 @@ const AppRoutes = () => {
         <Route
           path="/find-groups"
           element={
-            <h1 className="text-3xl font-bold">Groups Page Coming Soon!</h1>
+            <AllGroups />
           }
         />
         <Route
