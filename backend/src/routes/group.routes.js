@@ -10,9 +10,9 @@ const upload = multer({storage: multer.memoryStorage()})
 
 router.get("/all", authMiddleware, groupController.getAllGroups)
 
-router.post("/join/:groupId",authMiddleware,groupController.joinGroup)
+router.get("/search",authMiddleware,groupController.searchGroup)
 
-// router.get("/search")
+router.post("/join/:groupId",authMiddleware,groupController.joinGroup)
 
 router.post("/create",authMiddleware,upload.single("image"), groupCreateValidation, groupController.createGroup)
 

@@ -9,14 +9,14 @@ async function getAllGroups(req, res) {
 }
 
 async function searchGroup(req, res) {
-  const { q } = req.qurey;
+  const { q } = req.query;
   let filter = {};
   if (q) {
     filter.$text = { $search: q };
   }
   try {
-    const products = await productModel.find(filter).skip(0);
-    return res.status(200).json({ products });
+    const groups = await groupModel.find(filter).skip(0);
+    return res.status(200).json({ groups });
   } catch (error) {
     return res.status(500).json({ message: "Error fetching products", error });
   }
