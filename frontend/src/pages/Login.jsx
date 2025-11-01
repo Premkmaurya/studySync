@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import axios from "axios";
-
+import {useNavigate} from "react-router-dom"
 import { useForm } from "react-hook-form";
 
 
 export default function Login() {
+  const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
 
   const onSubmit = async (data) => {
@@ -13,6 +14,7 @@ export default function Login() {
       withCredentials:true
     })
     console.log(response)
+    navigate("/find-groups")
   };
 
   return (

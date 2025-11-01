@@ -1,32 +1,30 @@
-import React from 'react';
-import axios from 'axios';
-import { HiUserGroup, HiOutlineCheckCircle } from 'react-icons/hi';
+import React, { useRef, useState } from "react";
+import axios from "axios";
+import { HiUserGroup, HiOutlineCheckCircle } from "react-icons/hi";
 
 export default function GroupCard({ group }) {
-  
-  // Magic Placeholder Image
-  // Jab tak backend mein image nahi hai, yeh group ke naam se image bana dega
-  const placeholderImageUrl = `https://placehold.co/600x340/374151/FFFFFF?text=${encodeURIComponent(group.name)}&font=lato`;
+  const [joinText, setJoinText] = useState("join");
+  const btnRef = useRef(null);
 
-  // TODO: Jab image upload kaam karega, hum `group.imageUrl || placeholderImageUrl` use karenge
+
   const imageUrl = group.image || placeholderImageUrl;
 
-  // Owner ko mila ke total members
-  const totalMembers = (group.members?.length || 0) + 1; // +1 for the owner
-
   const handleJoin = async () => {
+    if (joinText === "joined") return;
+    setJoinText("joining...");
     try {
-      // TODO: Is button ke click pe "Join Group" API call karni hai
       console.log(`Joining group: ${group.name} (ID: ${group._id})`);
       const response = await axios.post(
         `http://localhost:3000/api/groups/join/${group._id}`,
         {},
         { withCredentials: true }
       );
-      console.log('Joined group!', response.data);
+      setJoinText("joined");
+      btnRef.current.disabled = true;
+      console.log("Joined group!", response.data);
     } catch (err) {
-      console.error('Failed to join group:', err);
-      alert('Failed to join group.');
+      console.error("Failed to join group:", err);
+      alert("Failed to join group.");
     }
   };
 
@@ -49,23 +47,27 @@ export default function GroupCard({ group }) {
         <p className="text-gray-400 text-sm mb-4 h-10 overflow-hidden">
           {/* Truncate description for clean UI */}
           {group.description.length > 60
-            ? group.description.substring(0, 60) + '...'
+            ? group.description.substring(0, 60) + "..."
             : group.description}
         </p>
-        
+
         <div className="flex justify-between items-center">
           {/* Member Count */}
           <div className="flex items-center space-x-2 text-gray-400">
             <HiUserGroup className="h-5 w-5" />
-            <span className="text-sm font-medium">{totalMembers} Members</span>
+            <span className="text-sm font-medium">{group.members?.length} Members</span>
           </div>
 
           {/* Join Button */}
           <button
+            ref={btnRef}
             onClick={handleJoin}
-            className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
+            className={`px-4 py-2 text-white text-sm font-medium rounded-md transition-colors
+            ${joinText === "joined" ? "bg-blue-400" : "bg-blue-600"}
+            ${joinText !== "joined" ? "hover:bg-blue-700" : ""}
+            `}
           >
-            Join
+            {joinText}
           </button>
         </div>
       </div>

@@ -21,6 +21,7 @@ export default function AllGroups() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  
 
   const searchRef = useRef()
 

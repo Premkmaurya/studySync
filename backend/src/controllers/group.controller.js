@@ -34,6 +34,7 @@ async function createGroup(req, res) {
     description,
     image: response.url,
     owner: user.id,
+    members: [user.id],
   });
 
   return res.status(201).json({
