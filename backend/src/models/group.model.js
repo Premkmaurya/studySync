@@ -15,21 +15,19 @@ const groupSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
-    image:{
-      type:String,
+    image: {
+      type: String,
     },
-    members: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
-      },
-    ],
-    notes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "note",
-      },
-    ],
+    members: {
+      type:Number,
+      default:0,
+      min:0
+    },
+    notes: {
+      type: Number,
+      default:0,
+      min:0
+    },
     lastUpdated: {
       type: Date,
       default: Date.now,
@@ -38,7 +36,7 @@ const groupSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-groupSchema.index({name:"text"});
+groupSchema.index({ name: "text" });
 
 const groupModel = mongoose.model("group", groupSchema);
 

@@ -11,9 +11,6 @@ export default function Register() {
     const response = await axios.post("http://localhost:3000/api/auth/register",data,{
       withCredentials:true
     })
-
-    console.log(response)
-
   };
 
   return (

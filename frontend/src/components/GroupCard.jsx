@@ -1,11 +1,27 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useEffect } from "react";
 import axios from "axios";
 import { HiUserGroup, HiOutlineCheckCircle } from "react-icons/hi";
 
 export default function GroupCard({ group }) {
   const [joinText, setJoinText] = useState("join");
+  const [members, setMembers] = useState(1)
   const btnRef = useRef(null);
 
+  useEffect(()=>{
+    async function getGroups(){
+      const fetchGroups = await axios.get("http://localhost:3000/api/groups/joined-groups",{
+        withCredentials:true
+      })
+      fetchGroups.data.groups.some(item=>{
+        if(item.groupId===group._id){
+
+          setJoinText("joined")
+          return;
+        }
+      })
+    }
+    getGroups()
+  },[])
 
   const imageUrl = group.image || placeholderImageUrl;
 
@@ -13,7 +29,6 @@ export default function GroupCard({ group }) {
     if (joinText === "joined") return;
     setJoinText("joining...");
     try {
-      console.log(`Joining group: ${group.name} (ID: ${group._id})`);
       const response = await axios.post(
         `http://localhost:3000/api/groups/join/${group._id}`,
         {},
@@ -21,10 +36,8 @@ export default function GroupCard({ group }) {
       );
       setJoinText("joined");
       btnRef.current.disabled = true;
-      console.log("Joined group!", response.data);
     } catch (err) {
       console.error("Failed to join group:", err);
-      alert("Failed to join group.");
     }
   };
 
@@ -55,7 +68,7 @@ export default function GroupCard({ group }) {
           {/* Member Count */}
           <div className="flex items-center space-x-2 text-gray-400">
             <HiUserGroup className="h-5 w-5" />
-            <span className="text-sm font-medium">{group.members?.length} Members</span>
+            <span className="text-sm font-medium">{group.members} Members</span>
           </div>
 
           {/* Join Button */}

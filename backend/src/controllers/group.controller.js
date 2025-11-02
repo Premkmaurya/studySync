@@ -1,4 +1,5 @@
 const groupModel = require("../models/group.model");
+const userGroupModel = require("../models/userGroup.model");
 const uploadImage = require("../services/image.service");
 
 async function getAllGroups(req, res) {
@@ -26,7 +27,6 @@ async function createGroup(req, res) {
   const { name, description } = req.body;
   const image = req.file;
   const user = req.user;
-  console.log(image);
 
   const response = await uploadImage(image.buffer);
   const group = await groupModel.create({
@@ -34,7 +34,11 @@ async function createGroup(req, res) {
     description,
     image: response.url,
     owner: user.id,
-    members: [user.id],
+    members:1
+  });
+  await userGroupModel.create({
+    userId: user.id,
+    groupId: group._id,
   });
 
   return res.status(201).json({
@@ -104,20 +108,48 @@ async function updateGroup(req, res) {
 async function joinGroup(req, res) {
   const { groupId } = req.params;
   const user = req.user;
-  const group = await groupModel.findOneAndUpdate(
-    { _id: groupId },
-    { $addToSet: { members: user.id } },
-    { new: true }
-  );
-  if (!group) {
-    return res.status(400).json({
-      message: "Group not found",
+  
+  const isUserExist = await userGroupModel.findOne({
+    userId: user.id,
+    groupId,
+  });
+
+  if (isUserExist) {
+    return res.status(200).json({
+      message: "you already joined."
     });
   }
+  
+  await userGroupModel.create({
+    userId: user.id,
+    groupId,
+  });
+  const group = await groupModel.findByIdAndUpdate(
+    groupId,
+    {
+      $inc: {members:1},
+    },
+    { new: true }
+  );
+
   return res.status(200).json({
     message: "Joined group successfully",
-    group,
   });
+}
+
+async function joinedGroup(req,res){
+  const user = req.user;
+  const groups = await userGroupModel.find({userId:user.id})
+  if(!groups){
+    return res.status(400).json({
+      message:"you didn't join any group yet."
+    })
+  }
+
+  return res.status(200).json({
+    message:"groups fetched successfully.",
+    groups
+  })
 }
 
 module.exports = {
@@ -127,5 +159,6 @@ module.exports = {
   getAllGroups,
   updateGroup,
   joinGroup,
-  searchGroup
+  searchGroup,
+  joinedGroup
 };

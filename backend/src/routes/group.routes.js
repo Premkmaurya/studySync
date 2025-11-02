@@ -14,6 +14,8 @@ router.get("/search",authMiddleware,groupController.searchGroup)
 
 router.post("/join/:groupId",authMiddleware,groupController.joinGroup)
 
+router.get("/joined-groups",authMiddleware,groupController.joinedGroup)
+
 router.post("/create",authMiddleware,upload.single("image"), groupCreateValidation, groupController.createGroup)
 
 router.get("/my-groups",authMiddleware, groupController.getGroups)

@@ -40,10 +40,6 @@ export default function CreateGroup() {
     formData.append('name', data.name);
     formData.append('description', data.description);
     formData.append('image', imageFile);
-    
-    console.log(imageFile)
-
-
 
     try {
       const response = await axios.post(
@@ -57,9 +53,8 @@ export default function CreateGroup() {
         }
       );
 
-      console.log('Group created:', response.data);
       // Success ke baad user ko /groups page pe bhej do
-      navigate('/groups');
+      navigate('/find-groups');
     } catch (error) {
       console.error('Error creating group:', error.response?.data || error.message);
       // Yahan error dikha sakte hain

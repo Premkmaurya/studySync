@@ -13,7 +13,6 @@ export default function Login() {
     const response = await axios.post("http://localhost:3000/api/auth/login",data,{
       withCredentials:true
     })
-    console.log(response)
     navigate("/find-groups")
   };
 

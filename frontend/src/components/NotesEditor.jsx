@@ -62,7 +62,6 @@ export default function NotesEditor() {
         withCredentials: true,
       }
     );
-    console.log(response);
   };
 
   return (
