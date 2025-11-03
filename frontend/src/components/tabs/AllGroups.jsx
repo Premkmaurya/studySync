@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import GroupCard from "../GroupCard";
 import { HiSearch } from "react-icons/hi";
+import { io } from "socket.io-client";
 
 // Yeh categories humne CreateGroup.jsx mein define ki thi
 const categories = [
@@ -25,7 +26,6 @@ export default function AllGroups() {
 
   const searchRef = useRef()
 
-  // Step 1: Backend se saara data fetch karo
   useEffect(() => {
     const fetchGroups = async () => {
       setLoading(true);
@@ -45,9 +45,7 @@ export default function AllGroups() {
     };
 
     fetchGroups();
-  }, []); // Yeh sirf ek baar chalega
-
-  // Step 2: Filter logic (Abhi ke liye disabled hai)
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -118,6 +116,25 @@ export default function AllGroups() {
     };
   }, [searchRef]);
 
+  const handleGroupUpdate = (updatedGroup) => {
+    setGroups((currentGroups) =>
+      currentGroups.map((g) =>
+        g._id === updatedGroup._id ? updatedGroup : g
+      )
+    );
+  };
+  useEffect(() => {
+    const socket = io("http://localhost:3000");
+    socket.on("groupUpdated", (updatedGroup) => {
+      handleGroupUpdate(updatedGroup);
+      console.log("called.")
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
   return (
     <div className="text-white min-h-screen bg-[#1b1b1f]">
       {/* Hero Section */}
@@ -181,7 +198,7 @@ export default function AllGroups() {
         <div className="grid grid-cols-1 px-10 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredGroups.length > 0 ? (
             filteredGroups.map((group) => (
-              <GroupCard key={group._id} group={group} />
+              <GroupCard key={group._id} group={group} onGroupJoined={handleGroupUpdate} />
             ))
           ) : (
             <p>No groups found in this category.</p>

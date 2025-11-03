@@ -2,7 +2,7 @@ import React, { useRef, useState,useEffect } from "react";
 import axios from "axios";
 import { HiUserGroup, HiOutlineCheckCircle } from "react-icons/hi";
 
-export default function GroupCard({ group }) {
+export default function GroupCard({ group,onGroupJoined }) {
   const [joinText, setJoinText] = useState("join");
   const [members, setMembers] = useState(1)
   const btnRef = useRef(null);
@@ -34,6 +34,9 @@ export default function GroupCard({ group }) {
         {},
         { withCredentials: true }
       );
+      if (response.data && response.data.group) {
+        onGroupJoined(response.data.group);
+      }
       setJoinText("joined");
       btnRef.current.disabled = true;
     } catch (err) {
