@@ -131,6 +131,9 @@ async function joinGroup(req, res) {
     },
     { new: true }
   );
+  const io = req.app.get("io");
+
+  io.emit("groupUpdated", group);
 
   return res.status(200).json({
     message: "Joined group successfully",
@@ -146,10 +149,6 @@ async function joinedGroup(req,res){
       message:"you didn't join any group yet."
     })
   }
-
-  const io = req.app.get("io");
-
-  io.emit("groupUpdated", groups);
 
   return res.status(200).json({
     message:"groups fetched successfully.",

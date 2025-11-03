@@ -6,6 +6,7 @@ import Register from "../pages/Register";
 import MainLayout from "../pages/MainLayout";
 import CreateGroup from "../components/tabs/CreateGroup";
 import AllGroups from "../components/tabs/AllGroups";
+import Group from "../components/tabs/Group";
 
 const AppRoutes = () => {
   return (
@@ -25,9 +26,9 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/settings"
+          path="/group/:id"
           element={
-            <h1 className="text-3xl font-bold">Settings Page Coming Soon!</h1>
+            <Group />
           }
         />
       </Route>

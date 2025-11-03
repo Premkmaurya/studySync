@@ -1,27 +1,30 @@
-import React, { useRef, useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import axios from "axios";
 import { HiUserGroup, HiOutlineCheckCircle } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
-export default function GroupCard({ group,onGroupJoined }) {
+export default function GroupCard({ group, onGroupJoined }) {
   const [joinText, setJoinText] = useState("join");
-  const [members, setMembers] = useState(1)
   const btnRef = useRef(null);
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    async function getGroups(){
-      const fetchGroups = await axios.get("http://localhost:3000/api/groups/joined-groups",{
-        withCredentials:true
-      })
-      fetchGroups.data.groups.some(item=>{
-        if(item.groupId===group._id){
-
-          setJoinText("joined")
+  useEffect(() => {
+    async function getGroups() {
+      const fetchGroups = await axios.get(
+        "http://localhost:3000/api/groups/joined-groups",
+        {
+          withCredentials: true,
+        }
+      );
+      fetchGroups.data.groups.some((item) => {
+        if (item.groupId === group._id) {
+          setJoinText("joined");
           return;
         }
-      })
+      });
     }
-    getGroups()
-  },[])
+    getGroups();
+  }, []);
 
   const imageUrl = group.image || placeholderImageUrl;
 
@@ -37,6 +40,7 @@ export default function GroupCard({ group,onGroupJoined }) {
       if (response.data && response.data.group) {
         onGroupJoined(response.data.group);
       }
+      console.log(response.data.group._id);
       setJoinText("joined");
       btnRef.current.disabled = true;
     } catch (err) {
@@ -45,7 +49,16 @@ export default function GroupCard({ group,onGroupJoined }) {
   };
 
   return (
-    <div className="bg-[#202024] max-h-[45vh] rounded-lg overflow-hidden shadow-lg transition-all duration-300 border border-[#202024] hover:border-white/30">
+    <div
+      onClick={() => {
+        navigate(`/group/${group._id}`, {
+          state: {
+            groupData: group,
+          },
+        });
+      }}
+      className="bg-[#202024] max-h-[45vh] rounded-lg overflow-hidden shadow-lg transition-all duration-300 border border-[#202024] hover:border-white/30"
+    >
       {/* Card Banner Image */}
       <div className="card-image-container h-[20vh]">
         <img

@@ -127,7 +127,6 @@ export default function AllGroups() {
     const socket = io("http://localhost:3000");
     socket.on("groupUpdated", (updatedGroup) => {
       handleGroupUpdate(updatedGroup);
-      console.log("called.")
     });
 
     return () => {
