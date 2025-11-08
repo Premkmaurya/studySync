@@ -16,8 +16,16 @@ async function createNote(req,res) {
     })
 }
 
+async function getNotes(req,res){
+    const notes = await noteModel.find({})
+    return res.status(200).json({
+        message:"notes fetch successfully.",
+        notes
+    })
+}
 
 
 module.exports = {
-    createNote
+    createNote,
+    getNotes
 }

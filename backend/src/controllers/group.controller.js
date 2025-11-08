@@ -156,6 +156,22 @@ async function joinedGroup(req,res){
   })
 }
 
+async function getGroupMembers(req,res) {
+  const {groupId} = req.query;
+  const members = await userGroupModel.find({groupId})
+
+  if(!members){
+    return res.status(403).json({
+      message:"no members found."
+    })
+  }
+
+  res.status(200).json({
+    message:"members fetch successfully.",
+    members
+  })
+}
+
 module.exports = {
   createGroup,
   getGroups,
@@ -164,5 +180,6 @@ module.exports = {
   updateGroup,
   joinGroup,
   searchGroup,
-  joinedGroup
+  joinedGroup,
+  getGroupMembers
 };

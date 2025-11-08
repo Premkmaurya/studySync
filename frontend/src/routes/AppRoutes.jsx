@@ -6,7 +6,9 @@ import Register from "../pages/Register";
 import MainLayout from "../pages/MainLayout";
 import CreateGroup from "../components/tabs/CreateGroup";
 import AllGroups from "../components/tabs/AllGroups";
-import Group from "../components/tabs/Group";
+import SingleGroup from "../pages/SingleGroup";
+import GroupNotes from "../pages/GroupNotes"; 
+import GroupMembers from "../pages/GroupMembers";
 
 const AppRoutes = () => {
   return (
@@ -25,12 +27,18 @@ const AppRoutes = () => {
             <CreateGroup />
           }
         />
-        <Route
-          path="/group/:id"
-          element={
-            <Group />
-          }
-        />
+        <Route path="/group/:groupId" element={<SingleGroup />}>
+          
+          {/* Default tab (Column 3) */}
+          <Route index element={<GroupNotes />} /> 
+          
+          {/* Other tabs (Column 3) */}
+          <Route path="members" element={<GroupMembers />} />
+          <Route path="settings" element={
+              <h1 className="p-8 text-white text-2xl">Group Settings (TODO)</h1>
+            } 
+          />
+        </Route>
       </Route>
       {/* <Route path="/create-notes" element={<NotesEditor />} /> */}
       <Route path="/login" element={<Login />} />

@@ -6,5 +6,7 @@ const router = express.Router()
 
 router.post("/create",authMiddleware,notesController.createNote)
 
+router.get("/get",authMiddleware,notesController.getNotes)
+
 
 module.exports = router;
