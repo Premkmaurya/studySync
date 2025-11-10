@@ -18,16 +18,7 @@ export default function GroupMembers() {
           withCredentials: true,
         }
       );
-      const memberData = await Promise.all(
-        response.data.members.map(async (m) => {
-          const memberResponse = await axios.get(
-            "http://localhost:3000/api/auth/me",
-            { withCredentials: true }
-          );
-          return memberResponse.data; // return the data for each member
-        })
-      );
-      setMembers(memberData)
+      setMembers((prevMem)=>[...prevMem,...response.data.members])
     }
     getMembers();
   }, []);
@@ -38,13 +29,13 @@ export default function GroupMembers() {
       <div className="space-y-4 max-w-2xl mx-auto">
         {members.map((member) => (
           <div
-            key={member.userFind._id}
+            key={member.userId._id}
             className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
           >
             <div className="flex items-center space-x-3">
               <HiUserCircle className="h-10 w-10 text-gray-400" />
               <div>
-                <span className="font-medium">{member.userFind.fullname.firstname}</span>
+                <span className="font-medium">{member.userId.fullname.firstname}</span>
               </div>
             </div>
             {member.role === "Admin" && (

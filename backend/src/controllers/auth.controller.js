@@ -94,12 +94,21 @@ async function getMe(req, res) {
   const userFind = await userModel.findById(user.id).select("-password");
   return res.status(200).json({
     message:"data fetched successfully.",
-    userFind,
+    user,
   });
+}
+
+async function getUserById(req,res){
+  const {id}= req.user;
+  const user = await userModel.findById(id).select("-password");
+  return res.status(200).json({
+    user
+  })
 }
 
 module.exports = {
   registerUser,
   loginUser,
   getMe,
+  getUserById
 };

@@ -158,7 +158,7 @@ async function joinedGroup(req,res){
 
 async function getGroupMembers(req,res) {
   const {groupId} = req.query;
-  const members = await userGroupModel.find({groupId})
+  const members = await userGroupModel.find({groupId}).populate('userId','fullname').sort({createdAt:-1});
 
   if(!members){
     return res.status(403).json({

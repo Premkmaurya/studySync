@@ -36,14 +36,30 @@ import "@mantine/core/styles.css";
 import "@mantine/tiptap/styles.css";
 import axios from "axios";
 import { useState } from "react";
-
+import { useLocation } from "react-router-dom";
 import NoteTitleModal from "./NoteTilteModel";
-
-const content =
-  '<h2 style="text-align: center;">Welcome to Mantine rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul>';
 
 export default function NotesEditor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const location = useLocation();
+  const contentFromState = location.state?.content;
+  const [isViewOnly,setIsViewOnly]= useState(location.state?.isViewOnly || false);
+
+  const content =
+    typeof contentFromState === "string" && contentFromState.trim().length > 0
+      ? contentFromState
+      : `<h2 style="text-align: center;">Welcome to Mantine rich text editor</h2>
+       <p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. 
+       <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p>
+       <ul>
+         <li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s></li>
+         <li>Headings (h1-h6)</li>
+         <li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li>
+         <li>Ordered and bullet lists</li>
+         <li>Text align</li>
+         <li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li>
+       </ul>`;
 
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -56,6 +72,7 @@ export default function NotesEditor() {
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content,
+    editable: !isViewOnly,
   });
 
   const handleSave = async (title) => {
@@ -69,7 +86,7 @@ export default function NotesEditor() {
       }
     );
     console.log("Note saved:", response);
-    setIsModalOpen(false)
+    setIsModalOpen(false);
   };
 
   return (
@@ -79,9 +96,13 @@ export default function NotesEditor() {
         onClose={() => setIsModalOpen(false)}
         onCreateNote={handleSave}
       />
-      <div className={`text-editor-container ${isModalOpen ? "blur-xs" :""} relative`}>
+      <div
+        className={`text-editor-container ${
+          isModalOpen ? "blur-xs" : ""
+        } relative`}
+      >
         <RichTextEditor editor={editor}>
-          <RichTextEditor.Toolbar
+          {!isViewOnly && <RichTextEditor.Toolbar
             style={{
               display: "flex",
               justifyContent: "center",
@@ -154,11 +175,11 @@ export default function NotesEditor() {
               <RichTextEditor.Undo icon={() => <LuUndo2 size={14} />} />
               <RichTextEditor.Redo icon={() => <LuRedo2 size={14} />} />
             </RichTextEditor.ControlsGroup>
-          </RichTextEditor.Toolbar>
+          </RichTextEditor.Toolbar>}
 
           <RichTextEditor.Content />
         </RichTextEditor>
-        <div className="absolute right-4 mt-4 flex gap-4">
+        {!isViewOnly && <div className="absolute right-4 mt-4 flex gap-4">
           <button
             onClick={handleSave}
             className="text-[#007bff] cursor-pointer px-3 py-2 border border-[#007bff] rounded-lg"
@@ -166,12 +187,12 @@ export default function NotesEditor() {
             Cancel
           </button>
           <button
-            onClick={()=>setIsModalOpen(true)}
+            onClick={() => setIsModalOpen(true)}
             className="px-5 py-2 bg-[#007bff] cursor-pointer text-white rounded-lg"
           >
             Save
           </button>
-        </div>
+        </div>}
       </div>
     </>
   );

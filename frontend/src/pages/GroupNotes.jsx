@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import axios from "axios"
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { FaRegEye } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
+
 dayjs.extend(relativeTime);
 
 const GroupNotes = () => {
   const [articles,setArticles]= useState([])
+  const navigate = useNavigate();
   useEffect(() => {
     async function getNotes() {
       try{
@@ -15,7 +20,6 @@ const GroupNotes = () => {
           withCredentials:true
         })
         setArticles((prevArticles)=>[...prevArticles,...response.data.notes])
-        console.log("Notes fetched:", response.data);
       }catch(err){
         console.error("Error fetching notes:", err);
       }
@@ -32,7 +36,7 @@ const GroupNotes = () => {
       <div className="max-w-7xl mx-auto">
         {/* Search Bar and User Icon */}
         <div className="flex items-center justify-between mb-8 sm:mb-10">
-          <div className="relative flex-grow mr-4">
+          <div className="relative grow mr-4">
             <input
               type="text"
               placeholder="search..."
@@ -55,7 +59,7 @@ const GroupNotes = () => {
               />
             </svg>
           </div>
-          <FaUser className="h-7 w-7 transition-all duration-300 text-white cursor-pointer hover:text-blue-400 transition" />
+          <FaUser className="h-7 w-7 transition duration-300 text-white cursor-pointer hover:text-blue-400 transition" />
         </div>
 
         {/* Article Grid */}
@@ -70,21 +74,22 @@ const GroupNotes = () => {
                 <h2 className="text-xl font-semibold text-white mb-2">
                   {article.title}
                 </h2>
-                <p className="text-gray-400 text-sm mb-1">{article.author}</p>
+                <p className="text-gray-400 text-sm mb-1">{article.userId.fullname.firstname} {article.userId.fullname.lastname}</p>
                 <p className="text-gray-500 text-xs mb-4">{dayjs(article.createdAt).fromNow()}</p>
               </div>
               <button
-                className="self-start px-6 py-2 rounded-lg text-white font-medium hover:bg-blue-600 transition duration-200"
+                onClick={()=>navigate("/",{state:{content:article.content,isViewOnly:true}})}
+                className="self-start px-6 py-2 cursor-pointer rounded-lg text-white font-medium hover:bg-blue-600 transition duration-200 flex justify-start items-center gap-2"
                 style={{ backgroundColor: "#2a2a2e" }} // Slightly lighter for button contrast
               >
-                View more
+                <FaRegEye size={18} /> View more
               </button>
             </div>
           ))}
         </div>
 
         {/* Floating Action Button (FAB) */}
-        <button className="fixed bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition duration-300 ease-in-out transform ">
+        <button onClick={()=>navigate("/")} className="fixed cursor-pointer bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition duration-300 ease-in-out transform ">
           <FaPlus className="h-5 w-5" />
         </button>
       </div>
