@@ -8,5 +8,6 @@ router.post("/create",authMiddleware,notesController.createNote)
 
 router.get("/get",authMiddleware,notesController.getNotes)
 
+router.get("/search",authMiddleware,notesController.searchNotes)
 
 module.exports = router;

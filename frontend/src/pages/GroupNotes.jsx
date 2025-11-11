@@ -1,32 +1,78 @@
 import { FaPlus } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import axios from "axios"
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import axios from "axios";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { FaRegEye } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
 
 dayjs.extend(relativeTime);
 
 const GroupNotes = () => {
-  const [articles,setArticles]= useState([])
+  const [articles, setArticles] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
     async function getNotes() {
-      try{
-        const response = await axios.get("http://localhost:3000/api/notes/get",{
-          withCredentials:true
-        })
-        setArticles((prevArticles)=>[...prevArticles,...response.data.notes])
-      }catch(err){
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/notes/get",
+          {
+            withCredentials: true,
+          }
+        );
+        setLoading(false);
+        setError(null);
+        setArticles((prevArticles) => [
+          ...prevArticles,
+          ...response.data.notes,
+        ]);
+      } catch (err) {
         console.error("Error fetching notes:", err);
+        setError("Could not fetch notes. Please try again later.");
+        setLoading(false);
       }
     }
     getNotes();
   }, []);
 
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+
+    // 1. Waiter ka Timer set karo (500ms)
+    const timerId = setTimeout(() => {
+      // 2. Timer khatam hone ke baad, API call karo
+      const fetchNotes = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:3000/api/notes/search", // Hum /all route ko hi call karenge
+            {
+              params: {
+                q: searchTerm, // Search query bhejenge
+              },
+              withCredentials: true,
+            }
+          );
+          setArticles(response.data.notes); // Groups ko set karo
+        } catch (err) {
+          console.error("Error fetching groups:", err);
+          setError("Could not fetch groups. Please try again later.");
+        }
+        setLoading(false);
+      };
+
+      fetchNotes();
+    }, 300); // 300ms ka delay (thoda fast)
+
+    // 3. Cleanup: Agar user dobara type kare, toh purana timer cancel kar do
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [searchTerm]);
 
   return (
     <div
@@ -40,6 +86,8 @@ const GroupNotes = () => {
             <input
               type="text"
               placeholder="search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-5 pr-12 py-3 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
               style={{ backgroundColor: "#121214", border: "1px solid #333" }}
             />
@@ -63,33 +111,54 @@ const GroupNotes = () => {
         </div>
 
         {/* Article Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {articles.map((article, index) => (
-            <div
-              key={index}
-              className="p-5 rounded-2xl flex flex-col justify-between border border-gray-700 hover:border-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
-              style={{ backgroundColor: "#121214" }}
-            >
-              <div>
-                <h2 className="text-xl font-semibold text-white mb-2">
-                  {article.title}
-                </h2>
-                <p className="text-gray-400 text-sm mb-1">{article.userId.fullname.firstname} {article.userId.fullname.lastname}</p>
-                <p className="text-gray-500 text-xs mb-4">{dayjs(article.createdAt).fromNow()}</p>
-              </div>
-              <button
-                onClick={()=>navigate("/",{state:{content:article.content,isViewOnly:true}})}
-                className="self-start px-6 py-2 cursor-pointer rounded-lg text-white font-medium hover:bg-blue-600 transition duration-200 flex justify-start items-center gap-2"
-                style={{ backgroundColor: "#2a2a2e" }} // Slightly lighter for button contrast
-              >
-                <FaRegEye size={18} /> View more
-              </button>
-            </div>
-          ))}
-        </div>
+        {loading && <p className="text-white">Loading notes...</p>}
+        {error && <p className="text-red-400">{error}</p>}
+
+        {!loading && !error && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {articles.length > 0 ? (
+              articles.map((article, index) => (
+                <div
+                  key={index}
+                  className="p-5 rounded-2xl flex flex-col justify-between border border-gray-700 hover:border-blue-500 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                  style={{ backgroundColor: "#121214" }}
+                >
+                  <div>
+                    <h2 className="text-xl font-semibold text-white mb-2">
+                      {article.title}
+                    </h2>
+                    <p className="text-gray-400 text-sm mb-1">
+                      {article.userId.fullname.firstname}{" "}
+                      {article.userId.fullname.lastname}
+                    </p>
+                    <p className="text-gray-500 text-xs mb-4">
+                      {dayjs(article.createdAt).fromNow()}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() =>
+                      navigate("/", {
+                        state: { content: article.content, isViewOnly: true },
+                      })
+                    }
+                    className="self-start px-6 py-2 cursor-pointer rounded-lg text-white font-medium hover:bg-blue-600 transition duration-200 flex justify-start items-center gap-2"
+                    style={{ backgroundColor: "#2a2a2e" }} // Slightly lighter for button contrast
+                  >
+                    <FaRegEye size={18} /> View more
+                  </button>
+                </div>
+              ))
+            ) : (
+              <p className="text-white">No notes found.</p>
+            )}
+          </div>
+        )}
 
         {/* Floating Action Button (FAB) */}
-        <button onClick={()=>navigate("/")} className="fixed cursor-pointer bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition duration-300 ease-in-out transform ">
+        <button
+          onClick={() => navigate("/")}
+          className="fixed cursor-pointer bottom-6 right-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition duration-300 ease-in-out transform "
+        >
           <FaPlus className="h-5 w-5" />
         </button>
       </div>

@@ -6,6 +6,7 @@ import Register from "../pages/Register";
 import MainLayout from "../pages/MainLayout";
 import CreateGroup from "../components/tabs/CreateGroup";
 import AllGroups from "../components/tabs/AllGroups";
+import GroupChat from "../components/GroupChat";
 import SingleGroup from "../pages/SingleGroup";
 import GroupNotes from "../pages/GroupNotes"; 
 import GroupMembers from "../pages/GroupMembers";
@@ -33,6 +34,7 @@ const AppRoutes = () => {
           <Route index element={<GroupNotes />} /> 
           
           {/* Other tabs (Column 3) */}
+          <Route path="chats" element={<GroupChat />} />
           <Route path="members" element={<GroupMembers />} />
           <Route path="settings" element={
               <h1 className="p-8 text-white text-2xl">Group Settings (TODO)</h1>

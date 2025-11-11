@@ -84,6 +84,10 @@ export default function SingleGroupPage() {
           <HiDocumentText className="h-5 w-5" />
           <span>Notes</span>
         </NavLink>
+        <NavLink to={`/group/${groupId}/chats`} className={getNavLinkClass}>
+          <HiUsers className="h-5 w-5" />
+          <span>Chats</span>
+        </NavLink>
         <NavLink to={`/group/${groupId}/members`} className={getNavLinkClass}>
           <HiUsers className="h-5 w-5" />
           <span>Members</span>
