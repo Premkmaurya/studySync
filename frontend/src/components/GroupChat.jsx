@@ -1,35 +1,60 @@
-import React, { useState } from 'react';
-import { BiMessageDetail } from 'react-icons/bi';
+import React, { useState, useEffect } from "react";
+import { BiMessageDetail } from "react-icons/bi";
+import axios from "axios";
+import { useOutletContext } from "react-router-dom";
 
 const GroupChat = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: 'Hello! This is a sample message.',
-      sender: 'John Doe',
+      text: "Hello! This is a sample message.",
+      sender: "John Doe",
       isYou: false,
     },
     {
       id: 2,
-      text: 'Hi there! This is a reply.',
-      sender: 'You',
+      text: "Hi there! This is a reply.",
+      sender: "You",
       isYou: true,
     },
   ]);
-  const [newMessage, setNewMessage] = useState('');
+  const { group } = useOutletContext();
+  const groupId = group?._id;
+  console.log(groupId)
+  const [newMessage, setNewMessage] = useState("");
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/messages/${groupId}`,{
+          withCredentials:true
+        });
+        // const fetchedMessages = response.data.chat.map((msg, index) => ({
+        //   id: index + 1,
+        //   text: msg.text,
+        //   sender: msg.senderName,
+        //   isYou: msg.senderId === 'currentUserId', // Replace with actual current user ID
+        //  }));
+        // setMessages(response.data.messages);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    fetchMessages();
+  }, []);
 
   const handleSendMessage = () => {
-    if (newMessage.trim() === '') return;
+    if (newMessage.trim() === "") return;
 
     const newMessageObj = {
       id: messages.length + 1,
       text: newMessage,
-      sender: 'You',
+      sender: "You",
       isYou: true,
     };
 
     setMessages([...messages, newMessageObj]);
-    setNewMessage('');
+    setNewMessage("");
   };
 
   return (
@@ -44,7 +69,7 @@ const GroupChat = () => {
           <div
             key={message.id}
             className={`mb-7 flex items-start ${
-              message.isYou ? 'justify-end' : ''
+              message.isYou ? "justify-end" : ""
             } gap-5`}
           >
             {!message.isYou && (
@@ -58,7 +83,7 @@ const GroupChat = () => {
               </div>
               <div
                 className={`${
-                  message.isYou ? 'bg-blue-200' : 'bg-blue-300'
+                  message.isYou ? "bg-blue-200" : "bg-blue-300"
                 } py-3.5 px-5 rounded-2xl shadow-lg max-w-lg`}
               >
                 {message.text}
@@ -81,7 +106,7 @@ const GroupChat = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === "Enter") {
                 handleSendMessage();
               }
             }}

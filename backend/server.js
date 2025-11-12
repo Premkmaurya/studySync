@@ -5,30 +5,73 @@ const http = require("http");
 const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
+const messageModel = require("./src/models/message.model");
 
 const httpServer = http.createServer(app);
-
+let io = null;
 connectDB();
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:5173",
-    credentials: true,
-  },
-});
-io.use((socket, next) => {
-  const { token } = cookie.parse(socket.handshake.headers?.cookie || "");
-  if (!token) {
-    return next(new Error("Authentication error: No token provided"));
-  }
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    socket.user = decoded;
-    next();
-  } catch (error) {
-    return next(new Error("Authentication error: Invalid token"));
-  }
-});
+async function initServer(httpServer) {
+  io = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:5173",
+      credentials: true,
+    },
+  });
+  io.use((socket, next) => {
+    const { token } = cookie.parse(socket.handshake.headers?.cookie || "");
+    if (!token) {
+      console.log("Authentication error: No token provided");
+      return next(new Error("Authentication error: No token provided"));
+    }
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+      socket.user = decoded;
+      next();
+    } catch (error) {
+      console.log("Authentication error: No token provided");
+      return next(new Error("Authentication error: Invalid token"));
+    }
+  });
 
+  io.on("connection", (socket) => {
+    console.log("user connected:", socket.user.id);
+    socket.on("joinRoom", (roomId) => {
+      if (socket.currentRoom) {
+        socket.leave(socket.currentRoom);
+      }
+      socket.currentRoom = roomId;
+      socket.join(roomId);
+      socket.broadcast
+        .to(roomId)
+        .emit("userJoined", `user connect with this id:${socket.user.id}`);
+      socket.on("newMessage", async (message) => {
+        const roomId = socket.currentRoom; // Use the stored room ID
+
+        if (!roomId) {
+          // If user sends a message without joining a room, ignore it
+          return console.log("Error: Message sent without joining a room.");
+        }
+        const createMsg = await messageModel.create({
+          text: message.text,
+          user: socket.user.id,
+          group: roomId,
+        });
+        const populatedMsg = await messageModel
+          .findById(createMsg._id)
+          .populate('user', 'fullname');
+        socket.broadcast.to(roomId).emit("newMessage", populatedMsg);
+      });
+    });
+    socket.on("disconnect", () => {
+      console.log("user disconnected...", socket.user.id);
+      if (socket.currentRoom) {
+      socket.leave(socket.currentRoom);
+    }
+    });
+  });
+}
+
+initServer(httpServer);
 app.set("io", io);
 
 httpServer.listen(3000, () => {

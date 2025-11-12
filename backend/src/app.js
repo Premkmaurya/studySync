@@ -21,6 +21,6 @@ app.use(express.json())
 app.use("/api/auth",authRoutes)
 app.use("/api/groups",groupRoutes)
 app.use("/api/notes",noteRoutes)
-app.get("/api/message/:_id",authMiddleware,getMessages)
+app.get("/api/messages/:groupId",authMiddleware,getMessages)
 
 module.exports = app;
