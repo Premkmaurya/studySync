@@ -4,6 +4,8 @@ const authRoutes = require("./routes/auth.routes")
 const groupRoutes = require("./routes/group.routes")
 const noteRoutes = require("./routes/notes.routes")
 const cors = require("cors")
+const authMiddleware = require("./middlewares/auth.middleware")
+const getMessages = require("./controllers/message.controller")
 
 const app = express()
 
@@ -19,5 +21,6 @@ app.use(express.json())
 app.use("/api/auth",authRoutes)
 app.use("/api/groups",groupRoutes)
 app.use("/api/notes",noteRoutes)
+app.get("/api/message/:_id",authMiddleware,getMessages)
 
 module.exports = app;

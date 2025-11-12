@@ -26,7 +26,7 @@ export default function GroupCard({ group, onGroupJoined }) {
     getGroups();
   }, []);
 
-  const imageUrl = group.image || placeholderImageUrl;
+  const imageUrl = group.image || "placeholderImageUrl";
 
   const handleJoin = async () => {
     if (joinText === "joined") return;

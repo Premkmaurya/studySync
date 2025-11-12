@@ -27,15 +27,7 @@ export default function CreateGroup() {
 
   // Jab form submit ho
   const onSubmit = async (data) => {
-    // ABHI KE LIYE: Hum sirf name aur description bhejenge,
-    // kyunki backend abhi itna hi support karta hai.
-    const submissionData = {
-      name: data.name,
-      description: data.description,
-    };
-
-    // TODO (Next Step): Jab backend ready hoga,
-    // hum FormData use karke image bhi bhejenge.
+ 
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('description', data.description);
@@ -44,17 +36,14 @@ export default function CreateGroup() {
     try {
       const response = await axios.post(
         'http://localhost:3000/api/groups/create',
-        formData, // Abhi JSON bhej rahe hain
-        // formData, // Baad mein yeh bhejenge
+        formData, 
         {
           withCredentials: true,
-          // Headers abhi JSON ke liye theek hain
-          // Jab image bhejenge, tab 'Content-Type': 'multipart/form-data' lagega
         }
       );
 
       // Success ke baad user ko /groups page pe bhej do
-      navigate('/find-groups');
+      navigate(`/group/${response.data.group._id}`);
     } catch (error) {
       console.error('Error creating group:', error.response?.data || error.message);
       // Yahan error dikha sakte hain
@@ -62,7 +51,7 @@ export default function CreateGroup() {
   };
 
   return (
-    <div className="w-[92.9vw] h-[100vh] bg-[#121214] p-6 shadow-lg">
+    <div className="w-[92.9vw] h-screen bg-[#121214] p-6 shadow-lg">
       <h1 className="text-3xl font-bold text-white mb-6">
         Create a New Group
       </h1>

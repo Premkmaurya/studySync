@@ -128,6 +128,9 @@ export default function AllGroups() {
     socket.on("groupUpdated", (updatedGroup) => {
       handleGroupUpdate(updatedGroup);
     });
+    socket.on("groupCreated", (newGroup) => {
+      setGroups((currentGroups) => [newGroup, ...currentGroups]);
+    });
 
     return () => {
       socket.disconnect();

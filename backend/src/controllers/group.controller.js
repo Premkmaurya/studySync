@@ -1,6 +1,7 @@
 const groupModel = require("../models/group.model");
 const userGroupModel = require("../models/userGroup.model");
 const uploadImage = require("../services/image.service");
+const messageModel = require("../models/message.model");
 
 async function getAllGroups(req, res) {
   const groups = await groupModel.find().skip(0).limit(10);
@@ -27,22 +28,26 @@ async function createGroup(req, res) {
   const { name, description } = req.body;
   const image = req.file;
   const user = req.user;
-
-  const response = await uploadImage(image.buffer);
+  let response = {};
+  if(image){
+    response = await uploadImage(image.buffer);
+  }
   const group = await groupModel.create({
     name,
     description,
     image: response.url,
     owner: user.id,
-    members:1
+    members: 1,
   });
   await userGroupModel.create({
     userId: user.id,
     groupId: group._id,
   });
+  const io = req.app.get("io");
+
+  io.emit("groupCreated", group);
 
   return res.status(201).json({
-    message: "Group created successfully",
     group,
   });
 }
@@ -108,7 +113,7 @@ async function updateGroup(req, res) {
 async function joinGroup(req, res) {
   const { groupId } = req.params;
   const user = req.user;
-  
+
   const isUserExist = await userGroupModel.findOne({
     userId: user.id,
     groupId,
@@ -116,10 +121,10 @@ async function joinGroup(req, res) {
 
   if (isUserExist) {
     return res.status(200).json({
-      message: "you already joined."
+      message: "you already joined.",
     });
   }
-  
+
   await userGroupModel.create({
     userId: user.id,
     groupId,
@@ -127,7 +132,7 @@ async function joinGroup(req, res) {
   const group = await groupModel.findByIdAndUpdate(
     groupId,
     {
-      $inc: {members:1},
+      $inc: { members: 1 },
     },
     { new: true }
   );
@@ -137,39 +142,42 @@ async function joinGroup(req, res) {
 
   return res.status(200).json({
     message: "Joined group successfully",
-    group
+    group,
   });
 }
 
-async function joinedGroup(req,res){
+async function joinedGroup(req, res) {
   const user = req.user;
-  const groups = await userGroupModel.find({userId:user.id})
-  if(!groups){
+  const groups = await userGroupModel.find({ userId: user.id });
+  if (!groups) {
     return res.status(400).json({
-      message:"you didn't join any group yet."
-    })
+      message: "you didn't join any group yet.",
+    });
   }
 
   return res.status(200).json({
-    message:"groups fetched successfully.",
-    groups
-  })
+    message: "groups fetched successfully.",
+    groups,
+  });
 }
 
-async function getGroupMembers(req,res) {
-  const {groupId} = req.query;
-  const members = await userGroupModel.find({groupId}).populate('userId','fullname').sort({createdAt:-1});
+async function getGroupMembers(req, res) {
+  const { groupId } = req.query;
+  const members = await userGroupModel
+    .find({ groupId })
+    .populate("userId", "fullname")
+    .sort({ createdAt: -1 });
 
-  if(!members){
+  if (!members) {
     return res.status(403).json({
-      message:"no members found."
-    })
+      message: "no members found.",
+    });
   }
 
   res.status(200).json({
-    message:"members fetch successfully.",
-    members
-  })
+    message: "members fetch successfully.",
+    members,
+  });
 }
 
 module.exports = {
@@ -181,5 +189,5 @@ module.exports = {
   joinGroup,
   searchGroup,
   joinedGroup,
-  getGroupMembers
+  getGroupMembers,
 };
