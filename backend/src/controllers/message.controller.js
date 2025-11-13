@@ -1,16 +1,17 @@
 const messageModel = require("../models/message.model");
 
 const getMessages = async (req, res) => {
-  const { _id } = req.params;
+  const { groupId } = req.params;
   const user = req.user;
 
   const chat = await messageModel.find({
-    group: _id,
-  });
+    group: groupId,
+  }).populate("user","fullname");
   
   res.status(201).json({
     message: "message find successfully.",
     chat,
+    userId:user.id
   });
 };
 

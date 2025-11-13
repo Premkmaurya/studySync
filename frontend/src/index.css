@@ -41,3 +41,24 @@
   border-left: 1px solid rgba(114, 118, 122, 0.397);
   border-right: 1px solid rgba(114, 118, 122, 0.397);
 }
+
+
+/* Custom scrollbar styling */
+.custom-scrollbar {
+  scrollbar-width: thin; /* for Firefox */
+  scrollbar-color: #99a1b0 #1b1b1f; /* thumb + track */
+}
+
+/* For Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1b1b1f; /* scrollbar background */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #99a1b0; /* scrollbar thumb */
+  border-radius: 10px;
+}

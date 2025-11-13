@@ -12,6 +12,8 @@ router.get("/all", authMiddleware, groupController.getAllGroups)
 
 router.get("/search",authMiddleware,groupController.searchGroup)
 
+router.get("/search/:id",authMiddleware,groupController.searchGroupById)
+
 router.post("/join/:groupId",authMiddleware,groupController.joinGroup)
 
 router.get("/joined-groups",authMiddleware,groupController.joinedGroup)

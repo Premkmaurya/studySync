@@ -124,7 +124,9 @@ export default function AllGroups() {
     );
   };
   useEffect(() => {
-    const socket = io("http://localhost:3000");
+    const socket = io("http://localhost:3000",{
+      withCredentials:true
+    });
     socket.on("groupUpdated", (updatedGroup) => {
       handleGroupUpdate(updatedGroup);
     });

@@ -17,23 +17,15 @@ export default function SingleGroupPage() {
   useEffect(() => {
     // 2. Agar user seedha URL type karke aaya (bina "gift box" ke)
     if (!group) {
-      console.log("No state found, fetching group data from API...");
       const fetchGroupData = async () => {
         try {
-          // TODO: Backend mein ek naya route banana padega "/api/groups/get/:id"
-          // Abhi ke liye hum 'all' se filter kar rahe hain (best nahi hai, par chalega)
           const response = await axios.get(
-            `http://localhost:3000/api/groups/all`, // Humara search logic 'q' parameter use karta hai
+            `http://localhost:3000/api/groups/search/${groupId}`,
             { 
               withCredentials: true,
-              // Hum search logic ko use karke specific group dhoondh sakte hain
-              // par uske liye backend ko ID se search karna support karna chahiye.
-              // Abhi ke liye, hum maan rahe hain ki 'all' mein yeh mil jaayega
             }
           );
-          
-          // Temporary workaround: find from all
-          const foundGroup = response.data.groups.find(g => g._id === groupId);
+          const foundGroup = response.data.group;
 
           if (foundGroup) {
             setGroup(foundGroup);
@@ -71,7 +63,7 @@ export default function SingleGroupPage() {
   return (
     <div className="flex h-full bg-[#1b1b1f]">
       {/* Column 2: Group Tabs (Naya Sub-Sidebar) */}
-      <nav className="w-64 bg-[#121214] p-4 flex flex-col space-y-2 shrink-0">
+      <nav className="w-0 md:w-64 bg-[#121214] md:p-4 flex flex-col space-y-2 shrink-0">
         {/* Group Name Header */}
         <div className="px-2 py-3 mb-2 border-b border-gray-700">
           <h2 className="text-xl font-bold text-white truncate">{group.name}</h2>

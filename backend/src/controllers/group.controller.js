@@ -24,6 +24,20 @@ async function searchGroup(req, res) {
   }
 }
 
+async function searchGroupById(req,res){
+  const {id} = req.params;
+  const group = await groupModel.findById(id).lean();
+  if(!group){
+    return res.status(400).json({
+      message:"no group found."
+    })
+  }
+  return res.status(200).json({
+    message:"group found successfully.",
+    group
+  })
+}
+
 async function createGroup(req, res) {
   const { name, description } = req.body;
   const image = req.file;
@@ -190,4 +204,5 @@ module.exports = {
   searchGroup,
   joinedGroup,
   getGroupMembers,
+  searchGroupById
 };
