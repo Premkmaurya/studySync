@@ -193,6 +193,9 @@ export default function NotesEditor() {
             Save
           </button>
         </div>}
+        <div>
+          
+        </div>
       </div>
     </>
   );

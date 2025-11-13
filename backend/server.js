@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 const messageModel = require("./src/models/message.model");
+const genreateResponse = require("./src/services/ai.service");
 
 const httpServer = http.createServer(app);
 let io = null;
@@ -34,7 +35,6 @@ async function initServer(httpServer) {
   });
 
   io.on("connection", (socket) => {
-    console.log("user connected:", socket.user.id);
     socket.on("joinRoom", (roomId) => {
       if (socket.currentRoom) {
         socket.leave(socket.currentRoom);
@@ -58,15 +58,19 @@ async function initServer(httpServer) {
         });
         const populatedMsg = await messageModel
           .findById(createMsg._id)
-          .populate('user', 'fullname');
+          .populate("user", "fullname");
         socket.broadcast.to(roomId).emit("newMessage", populatedMsg);
       });
     });
+    socket.on("aiMessage", async (messagePayload) => {
+      const prompt = messagePayload.content + messagePayload.text;
+      const response = await genreateResponse(prompt);
+      socket.emit("ai-response", { text: response });
+    });
     socket.on("disconnect", () => {
-      console.log("user disconnected...", socket.user.id);
       if (socket.currentRoom) {
-      socket.leave(socket.currentRoom);
-    }
+        socket.leave(socket.currentRoom);
+      }
     });
   });
 }

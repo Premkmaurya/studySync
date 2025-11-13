@@ -19,7 +19,7 @@
   list-style-type: decimal;
 }
 .text-editor-container{
-  width:100vw;
+  width:92.5vw;
   height:100vh;
 }
 .text-editor-container blockquote {
@@ -33,7 +33,7 @@
 
 .text-editor-container .mantine-RichTextEditor-content {
   /* Jo bhi min height chahiye, yahan set karo */
-  min-height: 80vh; 
+  min-height: 82vh; 
   width: 60%;
   margin-left: 20%;
   display: flex;
