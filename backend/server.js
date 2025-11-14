@@ -62,9 +62,8 @@ async function initServer(httpServer) {
         socket.broadcast.to(roomId).emit("newMessage", populatedMsg);
       });
     });
-    socket.on("aiMessage", async (messagePayload) => {
-      const prompt = messagePayload.content + messagePayload.text;
-      const response = await genreateResponse(prompt);
+    socket.on("aiMessage", async (message) => {
+      const response = await genreateResponse(message);
       socket.emit("ai-response", { text: response });
     });
     socket.on("disconnect", () => {

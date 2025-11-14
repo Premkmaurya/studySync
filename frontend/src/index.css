@@ -34,7 +34,7 @@
 .text-editor-container .mantine-RichTextEditor-content {
   /* Jo bhi min height chahiye, yahan set karo */
   min-height: 82vh; 
-  width: 60%;
+  width: 59%;
   margin-left: 20%;
   display: flex;
   justify-content: center;
