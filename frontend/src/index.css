@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-
-
 /* Tailwind ke Preflight ko override karna hai! */
 .ProseMirror ul,
 .ProseMirror ol {
@@ -11,16 +9,16 @@
 
 .ProseMirror ul {
   /* Bullet dots wapas lao */
-  list-style-type: disc; 
+  list-style-type: disc;
 }
 
 .ProseMirror ol {
   /* Numbering wapas lao */
   list-style-type: decimal;
 }
-.text-editor-container{
-  width:92.5vw;
-  height:100vh;
+.text-editor-container {
+  width: 92.5vw;
+  height: 100vh;
 }
 .text-editor-container blockquote {
   /* Blockquote ki styling wapas lao */
@@ -33,15 +31,13 @@
 
 .text-editor-container .mantine-RichTextEditor-content {
   /* Jo bhi min height chahiye, yahan set karo */
-  min-height: 82vh; 
+  min-height: 82vh;
   width: 59%;
   margin-left: 20%;
   display: flex;
-  justify-content: center;
   border-left: 1px solid rgba(114, 118, 122, 0.397);
   border-right: 1px solid rgba(114, 118, 122, 0.397);
 }
-
 
 /* Custom scrollbar styling */
 .custom-scrollbar {
@@ -51,6 +47,19 @@
 .custom-scrollbar-2 {
   scrollbar-width: thin; /* for Firefox */
   scrollbar-color: #1b1b1f #e1e3e8; /* thumb + track */
+}
+
+.ProseMirror p.is-empty::before,
+.ProseMirror h1.is-empty::before,
+.ProseMirror h2.is-empty::before {
+  content: attr(data-placeholder);
+
+  color: #495057; 
+  font-style: italic;
+  pointer-events: none; 
+  float: left;
+  font-size:1.1rem;
+  height: 0; /* Prevents affecting line height */
 }
 
 /* For Chrome, Edge, Safari */
@@ -66,4 +75,3 @@
   background-color: #99a1b0; /* scrollbar thumb */
   border-radius: 10px;
 }
-

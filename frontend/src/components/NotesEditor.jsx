@@ -5,6 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
+import Placeholder from "@tiptap/extension-placeholder";
 import {
   TbClearFormatting,
   TbH1,
@@ -53,19 +54,9 @@ export default function NotesEditor() {
   const [isAisummarize, setIsAisummarize] = useState(false);
 
   const content =
-    typeof contentFromState === "string" && contentFromState.trim().length > 0
-      ? contentFromState
-      : `<h2 style="text-align: center;">Welcome to Mantine rich text editor</h2>
-       <p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. 
-       <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p>
-       <ul>
-         <li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s></li>
-         <li>Headings (h1-h6)</li>
-         <li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li>
-         <li>Ordered and bullet lists</li>
-         <li>Text align</li>
-         <li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li>
-       </ul>`;
+    typeof contentFromState === "string" &&
+    contentFromState.trim().length > 0 &&
+    contentFromState;
 
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -75,6 +66,10 @@ export default function NotesEditor() {
       Superscript,
       SubScript,
       Highlight,
+      Placeholder.configure({
+        placeholder:
+          "Generate notes (ctrl+I).Start typing to dismiss or don't show this again.",
+      }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content,
@@ -131,6 +126,9 @@ export default function NotesEditor() {
               stickyOffset="var(--docs-header-height)"
             >
               <RichTextEditor.ControlsGroup>
+                <div className="text-black text-sm border border-black/20 px-[0.1rem] py-[0.1rem]">
+                  AI
+                </div>
                 <RichTextEditor.Bold icon={() => <FaBold size={14} />} />
                 <RichTextEditor.Italic icon={() => <FaItalic size={14} />} />
                 <RichTextEditor.Underline
@@ -198,7 +196,7 @@ export default function NotesEditor() {
           )}
 
           <RichTextEditor.Content />
-          {content && (
+          {content && isViewOnly && (
             <div
               onClick={handleAiSummarize}
               className="absolute cursor-pointer bottom-[0.8rem] right-[21%] text-black font-semibold"
