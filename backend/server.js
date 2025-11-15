@@ -70,7 +70,7 @@ async function initServer(httpServer) {
         text: message,
       });
       const chatHistory = await aiMessageModel
-        .find({socket.user.id})
+        .find({userId:socket.user.id})
         .skip(0)
         .limit(10)
         .sort({ createdAt: -1 })
