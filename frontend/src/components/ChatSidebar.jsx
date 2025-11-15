@@ -74,7 +74,7 @@ const ChatSidebar = ({aiText}) => {
         </header>
 
         {/* --- Content Area (Where the chat/questions go) --- */}
-        <main ref={messagesEndRef} className="flex-grow p-4 flex flex-col overflow-y-auto relative">
+        <main ref={messagesEndRef} className="flex-grow p-4 flex flex-col overflow-y-auto relative custom-scrollbar custom-scrollbar-2">
           {/* In a real app, this is where messages would be mapped */}
           {messages.length > 0 ? (
           messages.map((message) => (
@@ -87,8 +87,8 @@ const ChatSidebar = ({aiText}) => {
               <div>
                 <div
                   className={`${
-                    message.isYou ? "bg-blue-200" : "bg-blue-300"
-                  } py-2 px-3 rounded-2xl text-xs shadow-lg max-w-lg custom-scrollbar`}
+                    message.isYou ? "bg-blue-200" : ""
+                  } py-2 px-3 rounded-2xl text-xs shadow-lg max-w-lg`}
                 >
                  <ReactMarkdown>{message.text}</ReactMarkdown>
                 </div>

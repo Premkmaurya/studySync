@@ -6,6 +6,7 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 const messageModel = require("./src/models/message.model");
+const aiMessageModel = require("./src/models/aiMessage.model");
 const genreateResponse = require("./src/services/ai.service");
 
 const httpServer = http.createServer(app);
@@ -63,8 +64,33 @@ async function initServer(httpServer) {
       });
     });
     socket.on("aiMessage", async (message) => {
-      const response = await genreateResponse(message);
+      await aiMessageModel.create({
+        userId: socket.user.id,
+        role: "user",
+        text: message,
+      });
+      const chatHistory = await aiMessageModel
+        .find({socket.user.id})
+        .skip(0)
+        .limit(10)
+        .sort({ createdAt: -1 })
+        .lean()
+        .then((chat) => chat.reverse());
+
+      const stm = chatHistory.map((item) => {
+        return {
+          role: item.role,
+          parts: [{ text: item.text }],
+        };
+      });
+
+      const response = await genreateResponse(stm);
       socket.emit("ai-response", { text: response });
+      await aiMessageModel.create({
+        userId: socket.user.id,
+        role: "model",
+        text: response,
+      });
     });
     socket.on("disconnect", () => {
       if (socket.currentRoom) {

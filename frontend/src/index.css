@@ -48,6 +48,10 @@
   scrollbar-width: thin; /* for Firefox */
   scrollbar-color: #99a1b0 #1b1b1f; /* thumb + track */
 }
+.custom-scrollbar-2 {
+  scrollbar-width: thin; /* for Firefox */
+  scrollbar-color: #1b1b1f #e1e3e8; /* thumb + track */
+}
 
 /* For Chrome, Edge, Safari */
 .custom-scrollbar::-webkit-scrollbar {
@@ -62,3 +66,4 @@
   background-color: #99a1b0; /* scrollbar thumb */
   border-radius: 10px;
 }
+

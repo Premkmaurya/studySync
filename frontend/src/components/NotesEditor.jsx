@@ -41,7 +41,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import NoteTitleModal from "./NoteTilteModel";
 
-
 export default function NotesEditor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aiText, setAiText] = useState("");
@@ -51,7 +50,7 @@ export default function NotesEditor() {
   const [isViewOnly, setIsViewOnly] = useState(
     location.state?.isViewOnly || false
   );
-  const [isAisummarize,setIsAisummarize]=useState(false)
+  const [isAisummarize, setIsAisummarize] = useState(false);
 
   const content =
     typeof contentFromState === "string" && contentFromState.trim().length > 0
@@ -99,8 +98,12 @@ export default function NotesEditor() {
   const handleAiSummarize = async () => {
     if (!editor) return;
     const content = editor.getHTML();
-    console.log(typeof(content))
-    setAiText(content+" Summarize the above note content in simple and concise terms with using bullet points.");
+    console.log(typeof content);
+    setAiText(
+      content +
+        " Create a structured summary of the above note. Use short bullet points, highlight key ideas, and remove any unnecessary detail. Keep it concise and easy to study."
+    );
+
     setTimeout(() => setIsAisummarize(true), 500);
   };
 
