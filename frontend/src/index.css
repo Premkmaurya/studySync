@@ -19,6 +19,7 @@
 .text-editor-container {
   width: 92.5vw;
   height: 100vh;
+  overflow-x:hidden;
 }
 .text-editor-container blockquote {
   /* Blockquote ki styling wapas lao */

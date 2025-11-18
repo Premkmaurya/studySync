@@ -98,7 +98,8 @@ export default function NotesEditor() {
   }, []);
   useEffect(() => {
   if (editor && content) {
-    editor.commands.setContent(content);
+    editor.commands.focus('end');
+    editor.commands.insertContent(content)
   }
 }, [editor, content]);
 
