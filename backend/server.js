@@ -72,7 +72,7 @@ async function initServer(httpServer) {
       const chatHistory = await aiMessageModel
         .find({userId:socket.user.id})
         .skip(0)
-        .limit(10)
+        .limit(6)
         .sort({ createdAt: -1 })
         .lean()
         .then((chat) => chat.reverse());
