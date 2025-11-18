@@ -1,12 +1,33 @@
 import { useEffect, useRef, useState } from "react";
 import { FaCircleNotch } from "react-icons/fa";
+import {io} from "socket.io-client"
 
-export default function AIPopup({ isOpen, onClose, onSend }) {
+export default function AIPopup({ isOpen, onClose, setContent }) {
+const [socket, setSocket] = useState();
   const inputRef = useRef();
   const [loading, setLoading] = useState(false);
 
   // Close with ESC key
-  useEffect(() => {
+ 
+  useEffect(()=>{
+    const socketInstance = io("http://localhost:3000", {
+          withCredentials: true,
+        });
+       
+        socketInstance.on("ai-response", (data) => {
+          console.log(data.text)
+          setContent(data.text);
+          setLoading(false);
+          onClose()
+        });
+        setSocket(socketInstance);
+      return()=>{
+        socketInstance.disconnect();
+      }
+  },[])
+
+
+   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") onClose();
     };
@@ -14,7 +35,6 @@ export default function AIPopup({ isOpen, onClose, onSend }) {
 
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
-
   // Close when clicking outside
   const overlayRef = useRef();
 
@@ -29,11 +49,7 @@ export default function AIPopup({ isOpen, onClose, onSend }) {
     if (!val || loading) return;
 
     setLoading(true);
-
-    const response = await onSend(val); //waiting for backend response
-    if (response) {
-      setLoading(false);
-    }
+    socket.emit("aiMessage", val);
   };
 
   return (

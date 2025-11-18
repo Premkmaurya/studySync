@@ -54,15 +54,8 @@ export default function NotesEditor() {
   );
   const [isAisummarize, setIsAisummarize] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
-    const [socket, setSocket] = useState();
 
 
-  if (
-    typeof contentFromState === "string" &&
-    contentFromState.trim().length > 0
-  ) {
-    setContent(contentFromState);
-  } 
 
 
   const editor = useEditor({
@@ -79,12 +72,12 @@ export default function NotesEditor() {
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content,
+    content: contentFromState || content,
     editable: !isViewOnly,
   });
 
 
-// Listener for activate AI (ctrl+shift+k) && Socket.io connection
+// Listener for activate AI (ctrl+shift+k)
   useEffect(() => {
 
     const handleShortcut = (e) => {
@@ -97,21 +90,18 @@ export default function NotesEditor() {
     window.addEventListener("keydown", handleShortcut);
 
     // socket.io connection
-    const socketInstance = io("http://localhost:3000", {
-          withCredentials: true,
-        });
-       
-        socketInstance.on("ai-response", (data) => {
-          console.log(data.text)
-          setContent(data.text);
-        });
-        setSocket(socketInstance);
+    
 
     return () => {
       window.removeEventListener("keydown", handleShortcut);
-      socketInstance.disconnect();
     };
   }, []);
+  useEffect(() => {
+  if (editor && content) {
+    editor.commands.setContent(content);
+  }
+}, [editor, content]);
+
 
   const handleSave = async (title) => {
     if (!editor || !title) return;
@@ -138,13 +128,6 @@ export default function NotesEditor() {
     setTimeout(() => setIsAisummarize(true), 500);
   };
 
-  const handleSend = (text) => {
-    socket.emit("aiMessage", text);
-    if(content.length > 0){
-      setIsAIOpen(false);
-      return content;
-    }
-  };
 
   return (
     <>
@@ -157,7 +140,7 @@ export default function NotesEditor() {
         <AIPopup
         isOpen={isAIOpen}
         onClose={() => setIsAIOpen(false)}
-        onSend={handleSend}
+        setContent={setContent}
       />
       </div>
       <div
