@@ -31,7 +31,7 @@ import {
   FaAlignJustify,
 } from "react-icons/fa";
 import ChatSidebar from "./ChatSidebar";
-
+import AIPopup from "./AiPopup";
 import { MdFormatListBulleted, MdClose } from "react-icons/md";
 import { GoListOrdered } from "react-icons/go";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
@@ -41,22 +41,29 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import NoteTitleModal from "./NoteTilteModel";
+import {io} from "socket.io-client"
 
 export default function NotesEditor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aiText, setAiText] = useState("");
-
+  const [content, setContent] = useState("");
   const location = useLocation();
   const contentFromState = location.state?.content;
   const [isViewOnly, setIsViewOnly] = useState(
     location.state?.isViewOnly || false
   );
   const [isAisummarize, setIsAisummarize] = useState(false);
+  const [isAIOpen, setIsAIOpen] = useState(false);
+    const [socket, setSocket] = useState();
 
-  const content =
+
+  if (
     typeof contentFromState === "string" &&
-    contentFromState.trim().length > 0 &&
-    contentFromState;
+    contentFromState.trim().length > 0
+  ) {
+    setContent(contentFromState);
+  } 
+
 
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -68,13 +75,43 @@ export default function NotesEditor() {
       Highlight,
       Placeholder.configure({
         placeholder:
-          "Generate notes (ctrl+I).Start typing to dismiss or don't show this again.",
+          "Generate notes (ctrl+shift+K).Start typing to dismiss or don't show this again.",
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
     content,
     editable: !isViewOnly,
   });
+
+
+// Listener for activate AI (ctrl+shift+k) && Socket.io connection
+  useEffect(() => {
+
+    const handleShortcut = (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsAIOpen(true)
+      }
+    };
+
+    window.addEventListener("keydown", handleShortcut);
+
+    // socket.io connection
+    const socketInstance = io("http://localhost:3000", {
+          withCredentials: true,
+        });
+       
+        socketInstance.on("ai-response", (data) => {
+          console.log(data.text)
+          setContent(data.text);
+        });
+        setSocket(socketInstance);
+
+    return () => {
+      window.removeEventListener("keydown", handleShortcut);
+      socketInstance.disconnect();
+    };
+  }, []);
 
   const handleSave = async (title) => {
     if (!editor || !title) return;
@@ -93,13 +130,20 @@ export default function NotesEditor() {
   const handleAiSummarize = async () => {
     if (!editor) return;
     const content = editor.getHTML();
-    console.log(typeof content);
     setAiText(
       content +
         " Create a structured summary of the above note. Use short bullet points, highlight key ideas, and remove any unnecessary detail. Keep it concise and easy to study."
     );
 
     setTimeout(() => setIsAisummarize(true), 500);
+  };
+
+  const handleSend = (text) => {
+    socket.emit("aiMessage", text);
+    if(content.length > 0){
+      setIsAIOpen(false);
+      return content;
+    }
   };
 
   return (
@@ -109,6 +153,13 @@ export default function NotesEditor() {
         onClose={() => setIsModalOpen(false)}
         onCreateNote={handleSave}
       />
+      <div>
+        <AIPopup
+        isOpen={isAIOpen}
+        onClose={() => setIsAIOpen(false)}
+        onSend={handleSend}
+      />
+      </div>
       <div
         className={`text-editor-container ${
           isModalOpen ? "blur-xs" : ""
