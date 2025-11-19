@@ -41,7 +41,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import NoteTitleModal from "./NoteTilteModel";
-import {io} from "socket.io-client"
+import { io } from "socket.io-client";
 
 export default function NotesEditor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -54,9 +54,6 @@ export default function NotesEditor() {
   );
   const [isAisummarize, setIsAisummarize] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
-
-
-
 
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -76,33 +73,29 @@ export default function NotesEditor() {
     editable: !isViewOnly,
   });
 
-
-// Listener for activate AI (ctrl+shift+k)
+  // Listener for activate AI (ctrl+shift+k)
   useEffect(() => {
-
     const handleShortcut = (e) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setIsAIOpen(true)
+        setIsAIOpen(true);
       }
     };
 
     window.addEventListener("keydown", handleShortcut);
 
     // socket.io connection
-    
 
     return () => {
       window.removeEventListener("keydown", handleShortcut);
     };
   }, []);
   useEffect(() => {
-  if (editor && content) {
-    editor.commands.focus('end');
-    editor.commands.insertContent(content)
-  }
-}, [editor, content]);
-
+    if (editor && content) {
+      editor.commands.focus("end");
+      editor.commands.insertContent(content);
+    }
+  }, [editor, content]);
 
   const handleSave = async (title) => {
     if (!editor || !title) return;
@@ -129,7 +122,6 @@ export default function NotesEditor() {
     setTimeout(() => setIsAisummarize(true), 500);
   };
 
-
   return (
     <>
       <NoteTitleModal
@@ -139,10 +131,10 @@ export default function NotesEditor() {
       />
       <div>
         <AIPopup
-        isOpen={isAIOpen}
-        onClose={() => setIsAIOpen(false)}
-        setContent={setContent}
-      />
+          isOpen={isAIOpen}
+          onClose={() => setIsAIOpen(false)}
+          setContent={setContent}
+        />
       </div>
       <div
         className={`text-editor-container ${
@@ -231,16 +223,14 @@ export default function NotesEditor() {
           )}
 
           <RichTextEditor.Content />
-          {content && isViewOnly && (
-            <div
-              onClick={handleAiSummarize}
-              className="absolute cursor-pointer bottom-[0.8rem] right-[21%] text-black font-semibold"
-            >
-              <p>
-                Summarize with <span className="text-orange-700">AI ✨</span>
-              </p>
-            </div>
-          )}
+          <div
+            onClick={handleAiSummarize}
+            className="fixed cursor-pointer bottom-[0.8rem] right-5 text-black font-semibold"
+          >
+            <p>
+              Summarize with <span className="text-orange-700">AI ✨</span>
+            </p>
+          </div>
         </RichTextEditor>
         {!isViewOnly && (
           <div className="absolute right-4 mt-4 flex gap-4">
@@ -259,7 +249,7 @@ export default function NotesEditor() {
           </div>
         )}
       </div>
-      {isAisummarize && <ChatSidebar aiText={aiText} />}
+      {isAisummarize && <ChatSidebar aiText={aiText} setIsAisummarize={setIsAisummarize} />}
     </>
   );
 }

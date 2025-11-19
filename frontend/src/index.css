@@ -76,3 +76,27 @@
   background-color: #99a1b0; /* scrollbar thumb */
   border-radius: 10px;
 }
+
+.chat-content ul {
+  list-style-type: disc; /* Shows the dots */
+  padding-left: 1.2rem;  /* Indent the list */
+  margin-bottom: 0.5rem;
+}
+
+.chat-content ol {
+  list-style-type: decimal; /* Shows numbers */
+  padding-left: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-content li {
+  margin-bottom: 0.25rem; /* Spacing between items */
+}
+
+.chat-content p {
+  margin-bottom: 0.5rem; /* Spacing between paragraphs */
+}
+
+.chat-content strong {
+  font-weight: bold; /* Ensure bold text stands out */
+}

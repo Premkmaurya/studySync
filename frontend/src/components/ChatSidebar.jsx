@@ -1,25 +1,27 @@
-import React,{useEffect,useRef,useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import ReactMarkdown from 'react-markdown'
+import { FaRegWindowRestore } from "react-icons/fa";
 
-const ChatSidebar = ({aiText}) => {
+const ChatSidebar = ({ aiText, setIsAisummarize }) => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
+  const mainRef = useRef(null);
   const [socket, setSocket] = useState();
+  const [isMaximize, setIsMaximize] = useState(false);
 
   useEffect(() => {
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
-    console.log(aiText)
-    socketInstance.emit("aiMessage",aiText)
+    console.log(aiText);
+    socketInstance.emit("aiMessage", aiText);
     socketInstance.on("ai-response", (data) => {
       const newMsg = {
-        id:data._id,
-        text:data.text,
-        isYou:false,
-      }
+        id: data._id,
+        text: data.text,
+        isYou: false,
+      };
       setMessages((prevMessages) => [...prevMessages, newMsg]);
     });
     setSocket(socketInstance);
@@ -53,13 +55,42 @@ const ChatSidebar = ({aiText}) => {
     scrollToBottom();
   }, [messages]);
 
+  const toggleMaximize = () => {
+    if (!mainRef.current) return;
+
+    if (isMaximize) {
+      // currently maximized -> minimize back to original size
+      mainRef.current.style.width = "25vw";
+      mainRef.current.style.height = "80vh";
+      mainRef.current.style.top = "3.2rem";
+      mainRef.current.style.right = "0";
+      mainRef.current.style.left = "auto";
+      mainRef.current.style.bottom = "auto";
+      mainRef.current.style.zIndex = "auto";
+      setIsMaximize(false);
+    } else {
+      // currently minimized/normal -> maximize to full viewport
+      mainRef.current.style.width = "100vw";
+      mainRef.current.style.height = "100vh";
+      mainRef.current.style.top = "0";
+      mainRef.current.style.left = "0";
+      mainRef.current.style.right = "0";
+      mainRef.current.style.bottom = "0";
+      mainRef.current.style.zIndex = "50";
+      setIsMaximize(true);
+    }
+  };
+
   return (
-    <div className="absolute top-[3.2rem] right-0 flex justify-center items-center max-h-screen h-[80vh] w-[25vw] bg-gray-100 p-4">
+    <div
+      ref={mainRef}
+      className="absolute top-[3.2rem] right-0 flex justify-center items-center max-h-screen h-[80vh] w-[25vw] bg-gray-100 p-4"
+    >
       {/* --- Main Chat Window Container --- */}
       <div
         className="
-          w-full max-w-sm h-[80vh] bg-gray-200 shadow-xl 
-          border-4 border-black rounded-[24px] overflow-hidden 
+          w-full h-full bg-gray-200 shadow-xl 
+          border-4 border-black rounded-3xl overflow-hidden 
           flex flex-col
         "
         style={{
@@ -69,49 +100,78 @@ const ChatSidebar = ({aiText}) => {
         {/* --- Header (Top Bar with Controls) --- */}
         <header className="flex justify-end p-2 border-b-4 border-black">
           {/* Mimic the min/max/close icons with text or simple icons */}
-          <span className="text-xl mx-1 font-bold">☐</span>
-          <span className="text-xl mx-1 font-bold cursor-pointer">X</span>
+
+          {isMaximize ? (
+            <span
+              title="Minimize"
+              onClick={toggleMaximize}
+              className="text-xl mx-2 font-bold mt-2 cursor-pointer"
+            >
+              <FaRegWindowRestore size={15} />
+            </span>
+          ) : (
+            <span
+              title="Maximize"
+              onClick={toggleMaximize}
+              className="text-xl mx-1 font-bold cursor-pointer"
+            >
+              ☐
+            </span>
+          )}
+          <span
+            onClick={() => setIsAisummarize(false)}
+            className="text-xl mx-1 font-bold cursor-pointer"
+          >
+            X
+          </span>
         </header>
 
         {/* --- Content Area (Where the chat/questions go) --- */}
-        <main ref={messagesEndRef} className="flex-grow p-4 flex flex-col overflow-y-auto relative custom-scrollbar custom-scrollbar-2">
+        <main
+          ref={messagesEndRef}
+          className="grow p-4 flex flex-col overflow-y-auto relative custom-scrollbar custom-scrollbar-2"
+        >
           {/* In a real app, this is where messages would be mapped */}
           {messages.length > 0 ? (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              className={`mb-3 flex items-start ${
-                message.isYou ? "justify-end" : ""
-              } gap-5`}
-            >
-              <div>
-                <div
-                  className={`${
-                    message.isYou ? "bg-blue-200" : ""
-                  } py-2 px-3 rounded-2xl text-xs shadow-lg max-w-lg`}
-                >
-                 <ReactMarkdown>{message.text}</ReactMarkdown>
+            messages.map((message) => (
+              <div
+                key={message.id}
+                className={`mb-3 flex items-start ${
+                  message.isYou ? "justify-end" : ""
+                } gap-5`}
+              >
+                <div>
+                  <div
+                    className={`${
+                      message.isYou ? "bg-blue-200" : ""
+                    } py-2 px-3 rounded-2xl ${isMaximize ? "text-sm":"text-xs"} shadow-lg max-w-lg chat-content`}
+                  >
+                    <div dangerouslySetInnerHTML={{ __html: message.text }} />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <p className="text-black/80 absolute top-[50%] text-xs left-[50%] transform -translate-x-1/2 -translate-y-1/2">
-            Start your conversation
-          </p>
-        )}
+            ))
+          ) : (
+            <p className="text-black/80 text-center absolute top-[50%] text-sm left-[20%]
+            ">
+              Start your conversation
+            </p>
+          )}
         </main>
 
         {/* --- form (Input Area) --- */}
-        <form onSubmit={handleSendMessage} className="p-3 border-t-4 border-black flex items-center bg-white">
+        <form
+          onSubmit={handleSendMessage}
+          className={`${isMaximize ? "p-3" : "p-1"} border-t-4 border-black flex items-center bg-white`}
+        >
           <input
             type="text"
             placeholder="ask..."
-            className="
-              px-4 py-2 w-[90%] text-lg bg-white border-2 border-black 
+            className={`
+              px-4 py-2 w-full text-lg bg-white border-2 border-black 
               rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
               font-sans
-            "
+            `}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => {
