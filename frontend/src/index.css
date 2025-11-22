@@ -100,3 +100,10 @@
 .chat-content strong {
   font-weight: bold; /* Ensure bold text stands out */
 }
+.hero-clip{
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%)
+}
+
+.hero-clip-1{
+  clip-path: polygon(0 0, 100% 0, 100% 68%, 0 69%);
+}

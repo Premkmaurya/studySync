@@ -99,7 +99,7 @@ async function getMe(req, res) {
 }
 
 async function getUserById(req,res){
-  const {id}= req.user;
+  const {id}= req.params;
   const user = await userModel.findById(id).select("-password");
   return res.status(200).json({
     user

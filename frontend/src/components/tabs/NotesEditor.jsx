@@ -30,8 +30,8 @@ import {
   FaAlignRight,
   FaAlignJustify,
 } from "react-icons/fa";
-import ChatSidebar from "./ChatSidebar";
-import AIPopup from "./AiPopup";
+import ChatSidebar from "../ChatSidebar";
+import AIPopup from "../AiPopup";
 import { MdFormatListBulleted, MdClose } from "react-icons/md";
 import { GoListOrdered } from "react-icons/go";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
@@ -40,7 +40,7 @@ import "@mantine/tiptap/styles.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import NoteTitleModal from "./NoteTilteModel";
+import NoteTitleModal from "../NoteTilteModel";
 import { io } from "socket.io-client";
 
 export default function NotesEditor() {
