@@ -107,3 +107,7 @@
 .hero-clip-1{
   clip-path: polygon(0 0, 100% 0, 100% 68%, 0 69%);
 }
+
+.rounded-t-r{
+  border-top-right-radius: 2rem;
+}

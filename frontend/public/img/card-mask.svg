@@ -1,0 +1,28 @@
+<svg
+  width="400"
+  height="260"
+  viewBox="0 0 400 260"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <!-- White = visible, Black = transparent (holes) -->
+    <mask id="cardMask" maskUnits="userSpaceOnUse">
+      <!-- Full rounded card -->
+      <rect x="0" y="0" width="400" height="260" rx="0" fill="white" />
+      <!-- Top pill cutout -->
+      <rect x="200" y="50" width="180" height="36" rx="18" fill="black" />
+      <!-- Bottom pill cutout -->
+      <rect x="230" y="115" width="150" height="36" rx="18" fill="black" />
+    </mask>
+  </defs>
+
+  <!-- Actual card that will be used as mask -->
+  <rect
+    x="0"
+    y="0"
+    width="400"
+    height="260"
+    fill="white"
+    mask="url(#cardMask)"
+  />
+</svg>

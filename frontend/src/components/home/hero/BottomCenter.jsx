@@ -4,7 +4,7 @@ import { FaArrowDown } from "react-icons/fa";
 
 const BottomCenter = () => {
   return (
-    <div className="absolute bottom-0 left-[40%] w-[25vw] flex items-center justify-center h-[40vh]">
+    <div className="absolute bottom-0 left-[40%] w-[25vw] bg-white flex items-center justify-center h-[40vh]">
       <div className="rounded-[50%] w-38 h-38 relative overflow-hidden">
         <CircularText
           text="REACT*BITS*COMPONENTS*"
