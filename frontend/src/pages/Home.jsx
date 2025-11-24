@@ -6,6 +6,7 @@ import BottomCenter from "../components/home/hero/BottomCenter";
 import Footer from "../components/home/footer/Footer";
 import Skill from "../components/home/skill/Skill";
 import Feature from "../components/home/feature/Feature";
+import Faq from "../components/home/FAQ/Faq";
 
 const Home = () => {
   return (
@@ -29,6 +30,9 @@ const Home = () => {
       </div>
       <div>
         <Feature />
+      </div>
+      <div>
+        <Faq />
       </div>
       <div className="w-screen overflow-x-hidden">
         <Footer />
