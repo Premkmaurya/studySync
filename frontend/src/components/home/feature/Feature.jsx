@@ -28,36 +28,67 @@ export default function Feature() {
         transition={{ delay: 0.4, duration: 0.8 }}
         className="text-center text-gray-600 max-w-xl mt-4"
       >
-        From connecting with your favorite tools to automating workflows, Geni AI simplifies business tasks.
+        From connecting with your favorite tools to automating workflows, Geni
+        AI simplifies business tasks.
       </motion.p>
 
       {/* Icons Row */}
-      <div className="flex items-center gap-6 md:gap-10 mt-16">
-        {["/mnt/data/fbc087bf-daa6-4265-8a64-42e53a035d8e.png","/icons/brand1.png", "/icons/brand2.png", "/icons/brand3.png", "/icons/brand4.png"].map((icon, i) => (
-          <motion.img
-            key={i}
-            src={icon}
-            alt="icon"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: i * 0.15 }}
-            className="w-20 h-20 bg-white shadow-lg rounded-2xl p-4 object-contain"
-          />
-        ))}
-      </div>
+      <div className="flex">
+        <div className="flex items-center gap-6 md:gap-10 mt-16">
+          {[
+            "https://framerusercontent.com/images/yw300BfNoo7QuILH3YwnXIGFUg.svg",
+            "https://framerusercontent.com/images/oNtsBWjFbsLxfLOZMVt8C5HVEI.svg",
+          ].map((icon, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+              className="p-2 border border-black/30 rounded-2xl"
+            >
+              <img
+                src={icon}
+                alt="icon"
+                className="w-30 h-30 bg-white shadow-lg rounded-2xl border border-black/20 p-4 object-contain"
+              />
+            </motion.div>
+          ))}
+        </div>
 
-      {/* Phone Mockup */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        className="relative mt-12"
-      >
-        <img
-          src="/img/mobile.png"
-          className="w-[320px] scale-110 md:w-[380px] drop-shadow-2xl rounded-3xl"
-        />
-      </motion.div>
+        {/* Phone Mockup */}
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="relative mt-12"
+        >
+          <img
+            src="/img/mobile.png"
+            className="w-[24rem] scale-110 md:w-120 drop-shadow-2xl rounded-3xl"
+          />
+        </motion.div>
+
+        <div className="flex items-center gap-6 md:gap-10 mt-16">
+          {[
+            "https://framerusercontent.com/images/Oo4CsXTZC6GtPr09sGUibuk.svg",
+            "https://framerusercontent.com/images/OX7vNAfYiPqXJtSgJa7LQ4oVwag.svg",
+          ].map((icon, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+              className="p-2 border border-black/30 rounded-2xl"
+            >
+              <img
+                src={icon}
+                alt="icon"
+                className="w-30 h-30 bg-white shadow-lg rounded-2xl border border-black/20 p-4 object-contain"
+              />
+            </motion.div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import React,{useState} from "react";
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa6";
+// import {useGSAP} from "@gsap/react"
 
-const FaqCard = () => {
+const FaqCard = ({q,ans}) => {
     const [isOpen, setIsOpen] = useState(false)
 
     const openHandler = () =>{
@@ -10,23 +11,22 @@ const FaqCard = () => {
         else setIsOpen(true)
     }
 
+    // useGSAP(()=>{
+
+    // })
+
   return (
-    <div className="w-[80%] p-2 rounded-xl border border-black/50">
-      <div onClick={openHandler} className="w-full h-auto bg-blue-300 rounded-xl flex flex-col justify-between px-8 py-6 items-center">
+    <div className="w-[80%] p-2 rounded-xl hover:bg-linear-to-t from-white to-blue-100 border border-black/50 transition-all duration-125">
+      <div onClick={openHandler} className="w-full h-auto border border-black/20 rounded-xl flex flex-col justify-between px-8 py-6 items-center">
         <div className="w-full flex justify-between items-center">
           <p className="text-xl text-black/70">
-            What is Geni AI, and how can it help me?
+            {q}
           </p>
-          {!isOpen ? <FaPlus />: <FaMinus />}
+          {!isOpen ? <FaPlus size={24} color="#cccccc" />: <FaMinus size={24} color="#cccccc" />}
         </div>
-        <div onClick={openHandler} className={`mt-6 ${!isOpen ? "hidden":""}`}>
+        <div onClick={openHandler} className={`mt-6 transition-all duration-105 ${!isOpen ? "hidden":""}`}>
           <p>
-            Geni AI is an innovative AI-powered tool designed to enhance
-            productivity and creativity. It helps users write professional
-            emails, engaging blogs, and unique content in seconds. Beyond
-            writing, Geni AI can generate stunning images and create custom bots
-            tailored to your specific needs, such as grammar correction, travel
-            planning, or automated workflows.
+            {ans}
           </p>
         </div>
       </div>
