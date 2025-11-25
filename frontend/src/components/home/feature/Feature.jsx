@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function Feature() {
   return (
-    <div className="w-full min-h-screen bg-gradient-to-b from-white to-blue-50 flex flex-col items-center justify-center py-20 px-5 overflow-hidden relative">
+    <div className="w-full h-screen min-h-screen bg-gradient-to-b from-white to-blue-50 flex flex-col items-center justify-center py-20 px-5 overflow-hidden relative">
       {/* Glow Effect */}
       <motion.div
         initial={{ opacity: 0 }}

@@ -1,13 +1,16 @@
 import React from 'react'
-import SkillCard from "./SkillCard"
+import SkillCard from './SkillCard'
+
 
 const SkillRightSection = () => {
+
+
   return (
-    <div className='overflow-y-auto px-12'>
-        <SkillCard />
-        <SkillCard />
-        <SkillCard />
-        <SkillCard />
+    <div className="w-full h-auto overflow-y-auto px-12 py-8 card-container">
+      <SkillCard />
+      <SkillCard />
+      <SkillCard />
+      <SkillCard />
     </div>
   )
 }
