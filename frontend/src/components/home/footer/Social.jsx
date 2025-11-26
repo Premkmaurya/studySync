@@ -22,7 +22,7 @@ const footerLinks = [
 
 const Social = () => {
   return (
-    <footer className=" p-4 sm:p-8 md:p-12 lg:p-16 flex flex-col gap-10">
+    <footer className="p-4 sm:p-8 md:p-12 lg:p-16 flex flex-col gap-10">
       <div className="p-2 border border-[#2221219f] rounded-3xl">
         <div className="bg-black text-gray-200 rounded-3xl p-8 lg:p-12 shadow-2xl border-4 border-[#1a1a1a]">
           <div className="max-w-7xl mx-auto">

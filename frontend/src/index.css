@@ -1,5 +1,11 @@
+@font-face {
+  font-family: "Inter";
+  src: url("/font/inter.ttf") format("truetype");
+}
+html,body,#root{
+  font-family: "Inter";
+}
 @import "tailwindcss";
-
 /* Tailwind ke Preflight ko override karna hai! */
 .ProseMirror ul,
 .ProseMirror ol {
@@ -19,7 +25,7 @@
 .text-editor-container {
   width: 92.5vw;
   height: 100vh;
-  overflow-x:hidden;
+  overflow-x: hidden;
 }
 .text-editor-container blockquote {
   /* Blockquote ki styling wapas lao */
@@ -55,11 +61,11 @@
 .ProseMirror h2.is-empty::before {
   content: attr(data-placeholder);
 
-  color: #495057; 
+  color: #495057;
   font-style: italic;
-  pointer-events: none; 
+  pointer-events: none;
   float: left;
-  font-size:1.1rem;
+  font-size: 1.1rem;
   height: 0; /* Prevents affecting line height */
 }
 
@@ -79,7 +85,7 @@
 
 .chat-content ul {
   list-style-type: disc; /* Shows the dots */
-  padding-left: 1.2rem;  /* Indent the list */
+  padding-left: 1.2rem; /* Indent the list */
   margin-bottom: 0.5rem;
 }
 
@@ -100,14 +106,14 @@
 .chat-content strong {
   font-weight: bold; /* Ensure bold text stands out */
 }
-.hero-clip{
-  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%)
+.hero-clip {
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%);
 }
 
-.hero-clip-1{
+.hero-clip-1 {
   clip-path: polygon(0 0, 100% 0, 100% 68%, 0 69%);
 }
 
-.rounded-t-r{
+.rounded-t-r {
   border-top-right-radius: 2rem;
 }
