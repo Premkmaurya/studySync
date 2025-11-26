@@ -3,6 +3,7 @@ import Nav from "../components/home/hero/Nav";
 import BottomRight from "../components/home/hero/BottomRight";
 import BottomLeft from "../components/home/hero/BottomLeft";
 import BottomCenter from "../components/home/hero/BottomCenter";
+import MagicBento from "../components/react-bits-components/MagicBento";
 import Footer from "../components/home/footer/Footer";
 import Skill from "../components/home/skill/Skill";
 import Feature from "../components/home/feature/Feature";
@@ -27,6 +28,20 @@ const Home = () => {
       </div>
       <div>
         <Skill />
+      </div>
+      <div className="w-screen">
+        <MagicBento
+          textAutoHide={true}
+          enableStars={true}
+          enableSpotlight={true}
+          enableBorderGlow={true}
+          enableTilt={true}
+          enableMagnetism={true}
+          clickEffect={true}
+          spotlightRadius={300}
+          particleCount={12}
+          glowColor="61, 142, 235"
+        />
       </div>
       <div>
         <Feature />
