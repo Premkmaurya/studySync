@@ -29,7 +29,7 @@ const cardData = [
     description:
       "Summaries, explanations, rewrites—AI helps you study smarter and faster.",
     label: "AI Support",
-    img:"/img/studySync.avif"
+    img: "/img/studySync.avif",
   },
   {
     color: "#fff",
@@ -37,7 +37,7 @@ const cardData = [
     description:
       "Manage study groups, notes, and tasks in one clean, organized workspace.",
     label: "Productivity",
-    img:"/img/learning.avif"
+    img: "/img/learning.avif",
   },
   {
     color: "#fff",
@@ -45,14 +45,14 @@ const cardData = [
     description:
       "Drop a topic and get clean, structured notes generated instantly.",
     label: "Automation",
-    img:"/img/design.avif"
+    img: "/img/design.avif",
   },
   {
     color: "#fff",
     title: "Secure Cloud Storage",
     description: "Your notes are protected with safe backups.",
     label: "Security",
-    img:"/img/security.avif"
+    img: "/img/security.avif",
   },
 ];
 
@@ -695,7 +695,10 @@ const MagicBento = ({
                 <ParticleCard
                   key={index}
                   className={baseClassName}
-                  style={cardStyle}
+                  style={{
+                    ...cardStyle,
+                    boxShadow: "inset 0 0 30px #AAC4F5",
+                  }}
                   disableAnimations={shouldDisableAnimations}
                   particleCount={particleCount}
                   glowColor={glowColor}

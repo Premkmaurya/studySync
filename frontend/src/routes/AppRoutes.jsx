@@ -11,6 +11,7 @@ import GroupChat from "../components/tabs/GroupChat";
 import SingleGroup from "../components/tabs/SingleGroup";
 import GroupNotes from "../components/tabs/GroupNotes";
 import Home from "../pages/Home";
+import About from "../pages/About";
 import GroupMembers from "../components/tabs/GroupMembers";
 
 const AppRoutes = () => {
@@ -18,6 +19,7 @@ const AppRoutes = () => {
     <>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route element={<MainLayout />}>
           <Route path="/home" element={<NotesEditor />} />
           <Route path="/find-groups" element={<AllGroups />} />
