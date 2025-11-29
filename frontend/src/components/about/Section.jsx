@@ -2,7 +2,7 @@ import React from 'react';
 
 const Section = ({ reverse }) => {
   return (
-    <section className="relative w-full h-[80vh] bg-white overflow-hidden">
+    <section className="relative w-full h-[70vh] bg-white overflow-hidden">
       {/* Dark clipped background shape from the wireframe */}
       <div
         className="absolute inset-0 text-black z-0"

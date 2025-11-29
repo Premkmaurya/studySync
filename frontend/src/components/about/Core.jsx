@@ -2,10 +2,10 @@ import React from 'react'
 
 const Core = () => {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="w-screen flex items-center justify-center h-[40vh] bg-red-400">
       
       {/* --- START OF CARD --- */}
-      <div className="relative w-full max-w-lg p-6 rounded-[2rem] bg-gradient-to-br from-blue-50/50 via-white to-white border border-white shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+      <div className="relative w-full p-[8vw] rounded-[2rem] bg-gradient-to-br from-blue-50/50 via-white to-white border border-white shadow-[0_8px_10px_rgb(0,0,0,0.04)]">
         
         {/* Number Icon Box */}
         <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-6">

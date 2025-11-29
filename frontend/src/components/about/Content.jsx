@@ -25,12 +25,12 @@ export default function Content() {
         />
       </div>
       {/* Paragraphs */}
-      <div className="mt-10">
+      <div className="mt-6">
         <Section />
         <Section reverse={"reverse"} />
       </div>
-      <div>
-        <div className="w-full flex justify-center h-[10vh] mt-[4vw]">
+      <div className="flex flex-col">
+        <div className="w-full flex justify-center h-[35vh] mt-[4vw]">
           <div className="w-[50%] text-center">
             <h1 className="text-[4.5vw] font-bold leading-none mb-8 text-gray-900">
               Driving Success through Smart AI
