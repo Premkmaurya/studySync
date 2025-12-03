@@ -24,7 +24,7 @@ export default function Content() {
           className="w-full object-cover border-4 border-white rounded-2xl shadow-lg shadow-black/50"
         />
       </div>
-      {/* Paragraphs */}
+      
       <div className="mt-6">
         <Section />
         <Section reverse={"reverse"} />
