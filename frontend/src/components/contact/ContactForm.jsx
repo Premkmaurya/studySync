@@ -1,8 +1,9 @@
 import React from 'react'
 
-const ContactHero = () => {
+const ContactForm = () => {
   return (
-    <div className="w-full min-h-screen px-6 py-20 flex flex-col justify-center">
+    <div>
+        <div className="w-full min-h-screen px-6 py-20 flex flex-col justify-center">
       {/* Header */}
       <div className="w-full flex justify-center h-[70vh] mt-[12vw]">
         <div className="w-[50%] text-center">
@@ -15,7 +16,9 @@ const ContactHero = () => {
         </div>
       </div>
     </div>
+    
+    </div>
   )
 }
 
-export default ContactHero
+export default ContactForm
