@@ -4,6 +4,7 @@ import Orb from "../components/react-bits-components/Orb";
 import ContactHero from "../components/contact/ContactHero";
 import ContactDetails from "../components/contact/ContactDetails";
 import ContactForm from "../components/contact/ContactForm";
+import Faq from "../components/home/FAQ/Faq";
 import Footer from "../components/home/footer/Footer";
 
 const Contact = () => {
@@ -19,8 +20,9 @@ const Contact = () => {
         />
       </div>
       <ContactHero />
-        <ContactDetails />
-        <ContactForm />
+      <ContactDetails />
+      <ContactForm />
+      <Faq />
       <Footer />
     </div>
   );
