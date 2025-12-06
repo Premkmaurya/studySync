@@ -13,6 +13,7 @@ import GroupNotes from "../components/tabs/GroupNotes";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
+import Features from "../pages/Features";
 import GroupMembers from "../components/tabs/GroupMembers";
 
 const AppRoutes = () => {
@@ -22,6 +23,7 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/features" element={<Features />} />
         <Route element={<MainLayout />}>
           <Route path="/home" element={<NotesEditor />} />
           <Route path="/find-groups" element={<AllGroups />} />

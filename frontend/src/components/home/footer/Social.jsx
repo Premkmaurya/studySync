@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // Data structure for the Social links
 const footerLinks = [
@@ -40,12 +41,12 @@ const Social = () => {
                   <ul className="space-y-3 text-sm">
                     {section.links.map((link, linkIndex) => (
                       <li key={linkIndex}>
-                        <a
-                          href={`#${link.toLowerCase().replace(" ", "-")}`}
+                        <Link
+                          to={`/${link.toLowerCase().replace(" ", "-")}`}
                           className="text-gray-400 hover:text-indigo-400 transition-colors duration-200"
                         >
                           {link}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>
