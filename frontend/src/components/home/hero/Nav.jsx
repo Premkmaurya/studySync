@@ -1,7 +1,8 @@
 import React from "react";
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 
 const Nav = () => {
+  const navigate = useNavigate()
   return (
     <div className="absolute z-999 text-white top-0 w-full h-14 flex justify-between px-8 bg-transparent ">
       <div className="bg-black/80 z-12 w-[40vw] h-full flex items-center justify-around hero-clip">
@@ -13,7 +14,7 @@ const Nav = () => {
         </ul>
       </div>
       <div>
-        <button className="px-10 py-3 mt-3 text-lg bg-black/80 outline-none border-none rounded-full">Log in</button>
+        <button onClick={() => navigate('/login')} className="px-10 py-3 mt-3 text-lg cursor-pointer bg-black/80 outline-none border-none rounded-full">Log in</button>
       </div>
     </div>
   );

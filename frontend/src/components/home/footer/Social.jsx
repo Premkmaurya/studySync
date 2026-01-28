@@ -42,7 +42,7 @@ const Social = () => {
                     {section.links.map((link, linkIndex) => (
                       <li key={linkIndex}>
                         <Link
-                          to={`/${link.toLowerCase().replace(" ", "-")}`}
+                          to={`/${link === "Home" ? "" : link.toLowerCase().replace(/ /g, "-")}`}
                           className="text-gray-400 hover:text-indigo-400 transition-colors duration-200"
                         >
                           {link}

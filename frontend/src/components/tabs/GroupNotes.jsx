@@ -137,7 +137,7 @@ const GroupNotes = () => {
                   </div>
                   <button
                     onClick={() =>
-                      navigate("/", {
+                      navigate("/home", {
                         state: { content: article.content, isViewOnly: true },
                       })
                     }

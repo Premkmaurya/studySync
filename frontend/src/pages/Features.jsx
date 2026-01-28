@@ -3,8 +3,8 @@ import Nav from "../components/home/hero/Nav";
 import Orb from "../components/react-bits-components/Orb";
 import Header from "../components/features/Header";
 import FeaturesCards from "../components/features/FeaturesCards";
-import Features from "../components/home/features/Features";
 import MagicBento from "../components/react-bits-components/MagicBento";
+import Footer from "../components/home/footer/Footer";
 
 const Features = () => {
   return (
@@ -20,7 +20,6 @@ const Features = () => {
       </div>
       <Header />
       <FeaturesCards />
-      <Features />
       <div className="w-screen flex flex-col justify-center gap-12 mt-15">
         <div className="text-center w-full flex flex-col  items-center justify-center gap-5">
           <h1 className="capitalize font-semibold text-[3.5rem] text-center leading-none">
@@ -44,6 +43,7 @@ const Features = () => {
           glowColor="61, 142, 235"
         />
       </div>
+      <Footer />
     </div>
   );
 };

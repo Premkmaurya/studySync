@@ -22,7 +22,6 @@ async function initServer(httpServer) {
   io.use((socket, next) => {
     const { token } = cookie.parse(socket.handshake.headers?.cookie || "");
     if (!token) {
-      console.log("Authentication error: No token provided");
       return next(new Error("Authentication error: No token provided"));
     }
     try {

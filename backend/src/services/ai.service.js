@@ -22,7 +22,7 @@ If the user asks for 'more data' or 'continue', ONLY provide the next set of raw
 
 async function genrateResponse(prompt) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash",
     contents: prompt,
     config: {
       systemInstruction: persona,

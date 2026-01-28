@@ -27,7 +27,7 @@ export default function Sidebar() {
   return (
     <nav className="w-20 bg-[#121214] p-4 flex flex-col space-y-6 shadow-lg">
 
-      <NavLink to="/" className={getNavLinkClass}>
+      <NavLink to="/home" className={getNavLinkClass}>
         <img src="/vite.svg" className='w-8 h-8 rounded-full' />
       </NavLink>
 

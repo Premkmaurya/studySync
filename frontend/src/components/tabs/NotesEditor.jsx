@@ -44,11 +44,14 @@ import NoteTitleModal from "../NoteTilteModel";
 import { io } from "socket.io-client";
 
 export default function NotesEditor() {
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aiText, setAiText] = useState("");
   const [content, setContent] = useState("");
+
   const location = useLocation();
   const contentFromState = location.state?.content;
+  
   const [isViewOnly, setIsViewOnly] = useState(
     location.state?.isViewOnly || false
   );
@@ -153,7 +156,7 @@ export default function NotesEditor() {
               stickyOffset="var(--docs-header-height)"
             >
               <RichTextEditor.ControlsGroup>
-                <div className="text-black text-sm border border-black/20 px-[0.1rem] py-[0.1rem]">
+                <div onClick={()=>setIsAIOpen(true)} className="text-black text-sm border border-black/20 px-[0.3rem] font-semibold py-[0.1rem]">
                   AI
                 </div>
                 <RichTextEditor.Bold icon={() => <FaBold size={14} />} />
@@ -223,14 +226,14 @@ export default function NotesEditor() {
           )}
 
           <RichTextEditor.Content />
-          <div
+          {isViewOnly && <div
             onClick={handleAiSummarize}
             className="fixed cursor-pointer bottom-[0.8rem] right-5 text-black font-semibold"
           >
             <p>
               Summarize with <span className="text-orange-700">AI ✨</span>
             </p>
-          </div>
+          </div>}
         </RichTextEditor>
         {!isViewOnly && (
           <div className="absolute right-4 mt-4 flex gap-4">
