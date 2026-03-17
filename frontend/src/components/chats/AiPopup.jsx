@@ -15,7 +15,6 @@ const [socket, setSocket] = useState();
         });
        
         socketInstance.on("ai-response", (data) => {
-          console.log(data.text)
           setContent(data.text);
           setLoading(false);
           onClose()

@@ -127,10 +127,6 @@ const GroupNotes = () => {
                     <h2 className="text-xl font-semibold text-white mb-2">
                       {article.title}
                     </h2>
-                    <p className="text-gray-400 text-sm mb-1">
-                      {article.userId.fullname.firstname}{" "}
-                      {article.userId.fullname.lastname}
-                    </p>
                     <p className="text-gray-500 text-xs mb-4">
                       {dayjs(article.createdAt).fromNow()}
                     </p>

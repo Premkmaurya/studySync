@@ -29,7 +29,6 @@ async function initServer(httpServer) {
       socket.user = decoded;
       next();
     } catch (error) {
-      console.log("Authentication error: No token provided");
       return next(new Error("Authentication error: Invalid token"));
     }
   });

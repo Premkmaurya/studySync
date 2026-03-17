@@ -1,9 +1,9 @@
 import React from "react";
 import Nav from "../components/home/hero/Nav";
-import Orb from "../components/react-bits-components/Orb";
+import Orb from "../components/ui/Orb";
 import Header from "../components/features/Header";
 import FeaturesCards from "../components/features/FeaturesCards";
-import MagicBento from "../components/react-bits-components/MagicBento";
+import MagicBento from "../components/ui/MagicBento";
 import Footer from "../components/home/footer/Footer";
 
 const Features = () => {

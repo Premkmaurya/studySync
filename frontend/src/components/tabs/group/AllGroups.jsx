@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import GroupCard from "../GroupCard";
+import GroupCard from "./GroupCard";
 import { HiSearch } from "react-icons/hi";
 import { io } from "socket.io-client";
 

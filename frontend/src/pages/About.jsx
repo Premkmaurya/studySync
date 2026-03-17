@@ -1,6 +1,6 @@
 import React from "react";
 import Nav from "../components/home/hero/Nav";
-import Orb from "../components/react-bits-components/Orb";
+import Orb from "../components/ui/Orb";
 import Content from "../components/about/Content";
 import Footer from "../components/home/footer/Footer";
 

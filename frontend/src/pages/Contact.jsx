@@ -1,6 +1,6 @@
 import React from "react";
 import Nav from "../components/home/hero/Nav";
-import Orb from "../components/react-bits-components/Orb";
+import Orb from "../components/ui/Orb";
 import ContactHero from "../components/contact/ContactHero";
 import ContactDetails from "../components/contact/ContactDetails";
 import ContactForm from "../components/contact/ContactForm";

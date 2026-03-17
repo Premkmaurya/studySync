@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import NavSidebar from '../components/NavSidebar';
+import NavSidebar from './NavSidebar';
 
 export default function MainLayout() {
   return (

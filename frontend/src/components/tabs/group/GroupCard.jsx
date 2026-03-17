@@ -40,7 +40,6 @@ export default function GroupCard({ group, onGroupJoined }) {
       if (response.data && response.data.group) {
         onGroupJoined(response.data.group);
       }
-      console.log(response.data.group._id);
       setJoinText("joined");
       btnRef.current.disabled = true;
     } catch (err) {

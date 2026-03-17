@@ -1,20 +1,20 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import NotesEditor from "../components/tabs/NotesEditor";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import MainLayout from "../pages/MainLayout";
-import CreateGroup from "../components/tabs/CreateGroup";
-import AllGroups from "../components/tabs/AllGroups";
-import GroupSettings from "../components/tabs/GroupSettings";
-import GroupChat from "../components/tabs/GroupChat";
-import SingleGroup from "../components/tabs/SingleGroup";
-import GroupNotes from "../components/tabs/GroupNotes";
+import NotesEditor from "../components/tabs/notes/NotesEditor";
+import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
+import MainLayout from "../components/tabs/common/MainLayout";
+import CreateGroup from "../components/tabs/group/CreateGroup";
+import AllGroups from "../components/tabs/group/AllGroups";
+import GroupSettings from "../components/tabs/group/GroupSettings";
+import GroupChat from "../components/tabs/group/GroupChat";
+import SingleGroup from "../components/tabs/group/SingleGroup";
+import GroupNotes from "../components/tabs/group/GroupNotes";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Features from "../pages/Features";
-import GroupMembers from "../components/tabs/GroupMembers";
+import GroupMembers from "../components/tabs/group/GroupMembers";
 
 const AppRoutes = () => {
   return (

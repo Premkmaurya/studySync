@@ -1,5 +1,5 @@
 import React from "react";
-import CircularText from "../../react-bits-components/CircularText"
+import CircularText from "../../ui/CircularText"
 import { FaArrowDown } from "react-icons/fa";
 
 const BottomCenter = () => {

@@ -3,7 +3,7 @@ import Nav from "../components/home/hero/Nav";
 import BottomRight from "../components/home/hero/BottomRight";
 import BottomLeft from "../components/home/hero/BottomLeft";
 import BottomCenter from "../components/home/hero/BottomCenter";
-import MagicBento from "../components/react-bits-components/MagicBento";
+import MagicBento from "../components/ui/MagicBento";
 import Footer from "../components/home/footer/Footer";
 import Skill from "../components/home/skill/Skill";
 import Feature from "../components/home/feature/Feature";

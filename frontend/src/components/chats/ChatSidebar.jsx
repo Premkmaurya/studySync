@@ -14,7 +14,6 @@ const ChatSidebar = ({ aiText, setIsAisummarize }) => {
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
-    console.log(aiText);
     socketInstance.emit("aiMessage", aiText);
     socketInstance.on("ai-response", (data) => {
       const newMsg = {
