@@ -2,10 +2,13 @@
   font-family: "Inter";
   src: url("/font/inter.ttf") format("truetype");
 }
-html,body,#root{
+
+html, body, #root {
   font-family: "Inter";
 }
+
 @import "tailwindcss";
+
 /* Tailwind ke Preflight ko override karna hai! */
 .ProseMirror ul,
 .ProseMirror ol {
@@ -22,18 +25,25 @@ html,body,#root{
   /* Numbering wapas lao */
   list-style-type: decimal;
 }
+
 .text-editor-container {
   width: 92.5vw;
   height: 100vh;
   overflow-x: hidden;
 }
+
 .text-editor-container blockquote {
   /* Blockquote ki styling wapas lao */
-  margin: 1.5rem 0; /* Top aur bottom margin dedo */
-  padding-left: 1em; /* Left padding for border */
-  border-left: 4px solid #ced4da; /* Ek halka gray border dedo */
-  color: #495057; /* Text ko thoda alag dikhao */
-  font-style: italic; /* Text ko thoda tedha (italic) kar do */
+  margin: 1.5rem 0;
+  /* Top aur bottom margin dedo */
+  padding-left: 1em;
+  /* Left padding for border */
+  border-left: 4px solid #ced4da;
+  /* Ek halka gray border dedo */
+  color: #495057;
+  /* Text ko thoda alag dikhao */
+  font-style: italic;
+  /* Text ko thoda tedha (italic) kar do */
 }
 
 .text-editor-container .mantine-RichTextEditor-content {
@@ -48,12 +58,21 @@ html,body,#root{
 
 /* Custom scrollbar styling */
 .custom-scrollbar {
-  scrollbar-width: thin; /* for Firefox */
-  scrollbar-color: #99a1b0 #1b1b1f; /* thumb + track */
+  scrollbar-width: thin;
+  /* for Firefox */
+  scrollbar-color: #99a1b0 #1b1b1f;
+  /* thumb + track */
 }
+
 .custom-scrollbar-2 {
-  scrollbar-width: thin; /* for Firefox */
-  scrollbar-color: #1b1b1f #e1e3e8; /* thumb + track */
+  scrollbar-width: thin;
+  /* for Firefox */
+  scrollbar-color: #1b1b1f #e1e3e8;
+  /* thumb + track */
+}
+
+.m_dd3f7539 {
+  border: none;
 }
 
 .ProseMirror p.is-empty::before,
@@ -66,7 +85,8 @@ html,body,#root{
   pointer-events: none;
   float: left;
   font-size: 1.1rem;
-  height: 0; /* Prevents affecting line height */
+  height: 0;
+  /* Prevents affecting line height */
 }
 
 /* For Chrome, Edge, Safari */
@@ -75,37 +95,46 @@ html,body,#root{
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1b1b1f; /* scrollbar background */
+  background: #1b1b1f;
+  /* scrollbar background */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #99a1b0; /* scrollbar thumb */
+  background-color: #99a1b0;
+  /* scrollbar thumb */
   border-radius: 10px;
 }
 
 .chat-content ul {
-  list-style-type: disc; /* Shows the dots */
-  padding-left: 1.2rem; /* Indent the list */
+  list-style-type: disc;
+  /* Shows the dots */
+  padding-left: 1.2rem;
+  /* Indent the list */
   margin-bottom: 0.5rem;
 }
 
 .chat-content ol {
-  list-style-type: decimal; /* Shows numbers */
+  list-style-type: decimal;
+  /* Shows numbers */
   padding-left: 1.2rem;
   margin-bottom: 0.5rem;
 }
 
 .chat-content li {
-  margin-bottom: 0.25rem; /* Spacing between items */
+  margin-bottom: 0.25rem;
+  /* Spacing between items */
 }
 
 .chat-content p {
-  margin-bottom: 0.5rem; /* Spacing between paragraphs */
+  margin-bottom: 0.5rem;
+  /* Spacing between paragraphs */
 }
 
 .chat-content strong {
-  font-weight: bold; /* Ensure bold text stands out */
+  font-weight: bold;
+  /* Ensure bold text stands out */
 }
+
 .hero-clip {
   clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%);
 }
