@@ -32,7 +32,7 @@ const Home = () => {
       <div className="w-screen flex flex-col justify-center gap-12">
         <div className="text-center w-full flex flex-col  items-center justify-center gap-5">
           <h1 className="capitalize font-semibold text-[3.5rem] text-center leading-none">
-            Unmatched and Adaptive AI <br/> Intelligence
+            Unmatched and Adaptive AI <br /> Intelligence
           </h1>
           <p className="text-md text-gray-700">
             From scheduling meetings with Google Calendar to automating

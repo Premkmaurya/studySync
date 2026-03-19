@@ -2,7 +2,23 @@ import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { FaRegWindowRestore } from "react-icons/fa";
 
-const ChatSidebar = ({ aiText, setIsAisummarize }) => {
+import {
+  Maximize2,
+  X,
+  Sparkles,
+  Zap,
+  Wand2,
+  MessageSquare,
+  LayoutGrid,
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+const ChatSidebar = ({
+  aiText,
+  setIsAisummarize,
+  isAiPanelOpen,
+  setIsAiPanelOpen,
+}) => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
@@ -10,25 +26,25 @@ const ChatSidebar = ({ aiText, setIsAisummarize }) => {
   const [socket, setSocket] = useState();
   const [isMaximize, setIsMaximize] = useState(false);
 
-  useEffect(() => {
-    const socketInstance = io("http://localhost:3000", {
-      withCredentials: true,
-    });
-    socketInstance.emit("aiMessage", aiText);
-    socketInstance.on("ai-response", (data) => {
-      const newMsg = {
-        id: data._id,
-        text: data.text,
-        isYou: false,
-      };
-      setMessages((prevMessages) => [...prevMessages, newMsg]);
-    });
-    setSocket(socketInstance);
+  // useEffect(() => {
+  //   const socketInstance = io("http://localhost:3000", {
+  //     withCredentials: true,
+  //   });
+  //   socketInstance.emit("aiMessage", aiText);
+  //   socketInstance.on("ai-response", (data) => {
+  //     const newMsg = {
+  //       id: data._id,
+  //       text: data.text,
+  //       isYou: false,
+  //     };
+  //     setMessages((prevMessages) => [...prevMessages, newMsg]);
+  //   });
+  //   setSocket(socketInstance);
 
-    return () => {
-      socketInstance.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     socketInstance.disconnect();
+  //   };
+  // }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -54,152 +70,111 @@ const ChatSidebar = ({ aiText, setIsAisummarize }) => {
     scrollToBottom();
   }, [messages]);
 
-  const toggleMaximize = () => {
-    if (!mainRef.current) return;
-
-    if (isMaximize) {
-      // currently maximized -> minimize back to original size
-      mainRef.current.style.width = "25vw";
-      mainRef.current.style.height = "80vh";
-      mainRef.current.style.top = "3.2rem";
-      mainRef.current.style.right = "0";
-      mainRef.current.style.left = "auto";
-      mainRef.current.style.bottom = "auto";
-      mainRef.current.style.zIndex = "auto";
-      setIsMaximize(false);
-    } else {
-      // currently minimized/normal -> maximize to full viewport
-      mainRef.current.style.width = "100vw";
-      mainRef.current.style.height = "100vh";
-      mainRef.current.style.top = "0";
-      mainRef.current.style.left = "0";
-      mainRef.current.style.right = "0";
-      mainRef.current.style.bottom = "0";
-      mainRef.current.style.zIndex = "50";
-      setIsMaximize(true);
-    }
-  };
-
   return (
-    <div
-      ref={mainRef}
-      className="absolute top-[3.2rem] right-0 flex justify-center items-center max-h-screen h-[80vh] w-[25vw] bg-gray-100 p-4"
+    <motion.aside
+     layout // This makes the size change animate smoothly
+      initial={{ x: 400, opacity: 0 }}
+      animate={{ 
+        x: 0, 
+        opacity: 1,
+        // We can dynamically adjust these based on state
+        width: isMaximize ? "100%" : "340px",
+        inset: isMaximize ? "0px" : "128px 32px 40px auto" // top-32(128px) right-8(32px) bottom-10(40px)
+      }}
+      exit={{ x: 400, opacity: 0 }}
+      className={`fixed bg-zinc-950/80 backdrop-blur-3xl border border-white/10 p-8 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
+        isMaximize ? "rounded-0" : "rounded-[40px]"
+      }`}
+      style={{
+        // Ensure it covers everything when maximized
+        top: isMaximize ? 0 : undefined,
+        right: isMaximize ? 0 : undefined,
+        bottom: isMaximize ? 0 : undefined,
+        left: isMaximize ? 0 : undefined,
+      }}
     >
-      {/* --- Main Chat Window Container --- */}
-      <div
-        className="
-          w-full h-full bg-gray-200 shadow-xl 
-          border-4 border-black rounded-3xl overflow-hidden 
-          flex flex-col
-        "
-        style={{
-          boxShadow: "8px 8px 0px 0px rgba(0,0,0,1)",
-        }}
-      >
-        {/* --- Header (Top Bar with Controls) --- */}
-        <header className="flex justify-end p-2 border-b-4 border-black">
-          {/* Mimic the min/max/close icons with text or simple icons */}
-
-          {isMaximize ? (
-            <span
-              title="Minimize"
-              onClick={toggleMaximize}
-              className="text-xl mx-2 font-bold mt-2 cursor-pointer"
-            >
-              <FaRegWindowRestore size={15} />
+      <div className="flex items-center justify-between mb-12">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]">
+            <Zap size={20} className="text-white" />
+          </div>
+          <div className="flex flex-col">
+            <h3 className="font-black text-xs uppercase tracking-widest text-white">
+              AI Pulse
+            </h3>
+            <span className="text-[10px] text-zinc-500 font-bold">
+              GPT-4o Optimized
             </span>
-          ) : (
-            <span
-              title="Maximize"
-              onClick={toggleMaximize}
-              className="text-xl mx-1 font-bold cursor-pointer"
-            >
-              ☐
-            </span>
-          )}
-          <span
-            onClick={() => setIsAisummarize(false)}
-            className="text-xl mx-1 font-bold cursor-pointer"
+          </div>
+        </div>
+        <span>
+          <button
+            onClick={() => setIsMaximize(!isMaximize)}
+            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
           >
-            X
-          </span>
-        </header>
+            <Maximize2 size={18} className="text-zinc-500" />
+          </button>
+          <button
+            onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+          >
+            <X size={18} className="text-zinc-500" />
+          </button>
+        </span>
+      </div>
 
-        {/* --- Content Area (Where the chat/questions go) --- */}
-        <main
-          ref={messagesEndRef}
-          className="grow p-4 flex flex-col overflow-y-auto relative custom-scrollbar custom-scrollbar-2"
-        >
-          {/* In a real app, this is where messages would be mapped */}
-          {messages.length > 0 ? (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`mb-3 flex items-start ${
-                  message.isYou ? "justify-end" : ""
-                } gap-5`}
-              >
-                <div>
-                  <div
-                    className={`${
-                      message.isYou ? "bg-blue-200" : ""
-                    } py-2 px-3 rounded-2xl ${isMaximize ? "text-sm":"text-xs"} shadow-lg max-w-lg chat-content`}
-                  >
-                    <div dangerouslySetInnerHTML={{ __html: message.text }} />
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-black/80 text-center absolute top-[50%] text-sm left-[20%]
-            ">
-              Start your conversation
+      <div className="flex-1 space-y-5 overflow-y-auto pr-2 custom-scrollbar">
+        {[
+          {
+            icon: Wand2,
+            title: "GENERATE SUMMARY",
+            desc: "Extract the core pillars.",
+            color: "bg-fuchsia-500/10 text-fuchsia-400",
+          },
+          {
+            icon: MessageSquare,
+            title: "CHANGE TONE",
+            desc: "Switch to executive speak.",
+            color: "bg-cyan-500/10 text-cyan-400",
+          },
+          {
+            icon: LayoutGrid,
+            title: "BENTO GRID",
+            desc: "Convert note to structured blocks.",
+            color: "bg-amber-500/10 text-amber-400",
+          },
+        ].map((action, i) => (
+          <motion.div
+            key={i}
+            whileHover={{ y: -4, backgroundColor: "rgba(255,255,255,0.03)" }}
+            className="p-6 border border-white/5 rounded-3xl cursor-pointer transition-all group"
+          >
+            <div className={`p-3 w-fit rounded-xl mb-4 ${action.color}`}>
+              <action.icon size={20} />
+            </div>
+            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white mb-2">
+              {action.title}
+            </h4>
+            <p className="text-[12px] text-zinc-500 leading-relaxed group-hover:text-zinc-300 transition-colors">
+              {action.desc}
             </p>
-          )}
-        </main>
+          </motion.div>
+        ))}
+      </div>
 
-        {/* --- form (Input Area) --- */}
-        <form
-          onSubmit={handleSendMessage}
-          className={`${isMaximize ? "p-3" : "p-1"} border-t-4 border-black flex items-center bg-white`}
-        >
+      <div className="mt-8">
+        <div className="relative group">
           <input
             type="text"
-            placeholder="ask..."
-            className={`
-              px-4 py-2 w-full text-lg bg-white border-2 border-black 
-              rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 
-              font-sans
-            `}
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                handleSendMessage();
-              }
-            }}
+            placeholder="Prompt AI..."
+            className="w-full bg-white/5 border text-white border-white/10 rounded-2xl py-4 px-6 text-xs outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium"
           />
-
-          {/* Send Button - Mimicking the blue icon */}
-          <button className="ml-2 p-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-150">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 transform rotate-45"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-              />
-            </svg>
-          </button>
-        </form>
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 rounded-xl cursor-pointer">
+            <Sparkles size={16} className="text-white" />
+          </div>
+        </div>
       </div>
-    </div>
+    </motion.aside>
   );
 };
 

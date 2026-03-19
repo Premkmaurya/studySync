@@ -50,34 +50,11 @@ import { GoListOrdered } from "react-icons/go";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
 
 // Using lucide-react as the primary, stable icon engine
-import {
-  ChevronLeft,
-  Share2,
-  Users,
-  CloudUpload,
-  Sparkles,
-  MessageSquare,
-  LayoutGrid,
-  Maximize2,
-  Zap,
-  Trash2,
-  Archive,
-  Globe,
-  Type,
-  Bold,
-  Italic,
-  Underline,
-  List,
-  Quote,
-  Highlighter,
-  Wand2,
-  Bot,
-} from "lucide-react";
+import { ChevronLeft, Share2, CloudUpload, Sparkles, Bot } from "lucide-react";
 
 // Custom Components
-import ChatSidebar from "../chats/ChatSidebar";
 import AIPopup from "../chats/AiPopup";
-import NoteTitleModal from "./NoteTilteModel";
+import ChatSidebar from "../chats/ChatSidebar";
 
 // Axios and Socket.io
 import axios from "axios";
@@ -174,11 +151,6 @@ export default function NotesEditor({
 
   return (
     <>
-      <NoteTitleModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onCreateNote={handleSave}
-      />
       <div>
         <AIPopup
           isOpen={isAIOpen}
@@ -187,7 +159,7 @@ export default function NotesEditor({
         />
       </div>
       <div
-        className={`relative min-h-screen w-full bg-[#030303] selection:bg-indigo-500/40 font-sans text-editor-container ${
+        className={`relative min-h-screen w-full overflow-x-hidden bg-[#030303] selection:bg-indigo-500/40 font-sans text-editor-container ${
           isModalOpen ? "blur-xs" : ""
         } relative`}
       >
@@ -225,27 +197,36 @@ export default function NotesEditor({
                   />
                 ))}
               </div>
-              <button
-                onClick={handleSave}
-                className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
-                  isSaving
-                    ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
-                    : "bg-white text-black hover:bg-indigo-50 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-                }`}
-              >
-                <CloudUpload
-                  size={18}
-                  className={isSaving ? "animate-bounce" : ""}
-                />
-                {isSaving ? "SYNCING..." : "SAVE CHANGES"}
-              </button>
+              {!isViewOnly ? (
+                <button
+                  onClick={handleSave}
+                  className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
+                    isSaving
+                      ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
+                      : "bg-white text-black hover:bg-indigo-50 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
+                  }`}
+                >
+                  <CloudUpload
+                    size={18}
+                    className={isSaving ? "animate-bounce" : ""}
+                  />
+                  {isSaving ? "SYNCING..." : "SAVE CHANGES"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+                  className="p-2.5 bg-white/95 border border-white/10 rounded-xl transition-all text-black"
+                >
+                  AI Summary
+                </button>
+              )}
               <button className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all text-slate-400">
                 <Share2 size={20} />
               </button>
             </div>
           </div>
         </header>
-        <RichTextEditor editor={editor}>
+        <RichTextEditor editor={editor} className="border border-transparent">
           {!isViewOnly && (
             <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
               <motion.div
@@ -335,7 +316,7 @@ export default function NotesEditor({
                     scale: 1.05,
                     boxShadow: "0 0 20px rgba(79, 70, 229, 0.4)",
                   }}
-                  onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
+                  onClick={() => setIsAIOpen(!isAIOpen)}
                   className="flex items-center gap-2.5 px-5 py-2.5 bg-indigo-600 rounded-xl text-lg w-22 h-10 text-white ml-2 shadow-lg"
                 >
                   <Sparkles size={16} />
@@ -345,10 +326,11 @@ export default function NotesEditor({
             </div>
           )}
           <div className="w-full h-[80vh] ">
-            <motion.div className="bg-zinc-900/20 mt-[3rem] backdrop-blur-sm border border-white/5 rounded-[48px] p-12 md:p-20 shadow-3xl min-h-[850px] relative transition-all hover:bg-zinc-900/30">
+            <motion.div className="bg-zinc-900/20 mt-[3rem] backdrop-blur-sm rounded-[48px] p-12 md:p-20 shadow-3xl min-h-[850px] w-full relative transition-all hover:bg-zinc-900/30">
               <input
                 type="text"
                 value={title}
+                style={{ fontSize: "3rem", fontWeight: "bold" }}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full bg-transparent text-5xl md:text-6xl font-black tracking-tighter text-white placeholder:text-zinc-800 outline-none mb-6"
                 placeholder="Draft Name..."
@@ -359,10 +341,6 @@ export default function NotesEditor({
                   <Bot size={14} /> AI ENGINE ENGAGED
                 </span>
                 <span className="hidden sm:block opacity-20">|</span>
-                <span className="flex items-center gap-2">
-                  <Sparkles size={14} /> {wordCount} WORDS
-                </span>
-                <span className="hidden sm:block opacity-20">|</span>
                 <span className="tracking-widest">
                   {new Date().toLocaleDateString("en-US", {
                     month: "short",
@@ -371,7 +349,7 @@ export default function NotesEditor({
                   })}
                 </span>
               </div>
-              <div className="prose prose-invert max-w-none text-lg leading-relaxed text-white/90">
+              <div className="prose max-w-none wrap-break-word whitespace-pre-wrap text-lg leading-relaxed text-black">
                 <RichTextEditor.Content />
               </div>
             </motion.div>
@@ -387,10 +365,18 @@ export default function NotesEditor({
             </div>
           )}
         </RichTextEditor>
+
+        <AnimatePresence>
+          {isAiPanelOpen && (
+            <ChatSidebar
+              isAiPanelOpen={isAiPanelOpen}
+              setIsAiPanelOpen={setIsAiPanelOpen}
+              aiText={aiText}
+              setIsAisummarize={setIsAisummarize}
+            />
+          )}
+        </AnimatePresence>
       </div>
-      {isAisummarize && (
-        <ChatSidebar aiText={aiText} setIsAisummarize={setIsAisummarize} />
-      )}
     </>
   );
 }
