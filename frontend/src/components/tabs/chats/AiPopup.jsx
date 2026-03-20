@@ -23,16 +23,25 @@ export default function AIPopup({ isOpen, onClose, setContent }) {
   const inputRef = useRef();
 
   // Socket Logic
-  // useEffect(() => {
-  //   const socketInstance = io("http://localhost:3000", { withCredentials: true });
-  //   socketInstance.on("ai-response", (data) => {
-  //     setContent(data.text);
-  //     setLoading(false);
-  //     onClose();
-  //   });
-  //   setSocket(socketInstance);
-  //   return () => socketInstance.disconnect();
-  // }, [setContent, onClose]);
+useEffect(() => {
+  if (!isOpen) return; // ✅ connect only when popup opens
+
+  const socketInstance = io("http://localhost:3000", {
+    withCredentials: true,
+  });
+
+  socketInstance.on("ai-response", (data) => {
+    setContent(data.text);
+    setLoading(false);
+    onClose();
+  });
+
+  setSocket(socketInstance);
+
+  return () => {
+    socketInstance.disconnect(); // ✅ disconnect when popup closes
+  };
+}, [isOpen]);
 
   // Handle Esc
   useEffect(() => {

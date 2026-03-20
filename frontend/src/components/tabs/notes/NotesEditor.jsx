@@ -230,6 +230,8 @@ export default function NotesEditor({
           {!isViewOnly && (
             <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
               <motion.div
+                drag
+                dragMomentum={false}
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 className="flex items-center gap-1 bg-white/50 backdrop-blur-3xl p-2 rounded-[24px]"
