@@ -11,6 +11,8 @@ import GroupChat from "../components/tabs/group/GroupChat";
 import SingleGroup from "../components/tabs/group/SingleGroup";
 import GroupNotes from "../components/tabs/group/GroupNotes";
 import Profile from "../components/tabs/profile/Profile";
+import TabHome from "../components/tabs/home/TabHome";
+import SavedNotesContent from "../components/tabs/notes/SavedNotes";
 
 import Home from "../pages/Home";
 import About from "../pages/About";
@@ -27,9 +29,10 @@ const AppRoutes = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/features" element={<Features />} />
         <Route element={<MainLayout />}>
-          <Route path="/home" element={<NotesEditor />} />
+          <Route path="/home" element={<TabHome />} />
           <Route path="/find-groups" element={<AllGroups />} />
-          <Route path="/create-groups" element={<CreateGroup />} />
+          <Route path="/create-group" element={<CreateGroup />} />
+          <Route path="/saved-notes" element={<SavedNotesContent />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/group/:groupId" element={<SingleGroup />}>
             {/* Default tab (Column 3) */}

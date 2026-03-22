@@ -4,12 +4,8 @@ import { NavLink } from "react-router-dom";
 import {
   Home,
   Compass,
-  Users,
   FileText,
   Plus,
-  Settings,
-  Zap,
-  Bot,
 } from "lucide-react";
 
 const NavItem = ({
@@ -72,14 +68,14 @@ const Sidebar = () => {
     <motion.aside
       drag
       dragMomentum={false}
-      className="fixed right-6 top-[55%] -translate-y-1/2 h-[85vh] w-20 z-[100] flex flex-col items-center py-8 bg-zinc-900/40 backdrop-blur-3xl border border-white/10 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
+      style={{ WebkitTransform: 'translate3d(0,0,0)' }}
+      className="fixed right-6 top-[55%] -translate-y-1/2 h-[85vh] w-20 z-[100] flex flex-col items-center py-8 bg-zinc-900/40 backdrop-blur-2xl border border-white/10 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
     >
       {/* 2. Primary Navigation */}
       <div className="flex-1 flex flex-col items-center gap-6">
         <NavItem to="/home" icon={Home} label="Home" />
         <NavItem to="/find-groups" icon={Compass} label="Explore" />
-        <NavItem to="/group-chats" icon={Users} label="Collectives" />
-        <NavItem to="/notes" icon={FileText} label="Workspace" />
+        <NavItem to="/saved-notes" icon={FileText} label="Workspace" />
 
         <div className="w-8 h-[1px] bg-white/5 my-2" />
 

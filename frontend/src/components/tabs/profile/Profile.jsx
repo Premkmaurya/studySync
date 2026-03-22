@@ -102,7 +102,7 @@ const Profile = () => {
         </motion.div>
       </nav>
 
-      <main className="relative z-10 pt-32 pb-20 px-6 max-w-6xl mx-auto">
+      <main className="relative z-10 pt-32 pb-20 px-6 max-w-6xl mx-auto" style={{ WebkitTransform: 'translate3d(0,0,0)' }}>
         
         {/* 3. Hero Section */}
         <section className="flex flex-col md:flex-row items-center gap-8 mb-16">

@@ -10,7 +10,7 @@ export default function MainLayout() {
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto" style={{ WebkitTransform: 'translate3d(0,0,0)', willChange: 'scroll-position' }}>
           <Outlet />
         </div>
       </main>

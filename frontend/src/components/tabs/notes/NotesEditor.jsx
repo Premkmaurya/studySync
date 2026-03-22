@@ -10,8 +10,8 @@ import { useLocation } from "react-router-dom";
 // Using lucide-react as the primary, stable icon engine
 
 // Custom Components
-import AIPopup from "../chats/AiPopup";
-import ChatSidebar from "../chats/ChatSidebar";
+import AIPopup from "../chats_components/AiPopup";
+import ChatSidebar from "../chats_components/ChatSidebar";
 import Share from "./components/Share";
 import Header from "./components/Header";
 
