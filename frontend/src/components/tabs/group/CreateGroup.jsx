@@ -27,6 +27,7 @@ const CreateGroup = () => {
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
+  const [isPublic, setIsPublic] = useState(true);
   
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -46,6 +47,7 @@ const CreateGroup = () => {
     formData.append('name', data.name);
     formData.append('description', data.description);
     formData.append('field', data.field);
+    formData.append('privacy', isPublic ? 'public' : 'private');
     if (imageFile) formData.append('image', imageFile);
 
     try {
@@ -62,7 +64,7 @@ const CreateGroup = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-x-hidden text-sm">
+    <div className="relative h-screen w-full overflow-hidden bg-[#000] text-[#E5E7EB] font-sans text-sm">
       
       {/* Immersive Background Mesh */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -73,7 +75,7 @@ const CreateGroup = () => {
       </div>
 
       {/* Main Creation Form */}
-      <main className="relative z-10 flex justify-center py-5 px-6 h-screen">
+      <main className="relative z-10 flex justify-center items-center py-5 px-6 h-screen overflow-hidden">
         <motion.form 
           onSubmit={handleSubmit(onSubmit)}
           initial={{ opacity: 0, scale: 0.98 }}
@@ -163,8 +165,20 @@ const CreateGroup = () => {
                 <div className="space-y-4">
                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">Privacy Mode</label>
                    <div className="flex gap-2">
-                      <button type="button" className="flex-1 py-2.5 bg-indigo-600 rounded-xl text-[10px] font-black text-white shadow-lg shadow-indigo-600/20">PUBLIC</button>
-                      <button type="button" className="flex-1 py-2.5 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-zinc-500 hover:text-white transition-all">PRIVATE</button>
+                      <button 
+                        type="button" 
+                        onClick={() => setIsPublic(true)} 
+                        className={`flex-1 py-2.5 rounded-xl text-[10px] font-black transition-all ${isPublic ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-white/5 border border-white/10 text-zinc-500 hover:text-white'}`}
+                      >
+                        PUBLIC
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={() => setIsPublic(false)} 
+                        className={`flex-1 py-2.5 rounded-xl text-[10px] font-black transition-all ${!isPublic ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'bg-white/5 border border-white/10 text-zinc-500 hover:text-white'}`}
+                      >
+                        PRIVATE
+                      </button>
                    </div>
                 </div>
               </div>

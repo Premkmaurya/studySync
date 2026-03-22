@@ -1,53 +1,104 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-// Icons ke liye (react-icons install hai tere package.json mein)
-import { HiDocumentText, HiUserGroup, HiCog } from 'react-icons/hi';
-import { CiCirclePlus } from "react-icons/ci";
-import { FaCompass,FaRegUserCircle  } from "react-icons/fa";
-import { FaCircleUser } from "react-icons/fa6";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { NavLink } from "react-router-dom";
+import {
+  Home,
+  Compass,
+  Users,
+  FileText,
+  Plus,
+  Settings,
+  Zap,
+  Bot,
+} from "lucide-react";
 
-/**
- * Yeh hamara left sidebar hai.
- * Hum "NavLink" use kar rahe hain taaki active tab ko style kar sakein.
- */
-export default function Sidebar() {
-  
-  // Yeh function NavLink ko batata hai ki active link ko kaise style karna hai
-  const getNavLinkClass = ({ isActive }) => {
-    return `
-      flex items-center p-1.5 rounded-full transition-colors duration-200
-      ${
-        isActive
-          ? 'bg-[#38383d] text-white' // Active link style
-          : 'text-gray-400 hover:bg-[#38383d] hover:text-white' // Inactive link style
-      }
-    `;
-  };
+const NavItem = ({
+  to,
+  icon: Icon,
+  label,
+  color = "indigo",
+  isAction = false,
+}) => {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <nav className="w-20 bg-[#121214] p-4 flex flex-col space-y-6 shadow-lg">
+    <NavLink
+      to={to}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={({ isActive }) => `
+        relative group flex items-center justify-center w-12 h-12 rounded-2xl transition-all duration-300
+        ${isActive && !isAction ? "bg-indigo-500/10 text-indigo-400" : "text-zinc-500 hover:text-white"}
+        ${isAction ? "bg-white text-black hover:bg-fuchsia-500 hover:text-white shadow-lg shadow-white/5" : ""}
+      `}
+    >
+      {({ isActive }) => (
+        <>
+          {/* Active Indicator Pill */}
+          {isActive && !isAction && (
+            <motion.div
+              layoutId="active-pill"
+              className="absolute -left-4 w-1.5 h-6 bg-indigo-500 rounded-full shadow-[0_0_12px_rgba(99,102,241,0.6)]"
+            />
+          )}
 
-      <NavLink to="/home" className={getNavLinkClass}>
-        <img src="/vite.svg" className='w-8 h-8 rounded-full' />
-      </NavLink>
+          <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
 
-      <NavLink to="/find-groups" className={getNavLinkClass}>
-       <FaCompass className="w-10 h-10" />
-      </NavLink>
-      <NavLink to="/create-groups" className={getNavLinkClass}>
-       <CiCirclePlus className="w-10 h-10" />
-      </NavLink>
-
-      <NavLink to="/settings" className={getNavLinkClass}>
-        <HiCog className="h-9 w-9" />
-      </NavLink>
-
-      {/* User profile section (future mein) */}
-      <div className="mt-auto">
-      <NavLink to="/profile" className={getNavLinkClass}>
-        <FaRegUserCircle className='w-9 h-9' />
-      </NavLink>
-      </div>
-    </nav>
+          {/* Spatial Tooltip */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ opacity: 0, x: 10, scale: 0.9 }}
+                animate={{ opacity: 1, x: 20, scale: 1 }}
+                exit={{ opacity: 0, x: 10, scale: 0.9 }}
+                className="absolute left-full ml-4 px-3 py-1.5 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl pointer-events-none z-[100] whitespace-nowrap"
+              >
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                  {label}
+                </span>
+                {/* Tooltip Arrow */}
+                <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-zinc-900 border-l border-b border-white/10 rotate-45" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
+    </NavLink>
   );
-}
+};
+
+const Sidebar = () => {
+  return (
+    <motion.aside
+      drag
+      dragMomentum={false}
+      className="fixed right-6 top-[55%] -translate-y-1/2 h-[85vh] w-20 z-[100] flex flex-col items-center py-8 bg-zinc-900/40 backdrop-blur-3xl border border-white/10 rounded-[32px] shadow-[0_40px_100px_rgba(0,0,0,0.5)]"
+    >
+      {/* 2. Primary Navigation */}
+      <div className="flex-1 flex flex-col items-center gap-6">
+        <NavItem to="/home" icon={Home} label="Home" />
+        <NavItem to="/find-groups" icon={Compass} label="Explore" />
+        <NavItem to="/group-chats" icon={Users} label="Collectives" />
+        <NavItem to="/notes" icon={FileText} label="Workspace" />
+
+        <div className="w-8 h-[1px] bg-white/5 my-2" />
+
+        {/* The Action Button */}
+        <NavItem to="/create-group" icon={Plus} label="New Hub" isAction />
+      </div>
+
+      {/* 3. System Actions */}
+      <div className="flex flex-col items-center gap-6 mt-auto">
+        <NavLink to="/profile" className="relative group">
+          <div className="w-10 h-10 rounded-xl overflow-hidden border-2 border-transparent group-hover:border-indigo-500/50 transition-all shadow-lg">
+            <img src="https://i.pravatar.cc/100?u=current_user" alt="User" />
+          </div>
+          {/* Online Status */}
+          <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-zinc-900 rounded-full shadow-lg" />
+        </NavLink>
+      </div>
+    </motion.aside>
+  );
+};
+
+export default Sidebar;
