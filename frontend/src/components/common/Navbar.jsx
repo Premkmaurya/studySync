@@ -1,42 +1,44 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { ChevronDown, Bot } from "lucide-react";
 
 const Navbar = () => {
   const navItems = [
-    { label: "Features", path: "/features" },
-    { label: "Groups", path: "/find-groups" },
-    { label: "About", path: "/about" },
-    { label: "Support", path: "/contact" },
+    { label: "about", path: "/about", hasDropdown: false },
+    { label: "features", path: "/features", hasDropdown: false },
+    { label: "Contact", path: "/contact", hasDropdown: false },
   ];
 
   return (
-    <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-6xl">
-      <div className="flex items-center justify-between px-8 py-4 bg-black/20 backdrop-blur-2xl border border-white/10 rounded-full shadow-2xl">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black italic">
-            S
-          </div>
-          <span className="text-sm font-black tracking-tighter uppercase text-white">
+    <nav className="fixed top-0 left-0 w-full z-[100] bg-transparent backdrop-blur-lg border-b border-white/10">
+      <div className="flex items-center justify-between px-6 md:px-12 h-16 max-w-7xl mx-auto">
+        {/* Logo Section */}
+        <Link to="/" className="flex items-center gap-2">
+          <Bot className="text-indigo-400" size={24} />
+          <span className="text-lg font-semibold text-white tracking-tight">
             StudySync
           </span>
         </Link>
-        <div className="hidden md:flex items-center gap-10">
+
+        {/* Call to Action */}
+        <div className="flex items-center gap-4">
           {navItems.map((item) => (
             <Link
               key={item.label}
               to={item.path}
-              className="text-[10px] font-black uppercase tracking-widest text-zinc-300 hover:text-white transition-all"
+              className="flex items-center gap-1 text-[13px] font-medium text-zinc-400 hover:text-white transition-colors"
             >
               {item.label}
+              {item.hasDropdown && (
+                <ChevronDown size={14} className="text-zinc-500 mt-[1px]" />
+              )}
             </Link>
           ))}
-        </div>
-        <div className="flex items-center gap-4">
           <Link
             to="/login"
-            className="px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-indigo-500 hover:text-white transition-all"
+            className="flex items-center px-5 py-2 bg-white text-black text-[13px] font-medium rounded-full hover:bg-zinc-200 transition-all shadow-[0_0_15px_rgba(255,255,255,0.1)]"
           >
-            Get Started
+            Login
           </Link>
         </div>
       </div>
