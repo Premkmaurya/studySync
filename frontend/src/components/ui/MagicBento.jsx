@@ -691,7 +691,7 @@ const MagicBento = ({
               backgroundPosition: "center, 10px 1.4rem",
               backgroundRepeat: "no-repeat",
               backgroundBlendMode: "overlay",
-              boxShadow: "0 12px 30px rgba(0, 0, 0, 0.35) inset, 0 8px 22px rgba(21, 22, 40, 0.58)",
+              boxShadow: "0 8px 22px rgba(21, 22, 40, 0.58)",
               "--glow-x": "50%",
               "--glow-y": "50%",
               "--glow-intensity": "0",
@@ -705,7 +705,6 @@ const MagicBento = ({
                   className={baseClassName}
                   style={{
                     ...cardStyle,
-                    boxShadow: "inset 0 0 30px #AAC4F5",
                   }}
                   disableAnimations={shouldDisableAnimations}
                   particleCount={particleCount}

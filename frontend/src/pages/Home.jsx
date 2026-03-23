@@ -1,25 +1,14 @@
 import React, { useState, useEffect } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import {
   Sparkles,
   ArrowDown,
   Bot,
   Zap,
-  LayoutGrid,
-  ChevronDown,
-  Plus,
-  MessageSquare,
   Globe,
   ShieldCheck,
   Cpu,
   Terminal,
-  Search,
-  ArrowRight,
 } from "lucide-react";
 
 import MagicBento from "../components/ui/MagicBento";
@@ -28,36 +17,6 @@ import Footer from "../components/home/footer/Footer";
 
 // --- INLINED COMPONENTS FOR PREVIEW STABILITY ---
 
-const Nav = () => (
-  <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-6xl">
-    <div className="flex items-center justify-between px-8 py-4 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-full shadow-2xl">
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black italic">
-          S
-        </div>
-        <span className="text-sm font-black tracking-tighter uppercase text-white">
-          StudySync
-        </span>
-      </div>
-      <div className="hidden md:flex items-center gap-10">
-        {["Features", "Groups", "AI Sync", "Support"].map((item) => (
-          <a
-            key={item}
-            href="#"
-            className="text-[10px] font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-all"
-          >
-            {item}
-          </a>
-        ))}
-      </div>
-      <div className="flex items-center gap-4">
-        <button className="px-6 py-2 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-indigo-500 hover:text-white transition-all">
-          Get Started
-        </button>
-      </div>
-    </div>
-  </nav>
-);
 
 const Skill = () => (
   <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10">
@@ -127,7 +86,7 @@ const Feature = () => (
 
 // --- MAIN PAGE COMPONENT ---
 
-const App = () => {
+const Home = () => {
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
@@ -161,7 +120,6 @@ const App = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
         </div>
 
-        <Nav />
 
         {/* Hero Content Overlay */}
         <div className="mt-auto mb-32 z-20 flex flex-col items-center gap-8 px-6">
@@ -201,7 +159,7 @@ const App = () => {
       </motion.div>
 
       {/* 3. SKILL SECTION STAGE */}
-      <section className="relative z-10 py-48 bg-white/[0.01] border-y border-white/5">
+      <section className="relative z-10 py-18 bg-white/[0.01] border-y border-white/5">
         <div className="max-w-7xl mx-auto px-10">
           <div className="mb-20 text-center">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-4 block">
@@ -216,7 +174,7 @@ const App = () => {
       </section>
 
       {/* 4. THE BENTO EXPERIENCE */}
-      <section className="relative z-10 w-screen py-48 flex flex-col justify-center gap-20 px-6">
+      <section className="relative z-10 w-screen py-20 flex flex-col justify-center gap-20 px-6">
         <div className="max-w-5xl mx-auto w-full">
           <div className="flex items-center gap-4 mb-8">
             <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-indigo-400">
@@ -246,7 +204,7 @@ const App = () => {
       </section>
 
       {/* 5. FEATURE SECTION */}
-      <section className="relative z-10 py-32">
+      <section className="relative z-10 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between px-10 mb-24">
             <div className="flex items-center gap-6">
@@ -255,9 +213,6 @@ const App = () => {
               </h2>
               <div className="h-[2px] w-48 bg-gradient-to-r from-indigo-500 to-transparent" />
             </div>
-            <button className="text-xs font-black uppercase tracking-widest text-zinc-500 hover:text-white transition-colors flex items-center gap-2">
-              View All Hubs <ArrowRight size={14} />
-            </button>
           </div>
           <div className="px-10">
             <Feature />
@@ -296,4 +251,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Home;
