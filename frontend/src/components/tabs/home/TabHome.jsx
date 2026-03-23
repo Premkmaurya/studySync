@@ -95,7 +95,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-x-hidden">
+    <div className="relative pt-26 min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-x-hidden">
       
       {/* 1. Background Visuals */}
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -106,12 +106,6 @@ const Home = () => {
       {/* 2. Page Header */}
       <header className="relative z-10 pt-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div>
-          <div className="flex items-center gap-3 mb-4">
-             <div className="p-2 bg-white/5 rounded-lg border border-white/10">
-                <LayoutGrid size={16} className="text-indigo-400" />
-             </div>
-             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">System_Dashboard</span>
-          </div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
             Hello, <span className="text-indigo-500">Alex</span>
           </h1>

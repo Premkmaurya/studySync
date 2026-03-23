@@ -68,41 +68,7 @@ const Profile = () => {
         <div className="absolute bottom-0 left-0 w-[40%] h-[40%] bg-zinc-800/20 blur-[80px] rounded-full" />
       </div>
 
-      {/* 2. Top Navigation */}
-      <nav className="fixed top-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-6xl">
-        <motion.div 
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-          style={{ willChange: 'transform, opacity' }}
-          className="flex items-center justify-between px-6 py-3 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl"
-        >
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate(-1)} className="p-2 hover:bg-white/10 rounded-xl transition-all text-zinc-400">
-              <ChevronLeft size={20} />
-            </button>
-            <div className="flex flex-col border-l border-white/10 pl-4">
-              <span className="text-[9px] font-black tracking-[0.3em] text-indigo-400 uppercase">System_Access</span>
-              <h2 className="text-sm font-bold tracking-tight">User Dashboard</h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button className="p-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all text-zinc-400">
-              <Settings size={18} />
-            </button>
-            <button 
-              onClick={() => navigate('/logout')}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-white text-black rounded-xl text-xs font-black transition-all hover:bg-red-500 hover:text-white group"
-            >
-              <LogOut size={16} className="group-hover:-translate-x-1 transition-transform" />
-              SIGN OUT
-            </button>
-          </div>
-        </motion.div>
-      </nav>
-
-      <main className="relative z-10 pt-32 pb-20 px-6 max-w-6xl mx-auto" style={{ WebkitTransform: 'translate3d(0,0,0)' }}>
+      <main className="relative z-10 pt-36 pb-20 px-6 max-w-6xl mx-auto" style={{ WebkitTransform: 'translate3d(0,0,0)' }}>
         
         {/* 3. Hero Section */}
         <section className="flex flex-col md:flex-row items-center gap-8 mb-16">

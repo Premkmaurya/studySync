@@ -64,7 +64,7 @@ const CreateGroup = () => {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-[#000] text-[#E5E7EB] font-sans text-sm">
+    <div className="relative pt-20 min-h-screen w-full overflow-hidden bg-[#000] text-[#E5E7EB] font-sans text-sm">
       
       {/* Immersive Background Mesh */}
       <div className="absolute inset-0 z-0 pointer-events-none">

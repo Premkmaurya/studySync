@@ -47,7 +47,7 @@ const Faq = () => {
         <h1 className="capitalize font-semibold text-[3.5rem] text-center">
           Frquently ask questions
         </h1>
-        <p className="text-md text-gray-700">
+        <p className="text-md text-whitesmoke">
           From setup steps to feature details, our FAQs cover <br /> everything
           you need to know.
         </p>

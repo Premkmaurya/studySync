@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 
 const DEFAULT_PARTICLE_COUNT = 12;
 const DEFAULT_SPOTLIGHT_RADIUS = 300;
-const DEFAULT_GLOW_COLOR = "132, 0, 255";
+const DEFAULT_GLOW_COLOR = "#080808";
 const MOBILE_BREAKPOINT = 768;
 
 const cardData = [
@@ -48,7 +48,7 @@ const cardData = [
     img: "/img/design.avif",
   },
   {
-    color: "#fff",
+    color: "#111",
     title: "Secure Cloud Storage",
     description: "Your notes are protected with safe backups.",
     label: "Security",
@@ -541,9 +541,11 @@ const MagicBento = ({
             --glow-intensity: 0;
             --glow-radius: 200px;
             --glow-color: ${glowColor};
-            --border-color: #392e4e;
-            --background-dark: #fff;
-            --white: #111;
+            --border-color: rgba(102, 94, 164, 0.95);
+            --background-dark: #0c0e1a;
+            --white: #f8fafc;
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e1;
             --purple-primary: rgba(132, 0, 255, 1);
             --purple-glow: rgba(132, 0, 255, 0.2);
             --purple-border: rgba(132, 0, 255, 0.8);
@@ -589,25 +591,28 @@ const MagicBento = ({
             inset: 0;
             padding: 6px;
             background: radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
-                rgba(${glowColor}, calc(var(--glow-intensity) * 0.8)) 0%,
-                rgba(${glowColor}, calc(var(--glow-intensity) * 0.4)) 30%,
-                transparent 60%);
+                rgba(${glowColor}, calc(var(--glow-intensity) * 0.35)) 0%,
+                rgba(${glowColor}, calc(var(--glow-intensity) * 0.18)) 30%,
+                transparent 65%);
             border-radius: inherit;
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask-composite: subtract;
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            opacity: 0;
+            transition: opacity 0.4s ease, transform 0.4s ease;
             z-index: 1;
           }
           
           .card--border-glow:hover::after {
             opacity: 1;
+            transform: scale(1.02);
           }
           
           .card--border-glow:hover {
-            box-shadow: 0 4px 20px rgba(46, 24, 78, 0.4), 0 0 30px rgba(${glowColor}, 0.2);
+            box-shadow: 0 10px 30px rgba(32, 38, 68, 0.33), 0 0 40px rgba(${glowColor}, 0.12);
+            border-color: rgba(109, 118, 255, 0.9);
           }
           
           .particle::before {
@@ -673,21 +678,24 @@ const MagicBento = ({
       <BentoCardGrid gridRef={gridRef}>
         <div className="card-responsive grid gap-2">
           {cardData.map((card, index) => {
-            const baseClassName = `card flex flex-col text-black justify-between relative aspect-[4/3] min-h-[200px] w-full max-w-full p-3 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
+            const baseClassName = `card flex flex-col text-white justify-between relative aspect-[4/3] min-h-[200px] w-full max-w-full p-3 rounded-[20px] border border-solid font-light overflow-hidden transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(6,8,20,0.55)] ${
               enableBorderGlow ? "card--border-glow" : ""
             }`;
 
             const cardStyle = {
               borderColor: "var(--border-color)",
-              color: "var(--white)",
-              backgroundImage: `url(${card.img})`,
-              backgroundSize: "contain",
-              backgroundPosition: "10px 1.4rem",
+              backgroundColor: "",
+              color: "var(--text-primary)",
+              backgroundImage: `linear-gradient(135deg, rgba(8, 12, 30, 0.85), rgba(14, 16, 37, 0.7)), url(${card.img})`,
+              backgroundSize: "cover, contain",
+              backgroundPosition: "center, 10px 1.4rem",
               backgroundRepeat: "no-repeat",
+              backgroundBlendMode: "overlay",
+              boxShadow: "0 12px 30px rgba(0, 0, 0, 0.35) inset, 0 8px 22px rgba(21, 22, 40, 0.58)",
               "--glow-x": "50%",
               "--glow-y": "50%",
               "--glow-intensity": "0",
-              "--glow-radius": "200px",
+              "--glow-radius": "160px",
             };
 
             if (enableStars) {
@@ -706,10 +714,10 @@ const MagicBento = ({
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
                 >
-                  <div className="card__header flex justify-between gap-3 relative text-black">
-                    <span className="card__label text-base">{card.label}</span>
+                  <div className="card__header flex justify-between gap-3 relative text-white">
+                    <span className="card__label text-base text-sky-200">{card.label}</span>
                   </div>
-                  <div className="card__content flex flex-col relative text-black">
+                  <div className="card__content flex flex-col relative text-white">
                     <h3
                       className={`card__title font-normal text-base m-0 mb-1 ${
                         textAutoHide ? "text-clamp-1" : ""

@@ -207,16 +207,10 @@ const AllGroupsContent = () => {
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-fuchsia-600/5 blur-[100px] rounded-full" />
       </div>
 
-      <main className="relative z-10 pt-20 pb-32 px-6 max-w-7xl mx-auto">
+      <main className="relative z-10 pt-36 pb-32 px-6 max-w-7xl mx-auto">
         <section className="mb-20">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-16">
             <div className="max-w-2xl">
-              <div className="flex items-center gap-2 text-indigo-400 mb-4">
-                <Zap size={20} className="fill-current" />
-                <span className="text-[10px] font-black uppercase tracking-[0.3em]">
-                  Neural Matching Active
-                </span>
-              </div>
               <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6">
                 Find your <br />
                 <span className="text-indigo-500">Collective.</span>

@@ -24,8 +24,8 @@ const footerLinks = [
 const Social = () => {
   return (
     <footer className="p-4 sm:p-8 md:p-12 lg:p-16 flex flex-col gap-10">
-      <div className="p-2 border border-[#2221219f] rounded-3xl">
-        <div className="bg-black text-gray-200 rounded-3xl p-8 lg:p-12 shadow-2xl border-4 border-[#1a1a1a]">
+      <div className="p-2 rounded-3xl">
+        <div className="bg-[#080808] text-gray-200 rounded-3xl p-8 lg:p-12 shadow-2xl border-4 border-[#1a1a1a]">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 lg:gap-24">
               {footerLinks.map((section, index) => (
@@ -57,7 +57,7 @@ const Social = () => {
         </div>
       </div>
       <div className="p-2 border border-[#2221219f] rounded-3xl">
-        <div className="bg-black text-gray-200 rounded-3xl p-3 lg:p-5 shadow-2xl border-4 border-[#1a1a1a]">
+        <div className="bg-[#080808] text-gray-200 rounded-3xl p-3 lg:p-5 shadow-2xl border-4 border-[#1a1a1a]">
           <div className="max-w-7xl mx-auto text-xl flex flex-col gap-6">
               <h3>All Copyrights reserve at @StudySync</h3>
               <h3>Designed by Prem maurya</h3>

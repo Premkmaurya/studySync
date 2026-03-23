@@ -40,14 +40,14 @@ const FaqCard = ({ q, ans }) => {
   return (
     <div
       ref={containerRef} // Attach the scope ref here
-      className="w-[80%] p-2 rounded-xl hover:bg-linear-to-t from-white to-blue-100 border border-black/50 transition-all duration-125"
+      className="w-[80%] p-2 rounded-xl from-white to-blue-100 border border-white/50 transition-all duration-125"
     >
       <div
         onClick={openHandler}
-        className="w-full h-auto border border-black/20 rounded-xl flex flex-col justify-between px-8 py-6 cursor-pointer"
+        className="w-full h-auto border border-white/20 rounded-xl flex flex-col justify-between px-8 py-6 cursor-pointer"
       >
         <div className="w-full flex justify-between items-center">
-          <p className="text-xl text-black/70">{q}</p>
+          <p className="text-xl text-whitesmoke">{q}</p>
           {!isOpen ? (
             <FaPlus size={24} color="#cccccc" />
           ) : (
