@@ -111,9 +111,9 @@ const Home = () => {
         className="relative w-screen h-screen flex flex-col items-center z-10"
       >
         {/* Frame around the image */}
-        <div className="absolute inset-4 md:inset-8 overflow-hidden rounded-[40px] border border-white/10 shadow-2xl">
+        <div className="fixed inset-0 w-screen h-screen overflow-hidden">
           <img
-            className="w-full h-full object-cover brightness-[0.6] scale-105"
+            className="w-full h-full object-cover brightness-[0.6]"
             src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2000"
             alt="Hero Background"
           />
@@ -122,11 +122,11 @@ const Home = () => {
 
 
         {/* Hero Content Overlay */}
-        <div className="mt-auto mb-32 z-20 flex flex-col items-center gap-8 px-6">
+        <div className="mt-auto mb-32 z-20 flex flex-col items-center gap-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="px-4 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-400"
+            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-indigo-400"
           >
             <Sparkles size={12} className="animate-pulse" />
             Collective Intelligence Reimagined

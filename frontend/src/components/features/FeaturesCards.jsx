@@ -3,7 +3,7 @@ import SingleFeatureCard from "./SingleFeatureCard"
 
 const FeaturesCards = () => {
   return (
-    <div className="flex flex-col items-center justify-center px-6 lg:px-20 py-12 bg-white">
+    <div className="flex flex-col items-center justify-center px-6 lg:px-20 py-12 text-white">
       <div className="w-full lg:w-1/2 text-center mt-10 lg:mt-0">
         <h1 className="text-4xl lg:text-6xl font-bold leading-tight mb-6">
           Empowering Creativity

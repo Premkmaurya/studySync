@@ -8,8 +8,7 @@ import Footer from "../components/home/footer/Footer";
 
 const Features = () => {
   return (
-    <div className="relative overflow-x-hidden">
-      <Nav />
+    <div className="relative overflow-x-hidden text-whiteSmoke bg-[#050505]">
       <div className="w-full h-[90vh] absolute top-0 left-0">
         <Orb
           hoverIntensity={0.5}
@@ -22,10 +21,10 @@ const Features = () => {
       <FeaturesCards />
       <div className="w-screen flex flex-col justify-center gap-12 mt-15">
         <div className="text-center w-full flex flex-col  items-center justify-center gap-5">
-          <h1 className="capitalize font-semibold text-[3.5rem] text-center leading-none">
+          <h1 className="capitalize font-semibold text-[3.5rem] text-center text-white leading-none">
             Unmatched and Adaptive AI <br /> Intelligence
           </h1>
-          <p className="text-md text-gray-700">
+          <p className="text-md">
             From scheduling meetings with Google Calendar to automating
             communication in Slack.
           </p>
