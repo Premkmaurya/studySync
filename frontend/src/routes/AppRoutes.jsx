@@ -18,6 +18,7 @@ import Home from "../pages/Home";
 import About from "../pages/About";
 import Contact from "../pages/Contact";
 import Features from "../pages/Features";
+import NotFound from "../pages/NotFound";
 import GroupMembers from "../components/tabs/group/GroupMembers";
 
 const AppRoutes = () => {
@@ -47,6 +48,7 @@ const AppRoutes = () => {
         {/* <Route path="/create-notes" element={<NotesEditor />} /> */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );
