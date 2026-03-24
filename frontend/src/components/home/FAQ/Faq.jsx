@@ -44,10 +44,7 @@ const Faq = () => {
   return (
     <div>
       <div className="text-center flex flex-col gap-5">
-        <h1 className="capitalize font-semibold text-[3.5rem] text-center">
-          Frquently ask questions
-        </h1>
-        <p className="text-md text-whitesmoke">
+        <p className="text-md text-whitesmoke mt-10">
           From setup steps to feature details, our FAQs cover <br /> everything
           you need to know.
         </p>

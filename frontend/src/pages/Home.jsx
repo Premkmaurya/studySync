@@ -17,7 +17,6 @@ import Footer from "../components/home/footer/Footer";
 
 // --- INLINED COMPONENTS FOR PREVIEW STABILITY ---
 
-
 const Skill = () => (
   <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10">
     {[
@@ -120,7 +119,6 @@ const Home = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
         </div>
 
-
         {/* Hero Content Overlay */}
         <div className="mt-auto mb-32 z-20 flex flex-col items-center gap-8">
           <motion.div
@@ -222,10 +220,19 @@ const Home = () => {
 
       {/* 6. FAQ SECTION */}
       <section className="relative z-10 pt-28 bg-[#080808]">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-center text-white mb-10 uppercase">
-            Queries_
-          </h2>
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <div className="h-px w-12 bg-indigo-500/50" />
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">
+                Query_Database
+              </span>
+              <div className="h-px w-12 bg-indigo-500/50" />
+            </div>
+            <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase leading-[0.8]">
+              Frequent <br /> Protocols.
+            </h2>
+          </div>
           <Faq />
         </div>
       </section>
