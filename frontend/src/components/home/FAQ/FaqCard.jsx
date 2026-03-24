@@ -39,26 +39,28 @@ const FaqCard = ({ q, ans }) => {
 
   return (
     <div
-      ref={containerRef} // Attach the scope ref here
-      className="w-[80%] p-2 rounded-xl from-white to-blue-100 border border-white/50 transition-all duration-125"
+      ref={containerRef}
+      className="w-[90%] md:w-[80%] max-w-4xl p-1 md:p-2 rounded-xl from-white to-blue-100 border border-white/50 transition-all duration-125"
     >
       <div
         onClick={openHandler}
-        className="w-full h-auto border border-white/20 rounded-xl flex flex-col justify-between px-8 py-6 cursor-pointer"
+        className="w-full h-auto border border-white/20 rounded-xl flex flex-col justify-between px-4 py-4 md:px-8 md:py-6 cursor-pointer"
       >
-        <div className="w-full flex justify-between items-center">
-          <p className="text-xl text-whitesmoke">{q}</p>
-          {!isOpen ? (
-            <FaPlus size={24} color="#cccccc" />
-          ) : (
-            <FaMinus size={24} color="#cccccc" />
-          )}
+        <div className="w-full flex justify-between items-center gap-4">
+          <p className="text-base md:text-xl text-whitesmoke text-left">{q}</p>
+          <div className="flex-shrink-0">
+            {!isOpen ? (
+              <FaPlus className="w-5 h-5 md:w-6 md:h-6 text-[#cccccc]" />
+            ) : (
+              <FaMinus className="w-5 h-5 md:w-6 md:h-6 text-[#cccccc]" />
+            )}
+          </div>
         </div>
 
         {/* 3. Removed 'hidden' class. Added 'h-0 overflow-hidden' for initial closed state. */}
         {/* Moved margin (mt-6) inside to padding (pt-6) so it animates smoothly with height */}
         <div className="faq-card-answer h-0 overflow-hidden opacity-0">
-          <p className="pt-6 transition-all duration-105">{ans}</p>
+          <p className="pt-4 md:pt-6 text-sm md:text-base text-zinc-400 text-left transition-all duration-105">{ans}</p>
         </div>
       </div>
     </div>
