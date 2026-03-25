@@ -1,12 +1,15 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import NavSidebar from './NavSidebar';
 
 export default function MainLayout() {
+  const location = useLocation();
+  const isGroupRoute = location.pathname.startsWith('/group');
+
   return (
     <div className="flex h-screen">
       {/* Sidebar Component */}
-      <NavSidebar />
+      {!isGroupRoute && <NavSidebar />}
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
