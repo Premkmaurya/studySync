@@ -3,12 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 async function registerUser(req, res) {
-  const {
-    firstname, 
-    lastname ,
-    email,
-    password,
-  } = req.body;
+  const { firstname, lastname, email, password } = req.body;
 
   const isUserExists = await userModel.findOne({ email });
   if (isUserExists) {
@@ -36,11 +31,13 @@ async function registerUser(req, res) {
     process.env.JWT_SECRET_KEY,
     {
       expiresIn: "1d",
-    }
+    },
   );
-  res.cookie("token", token,{
-    httpOnly:true,
-    secure:true,
+  const ONE_YEAR = 31536000;
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    maxAge: ONE_YEAR,
   });
 
   return res.status(201).json({
@@ -75,12 +72,12 @@ async function loginUser(req, res) {
     process.env.JWT_SECRET_KEY,
     {
       expiresIn: "1d",
-    }
+    },
   );
 
-  res.cookie("token",token,{
-    httpOnly:true,
-    secure:true
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
   });
 
   return res.status(200).json({
@@ -93,22 +90,22 @@ async function getMe(req, res) {
   const user = req.user;
   const userFind = await userModel.findById(user.id).select("-password");
   return res.status(200).json({
-    message:"data fetched successfully.",
+    message: "data fetched successfully.",
     user,
   });
 }
 
-async function getUserById(req,res){
-  const {id}= req.params;
+async function getUserById(req, res) {
+  const { id } = req.params;
   const user = await userModel.findById(id).select("-password");
   return res.status(200).json({
-    user
-  })
+    user,
+  });
 }
 
 module.exports = {
   registerUser,
   loginUser,
   getMe,
-  getUserById
+  getUserById,
 };

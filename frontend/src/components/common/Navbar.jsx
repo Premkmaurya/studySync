@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Bot, Menu, X, ArrowRight } from "lucide-react";
+import { Bot, Menu, X, ArrowRight } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -55,12 +55,17 @@ const Navbar = () => {
               {item.label}
             </Link>
           ))}
-          <Link
+          { !user ? <Link
             to="/login"
             className="flex items-center px-6 py-2.5 bg-white text-black text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-indigo-500 hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95"
           >
             Login
-          </Link>
+          </Link> : <Link
+            to="/home"
+            className="flex items-center px-6 py-2.5 bg-white text-black text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-indigo-500 hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] active:scale-95"
+          >
+            Explore
+          </Link>}
         </div>
 
         {/* 3. MOBILE MENU TOGGLE */}

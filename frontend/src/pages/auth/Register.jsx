@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import axios from "axios";
+import { registerUser } from "../../services/authApi";
 import { useNavigate, BrowserRouter, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
@@ -27,13 +27,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       setAuthError("");
-      const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        data,
-        {
-          withCredentials: true,
-        },
-      );
+      const response = await registerUser(data);
       navigate("/find-groups");
     } catch (err) {
       setAuthError("Authentication failed. Please check your credentials.");
