@@ -47,6 +47,7 @@ const CATEGORIES = [
 const DiscoveryCard = ({ group, index }) => {
   const navigate = useNavigate();
 
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -92,7 +93,7 @@ const DiscoveryCard = ({ group, index }) => {
 
       <div className="flex gap-3">
         <button
-          onClick={() => navigate(`/groups/${group._id}`)}
+          onClick={() => navigate(`/group/${group._id}`)}
           className="flex-1 py-4 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
           style={{ willChange: 'transform' }}
         >
@@ -121,6 +122,7 @@ const AllGroupsContent = () => {
         const res = await axios.get("http://localhost:3000/api/groups/all", {
           withCredentials: true,
         });
+        console.log(res.data)
         if (res.data?.groups) {
           setGroups(res.data.groups);
           setFilteredGroups(res.data.groups);

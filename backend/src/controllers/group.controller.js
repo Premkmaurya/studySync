@@ -57,9 +57,6 @@ async function createGroup(req, res) {
     userId: user.id,
     groupId: group._id,
   });
-  const io = req.app.get("io");
-
-  io.emit("groupCreated", group);
 
   return res.status(201).json({
     group,

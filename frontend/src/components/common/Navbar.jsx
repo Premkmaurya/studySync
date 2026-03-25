@@ -26,13 +26,13 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 border-b ${
+      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 bg-black/80 backdrop-blur-2xl border-b ${
         scrolled || isOpen 
-          ? "bg-black/80 backdrop-blur-2xl border-white/10 py-3" 
+          ? "border-white/10 py-3" 
           : "bg-transparent border-transparent py-5"
       }`}
     >
-      <div className="flex items-center justify-between px-6 md:px-12 h-12 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between px-6 md:px-12 h-10 max-w-7xl mx-auto">
         
         {/* 1. LOGO SECTION */}
         <Link to="/" className="flex items-center gap-2 group relative z-[110]">
