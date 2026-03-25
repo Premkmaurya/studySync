@@ -1,84 +1,82 @@
 import React, { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, MemoryRouter, Routes, Route } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ShieldCheck,
-  Zap,
-  MoreVertical,
-  Users,
+import { 
+  ShieldCheck, 
+  Search, 
+  MoreHorizontal, 
+  Users, 
+  Zap, 
+  Fingerprint,
+  Circle
 } from "lucide-react";
 import axios from "axios";
 
 // --- SUB-COMPONENTS ---
 
-const MemberRow = ({ member, index }) => {
+const MemberEntry = ({ member, index }) => {
   const isAdmin = member.role === "Admin";
+  const firstName = String(member?.userId?.fullname?.firstname || "Node");
+  const lastName = String(member?.userId?.fullname?.lastname || "");
+  const userId = String(member?.userId?._id || index);
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="group relative flex items-center justify-between p-5 bg-white/[0.02] border border-white/5 rounded-3xl hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300 cursor-default"
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: index * 0.05, type: "spring", stiffness: 300, damping: 24 }}
+      className="group flex items-center justify-between py-4 border-b border-white/5 hover:bg-white/[0.01] px-4 transition-all duration-300"
     >
-      <div className="flex items-center gap-5">
-        {/* Avatar Slot */}
+      <div className="flex items-center gap-6">
+        {/* Simple Avatar Slot */}
         <div className="relative">
-          <div
-            className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-xs border transition-all ${
-              isAdmin
-                ? "bg-indigo-500/10 border-indigo-500/30 text-indigo-400 shadow-[0_0_20px_rgba(99,102,241,0.15)]"
-                : "bg-zinc-900 border-white/5 text-zinc-500"
-            }`}
-          >
-            {member.userId.fullname.firstname[0]}
-            {member.userId.fullname.lastname?.[0] || ""}
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-[10px] border transition-all ${
+            isAdmin 
+            ? "bg-indigo-500/5 border-indigo-500/30 text-indigo-400" 
+            : "bg-zinc-950 border-white/10 text-zinc-600"
+          }`}>
+            {firstName[0]}{lastName[0] || ""}
           </div>
           {isAdmin && (
-            <div className="absolute -top-1 -right-1 p-1 bg-black rounded-full border border-white/10">
-              <ShieldCheck size={10} className="text-emerald-500" />
-            </div>
+            <motion.div 
+              animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.2, 1] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="absolute -inset-1 bg-indigo-500/10 blur-xl rounded-full -z-10" 
+            />
           )}
         </div>
 
-        {/* Identity Metadata */}
-        <div>
-          <h4 className="text-sm font-black text-white tracking-tight group-hover:text-indigo-400 transition-colors uppercase">
-            {member.userId.fullname.firstname} {member.userId.fullname.lastname}
-          </h4>
-          <div className="flex items-center gap-3 mt-1">
-            <span
-              className={`text-[8px] font-black uppercase tracking-[0.3em] px-2 py-0.5 rounded-md border ${
-                isAdmin
-                  ? "text-emerald-400 border-emerald-500/20 bg-emerald-500/5"
-                  : "text-zinc-600 border-white/5"
-              }`}
-            >
-              {isAdmin ? "PROTO_ADMIN" : "NODE_MEMBER"}
+        {/* Name & ID */}
+        <div className="flex flex-col">
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-bold text-zinc-200 uppercase tracking-tight group-hover:text-white transition-colors">
+              {firstName} {lastName}
             </span>
+            {isAdmin && (
+              <span className="text-[8px] font-black text-indigo-400 border border-indigo-400/30 px-1.5 py-0.5 rounded uppercase tracking-widest">
+                Admin
+              </span>
+            )}
           </div>
+          <span className="text-[9px] font-mono text-zinc-600 mt-0.5 uppercase tracking-widest">
+            NODE_ID: {userId.substring(0, 8)}
+          </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
-        <div className="hidden md:flex flex-col items-end">
-          <span className="text-[9px] font-bold text-zinc-700 uppercase tracking-widest">
-            Uplink_Active
-          </span>
-          <span className="text-[10px] font-mono text-zinc-500">
-            ID: {member.userId._id.substring(0, 8)}...
-          </span>
-        </div>
-        <button className="p-2 hover:bg-white/5 rounded-xl text-zinc-700 hover:text-white transition-all">
-          <MoreVertical size={16} />
-        </button>
+      <div className="flex items-center gap-8">
+         {isAdmin && <button className="p-2 text-zinc-700 hover:text-white transition-colors">
+            <MoreHorizontal size={18} />
+         </button>}
       </div>
     </motion.div>
   );
 };
 
-export default function GroupMembers() {
-  const { group } = useOutletContext();
+const GroupMembers = () => {
+  const context = useOutletContext();
+  const group = context?.group || { _id: "preview-node", name: "Collective_Nexus" };
+  
   const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -91,34 +89,16 @@ export default function GroupMembers() {
           {
             params: { groupId: group._id },
             withCredentials: true,
-          },
+          }
         );
-        // Ensure we don't duplicate on strict mode
-        setMembers(response.data.members || []);
+        setMembers(Array.isArray(response.data.members) ? response.data.members : []);
       } catch (err) {
-        // Fallback mock for UI demonstration
+        // Fallback mock
         setMembers([
-          {
-            role: "Admin",
-            userId: {
-              _id: "u1",
-              fullname: { firstname: "Alex", lastname: "Rivera" },
-            },
-          },
-          {
-            role: "Member",
-            userId: {
-              _id: "u2",
-              fullname: { firstname: "Jordan", lastname: "Lee" },
-            },
-          },
-          {
-            role: "Member",
-            userId: {
-              _id: "u3",
-              fullname: { firstname: "Sam", lastname: "Chen" },
-            },
-          },
+          { role: "Admin", userId: { _id: "u1", fullname: { firstname: "Alex", lastname: "Rivera" } } },
+          { role: "Member", userId: { _id: "u2", fullname: { firstname: "Jordan", lastname: "Lee" } } },
+          { role: "Member", userId: { _id: "u3", fullname: { firstname: "Sam", lastname: "Chen" } } },
+          { role: "Member", userId: { _id: "u4", fullname: { firstname: "Taylor", lastname: "Swift" } } },
         ]);
       } finally {
         setLoading(false);
@@ -127,83 +107,61 @@ export default function GroupMembers() {
     getMembers();
   }, [group._id]);
 
-  const filteredMembers = members.filter((m) =>
-    `${m.userId.fullname.firstname} ${m.userId.fullname.lastname}`
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase()),
-  );
+  const filteredMembers = members.filter(m => {
+    const fullName = `${m?.userId?.fullname?.firstname || ""} ${m?.userId?.fullname?.lastname || ""}`.toLowerCase();
+    return fullName.includes(searchTerm.toLowerCase());
+  });
 
   return (
-    <div className="relative w-full h-full p-4 lg:p-8 max-w-4xl mx-auto flex flex-col">
-      {/* 1. Header & Filtering */}
-      <section className="mb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-10 border-b border-white/5 pb-8">
-          <div>
-            <h1 className="text-4xl font-black tracking-tighter text-white uppercase leading-none">
-              The Collective
-            </h1>
-          </div>
+    <div className="relative w-full min-h-screen bg-[#030303] text-zinc-400 font-sans p-6 md:p-12 max-w-5xl mx-auto">
+      
+      {/* 1. Ultra-Minimal Top Header */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-16">
+        <div>
+           <h1 className="text-3xl font-black text-white uppercase tracking-tighter">Collective</h1>
         </div>
 
-        {/* Global Hub Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-          {[
-            { label: "Synced", val: members.length, icon: Users },
-            {
-              role: "Notes",
-              val: members.filter((m) => m.role === "Admin").length,
-              icon: ShieldCheck,
-            },
-            { label: "Status", val: "Optimal", icon: Zap },
-          ].map((stat, i) => (
-            <div
-              key={i}
-              className="p-5 bg-white/[0.01] border border-white/5 rounded-3xl"
-            >
-              <div className="flex items-center gap-3 text-zinc-600 mb-2">
-                <stat.icon size={12} />
-                <span className="text-[8px] font-black uppercase tracking-widest">
-                  {stat.label || stat.role}
-                </span>
+        <div className="flex items-center gap-8">
+           {/* Tiny Stats Horizon */}
+           <div className="hidden lg:flex items-center gap-6 border-r border-white/5 pr-8">
+              <div className="text-center">
+                 <div className="text-xs font-black text-white">{members.length}</div>
+                 <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Total</div>
               </div>
-              <div className="text-xl font-black text-white">{stat.val}</div>
-            </div>
-          ))}
+              <div className="text-center">
+                 <div className="text-xs font-black text-indigo-400">{members.filter(m => m.role === "Admin").length}</div>
+                 <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Notes</div>
+              </div>
+           </div>
         </div>
-      </section>
+      </header>
 
-      {/* 2. The Member Stream */}
-      {loading ? (
-        <div className="py-20 flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
-          <span className="text-[9px] font-black uppercase tracking-widest text-zinc-800">
-            Retrieving Collective Data...
-          </span>
-        </div>
-      ) : (
-        <div className="space-y-3 pb-4 flex-1">
-          <AnimatePresence>
-            {filteredMembers.map((member, index) => (
-              <MemberRow
-                key={member.userId._id}
-                member={member}
-                index={index}
-              />
-            ))}
-          </AnimatePresence>
-
-          {filteredMembers.length === 0 && (
-            <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[40px]">
-              <p className="text-[10px] font-black uppercase tracking-widest text-zinc-700 italic">
-                No node matches found
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Subtle Background Glow */}
-      <div className="fixed bottom-[-10%] right-[-10%] w-96 h-96 bg-indigo-600/5 blur-[120px] rounded-full pointer-events-none" />
+      {/* 2. The Registry Ledger */}
+      <main className="relative z-10">
+        {loading ? (
+          <div className="py-20 flex flex-col items-center gap-4">
+             <div className="w-5 h-5 border border-white/10 border-t-indigo-500 rounded-full animate-spin" />
+             <span className="text-[8px] font-black uppercase tracking-[0.3em] text-zinc-700">Deciphering_Directory</span>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <AnimatePresence>
+              {filteredMembers.map((member, index) => (
+                <MemberEntry key={member?.userId?._id || index} member={member} index={index} />
+              ))}
+            </AnimatePresence>
+            
+            {filteredMembers.length === 0 && (
+              <div className="py-32 text-center">
+                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-800">0_Matches_Found</p>
+              </div>
+            )}
+          </div>
+        )}
+      </main>
     </div>
   );
-}
+};
+
+// --- PREVIEW WRAPPER ---
+export default GroupMembers;

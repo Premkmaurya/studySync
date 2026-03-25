@@ -117,11 +117,13 @@ const GroupNotes = () => {
               filteredArticles.map((article, index) => (
                 <motion.div
                   key={String(article._id || index)}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
+                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: index * 0.08, type: "spring", stiffness: 300, damping: 24 }}
                   whileHover={{
                     backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    y: -5,
+                    scale: 1.02,
                   }}
                   className="group relative p-5 bg-zinc-900/30 border border-white/5 rounded-[40px] shadow-2xl transition-all duration-500 overflow-hidden"
                 >
