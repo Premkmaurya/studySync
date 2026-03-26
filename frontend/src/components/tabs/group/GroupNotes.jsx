@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { motion, AnimatePresence } from "framer-motion";
@@ -14,61 +13,36 @@ import {
   ArrowUpRight,
   Database,
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectNotes } from "../../../features/notes/notesSelectors";
+import { fetchNotes, setLoading} from "../../../features/notes/notesSlice";
 
 dayjs.extend(relativeTime);
 
 // --- COMPONENT LOGIC ---
 
 const GroupNotes = () => {
-  const [articles, setArticles] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+  const notes = useSelector(selectNotes);
+  const loading = useSelector((state)=>state.notes.loading);
+
   useEffect(() => {
-    async function getNotes() {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          "http://localhost:3000/api/notes/get",
-          { withCredentials: true },
-        );
-        // Ensure we are setting an array
-        const notesData = Array.isArray(response.data?.notes)
-          ? response.data.notes
-          : [];
-        setArticles(notesData);
-      } catch (err) {
-        console.error("Error fetching notes:", err);
-        // Fallback mock data for visual demonstration in preview
-        setArticles([
-          {
-            _id: "1",
-            title: "Neural Sync Architecture",
-            content: "Technical deep dive into the synchronization logic...",
-            createdAt: new Date().toISOString(),
-          },
-          {
-            _id: "2",
-            title: "Distributed Database Protocols",
-            content: "Observations on latency and consistency in edge nodes...",
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-          },
-          {
-            _id: "3",
-            title: "UI Physics Research",
-            content: "How haptic feedback affects long-term user retention...",
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-        ]);
-      } finally {
-        setLoading(false);
+    const loadNotes = async () => {
+      dispatch(setLoading(true));
+      const res = await dispatch(fetchNotes());
+      if(res?.payload?.success || res?.payload){
+        dispatch(setLoading(false));
+      }else{
+        dispatch(setLoading(false));
       }
-    }
-    getNotes();
+    };
+    loadNotes();
   }, []);
 
-  const filteredArticles = articles.filter((article) =>
+  const filteredArticles = notes.filter((article) =>
     (article.title || "").toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
@@ -119,7 +93,12 @@ const GroupNotes = () => {
                   key={String(article._id || index)}
                   initial={{ opacity: 0, y: 30, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: index * 0.08, type: "spring", stiffness: 300, damping: 24 }}
+                  transition={{
+                    delay: index * 0.08,
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 24,
+                  }}
                   whileHover={{
                     backgroundColor: "rgba(255, 255, 255, 0.03)",
                     y: -5,
@@ -186,7 +165,7 @@ const GroupNotes = () => {
       {/* 3. QUANTUM FLOATING ACTION BUTTON */}
       {createPortal(
         <motion.button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/create-notes")}
           className="fixed bottom-10 right-10 z-[100] p-4 bg-white text-black rounded-full hover:bg-indigo-500 hover:text-white group"
         >
           <Plus size={20} className="transition-transform" />
@@ -194,17 +173,6 @@ const GroupNotes = () => {
         </motion.button>,
         document.body,
       )}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
-      `,
-        }}
-      />
     </div>
   );
 };

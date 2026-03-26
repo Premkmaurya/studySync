@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { registerUser } from "../../services/authApi";
 import { useNavigate, BrowserRouter, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
@@ -14,9 +13,12 @@ import {
   Github,
   Chrome,
 } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { registerUser } from "../../features/auth/authSlice";
 
 const Register = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const {
     register,
     handleSubmit,
@@ -27,8 +29,10 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       setAuthError("");
-      const response = await registerUser(data);
-      navigate("/find-groups");
+      const response = await dispatch(registerUser(data));
+      if(response.payload.user) {
+        navigate("/find-groups");
+      }
     } catch (err) {
       setAuthError("Authentication failed. Please check your credentials.");
       // For preview purposes, we allow bypass if needed, but here we simulate a real check

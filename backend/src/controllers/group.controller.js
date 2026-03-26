@@ -173,22 +173,32 @@ async function joinedGroup(req, res) {
 }
 
 async function getGroupMembers(req, res) {
-  const { groupId } = req.query;
-  const members = await userGroupModel
-    .find({ groupId })
-    .populate("userId", "fullname")
-    .sort({ createdAt: -1 });
+  try {
+    const { groupId } = req.query;
+    if (!groupId || groupId === "undefined" || groupId === "preview-node" || groupId === "nexus-01") {
+      return res.status(400).json({ message: "Invalid or missing groupId", members: [] });
+    }
 
-  if (!members) {
-    return res.status(403).json({
-      message: "no members found.",
+    const members = await userGroupModel
+      .find({ groupId })
+      .populate("userId", "fullname")
+      .sort({ createdAt: -1 });
+
+    if (!members) {
+      return res.status(404).json({
+        message: "no members found.",
+        members: []
+      });
+    }
+
+    res.status(200).json({
+      message: "members fetch successfully.",
+      members,
     });
+  } catch (error) {
+    console.error("Error in getGroupMembers:", error);
+    res.status(500).json({ message: "Internal server error fetching members", error: error.message });
   }
-
-  res.status(200).json({
-    message: "members fetch successfully.",
-    members,
-  });
 }
 
 module.exports = {

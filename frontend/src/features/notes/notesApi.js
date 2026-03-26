@@ -1,7 +1,7 @@
 import api from '../../services/api';
 
 export const fetchNotesApi = async () => {
-  const response = await api.get('/notes');
+  const response = await api.get('/notes/get');
   return response.data;
 };
 

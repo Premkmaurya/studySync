@@ -1,37 +1,77 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchGroupsApi, createGroupApi, joinGroupApi, fetchGroupDetailsApi } from './groupsApi';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  fetchGroupsApi,
+  createGroupApi,
+  joinGroupApi,
+  fetchGroupDetailsApi,
+  fetchGroupMembersApi,
+} from "./groupsApi";
 
-export const fetchGroups = createAsyncThunk('groups/fetchGroups', async (_, thunkAPI) => {
-  try {
-    return await fetchGroupsApi();
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch groups');
-  }
-});
+export const fetchGroups = createAsyncThunk(
+  "groups/fetchGroups",
+  async (_, thunkAPI) => {
+    try {
+      return await fetchGroupsApi();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch groups",
+      );
+    }
+  },
+);
 
-export const createGroup = createAsyncThunk('groups/createGroup', async (groupData, thunkAPI) => {
-  try {
-    return await createGroupApi(groupData);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to create group');
-  }
-});
+export const createGroup = createAsyncThunk(
+  "groups/createGroup",
+  async (groupData, thunkAPI) => {
+    try {
+      return await createGroupApi(groupData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to create group",
+      );
+    }
+  },
+);
 
-export const joinGroup = createAsyncThunk('groups/joinGroup', async (groupId, thunkAPI) => {
-  try {
-    return await joinGroupApi(groupId);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to join group');
-  }
-});
+export const joinGroup = createAsyncThunk(
+  "groups/joinGroup",
+  async (groupId, thunkAPI) => {
+    try {
+      return await joinGroupApi(groupId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to join group",
+      );
+    }
+  },
+);
 
-export const fetchGroupDetails = createAsyncThunk('groups/fetchGroupDetails', async (groupId, thunkAPI) => {
-  try {
-    return await fetchGroupDetailsApi(groupId);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch group details');
-  }
-});
+export const fetchGroupMembers = createAsyncThunk(
+  "groups/fetchGroupMembers",
+  async (groupId, thunkAPI) => {
+    try {
+      return await fetchGroupMembersApi(groupId);
+    } catch (error) {
+      console.log(error)
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch group members",
+      );
+    }
+  },
+);
+
+export const fetchGroupDetails = createAsyncThunk(
+  "groups/fetchGroupDetails",
+  async (groupId, thunkAPI) => {
+    try {
+      return await fetchGroupDetailsApi(groupId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch group details",
+      );
+    }
+  },
+);
 
 const initialState = {
   groups: [],
@@ -42,7 +82,7 @@ const initialState = {
 };
 
 const groupsSlice = createSlice({
-  name: 'groups',
+  name: "groups",
   initialState,
   reducers: {
     setCurrentGroup: (state, action) => {
@@ -50,7 +90,7 @@ const groupsSlice = createSlice({
     },
     clearGroupsError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -71,7 +111,7 @@ const groupsSlice = createSlice({
         state.currentGroup = action.payload.group || action.payload;
         state.members = action.payload.members || [];
       });
-  }
+  },
 });
 
 export const { setCurrentGroup, clearGroupsError } = groupsSlice.actions;

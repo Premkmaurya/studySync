@@ -15,6 +15,8 @@ import {
   Settings,
   Zap,
   ShieldCheck,
+  Menu,
+  X,
 } from "lucide-react";
 
 // --- SUB-COMPONENTS ---
@@ -53,6 +55,11 @@ const SingleGroupPage = () => {
 
   const [group, setGroup] = useState(location.state?.groupData);
   const [loading, setLoading] = useState(!group);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!group) {
@@ -95,18 +102,39 @@ const SingleGroupPage = () => {
     );
 
   return (
-    <div className="relative min-h-screen w-full bg-[#030303] text-slate-200 selection:bg-indigo-500/30 font-sans overflow-hidden flex flex-col md:flex-row">
+    <div className="relative min-h-screen w-full bg-[#030303] text-slate-200 selection:bg-indigo-500/30 font-sans overflow-hidden flex flex-row">
       {/* 1. SPATIAL BACKGROUND */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" style={{ transform: 'translateZ(0)', willChange: 'transform' }}>
         <div className="absolute top-[-10%] left-[20%] w-[60%] h-[60%] bg-indigo-600/5 blur-[100px] rounded-full" style={{ transform: 'translateZ(0)' }} />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-fuchsia-600/5 blur-[80px] rounded-full" style={{ transform: 'translateZ(0)' }} />
       </div>
 
-      {/* 2. CONTEXTUAL SUB-SIDEBAR (The Blade) */}
-      <aside className="relative z-20 w-full md:w-72 lg:w-80 h-auto md:h-screen flex flex-col border-r border-white/5 bg-zinc-950/80 pt-10 px-6" style={{ transform: 'translateZ(0)' }}>
-        {/* Hub Identity */}
-        <div className="mb-10 group">
+      {/* MOBILE THIN SIDEBAR (Always visible) */}
+      <div className="w-14 min-w-[56px] md:hidden border-r border-white/5 bg-zinc-950 flex flex-col items-center flex-shrink-0 pt-8 h-screen z-20">
+        <button 
+          onClick={() => setIsSidebarOpen(true)}
+          className="p-3 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-xl"
+        >
+          <Menu size={20} />
+        </button>
+      </div>
 
+      {/* MOBILE OVERLAY */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* 2. CONTEXTUAL SUB-SIDEBAR (The Blade) */}
+      <aside 
+        className={`fixed md:relative top-0 left-0 z-40 h-screen flex flex-col border-r border-white/5 bg-zinc-950 pt-10 px-6 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] w-72 lg:w-80 flex-shrink-0 ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+        }`}
+      >
+        {/* Hub Identity */}
+        <div className="mb-10 group flex justify-between items-start">
           <div className="relative">
             <h2 className="text-3xl font-black tracking-tighter text-white uppercase leading-none group-hover:text-indigo-400 transition-colors">
               {group?.name || "Group Hub"}
@@ -121,6 +149,13 @@ const SingleGroupPage = () => {
               </span>
             </div>
           </div>
+          {/* Mobile Close Button */}
+          <button 
+            onClick={() => setIsSidebarOpen(false)} 
+            className="md:hidden p-2 text-zinc-500 hover:text-white bg-white/5 rounded-full"
+          >
+            <X size={16} />
+          </button>
         </div>
 
         {/* Navigation Grid */}
@@ -142,11 +177,11 @@ const SingleGroupPage = () => {
             label="Collective"
           />
 
-            <SubNavItem
-              to={`/group/${groupId}/settings`}
-              icon={Settings}
-              label="Protocols"
-            />
+          <SubNavItem
+            to={`/group/${groupId}/settings`}
+            icon={Settings}
+            label="Protocols"
+          />
 
         </nav>
       </aside>
@@ -168,17 +203,6 @@ const SingleGroupPage = () => {
           </AnimatePresence>
         </div>
       </main>
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6366f1; }
-        h2, h1 { letter-spacing: -0.05em !important; }
-      `,
-        }}
-      />
     </div>
   );
 };

@@ -47,6 +47,10 @@ const notesSlice = createSlice({
     setSelectedNote: (state, action) => {
       state.selectedNote = action.payload;
     },
+    setLoading:(state,action) =>{
+      state.loading = action.payload;
+      state.error = null;
+    },
     clearNotesError: (state) => {
       state.error = null;
     }
@@ -69,6 +73,6 @@ const notesSlice = createSlice({
   }
 });
 
-export const { setSelectedNote, clearNotesError } = notesSlice.actions;
+export const { setSelectedNote,setLoading, clearNotesError } = notesSlice.actions;
 
 export default notesSlice.reducer;

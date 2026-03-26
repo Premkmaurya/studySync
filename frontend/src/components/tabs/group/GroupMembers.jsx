@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useOutletContext, MemoryRouter, Routes, Route } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   ShieldCheck, 
@@ -10,7 +10,9 @@ import {
   Fingerprint,
   Circle
 } from "lucide-react";
-import axios from "axios";
+
+import { useDispatch } from "react-redux";
+import { fetchGroupMembers } from "../../../features/groups/groupsSlice";
 
 // --- SUB-COMPONENTS ---
 
@@ -81,33 +83,25 @@ const GroupMembers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
 
+  const dispatch = useDispatch();
+
+
   useEffect(() => {
     async function getMembers() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/groups/members",
-          {
-            params: { groupId: group._id },
-            withCredentials: true,
-          }
-        );
-        setMembers(Array.isArray(response.data.members) ? response.data.members : []);
-      } catch (err) {
-        // Fallback mock
-        setMembers([
-          { role: "Admin", userId: { _id: "u1", fullname: { firstname: "Alex", lastname: "Rivera" } } },
-          { role: "Member", userId: { _id: "u2", fullname: { firstname: "Jordan", lastname: "Lee" } } },
-          { role: "Member", userId: { _id: "u3", fullname: { firstname: "Sam", lastname: "Chen" } } },
-          { role: "Member", userId: { _id: "u4", fullname: { firstname: "Taylor", lastname: "Swift" } } },
-        ]);
-      } finally {
-        setLoading(false);
+      const res = await dispatch(fetchGroupMembers(group._id));
+      console.log(res);
+      
+      if (res.meta.requestStatus === "fulfilled" && res.payload?.members) {
+        setMembers(res.payload.members);
+      } else {
+        setMembers([]);
       }
+      setLoading(false);
     }
     getMembers();
   }, [group._id]);
 
-  const filteredMembers = members.filter(m => {
+  const filteredMembers = (members || []).filter(m => {
     const fullName = `${m?.userId?.fullname?.firstname || ""} ${m?.userId?.fullname?.lastname || ""}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
