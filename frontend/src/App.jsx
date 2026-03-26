@@ -1,9 +1,14 @@
 import AppRoutes from "./routes/AppRoutes"
 import Navbar from "./components/common/Navbar"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchCurrentUser } from "./features/auth/authSlice";
 
 function App() {
   const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
   const hideNavbarRoutes = [
     "/login", 
     "/register", 
@@ -13,6 +18,17 @@ function App() {
     "/saved-notes", 
     "/profile"
   ];
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = dispatch(fetchCurrentUser());
+      console.log(res);
+      if(res.payload.user) {
+        navigate("/home");
+      }
+    }
+    fetchUser();
+  }, []);
 
   const shouldHideNavbar = 
     hideNavbarRoutes.includes(location.pathname) || 

@@ -71,13 +71,15 @@ async function loginUser(req, res) {
     },
     process.env.JWT_SECRET_KEY,
     {
-      expiresIn: "1d",
+      expiresIn: "365d",
     },
   );
-
+  
+  const ONE_YEAR = 31536000;
   res.cookie("token", token, {
     httpOnly: true,
     secure: true,
+    maxAge:ONE_YEAR,
   });
 
   return res.status(200).json({
