@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { loginUser } from "../../services/authApi";
-import { useNavigate, BrowserRouter, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../features/auth/authSlice";
+import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
+import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
   Mail,
@@ -17,6 +19,9 @@ import {
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const reduxLoading = useSelector(selectAuthLoading);
+  const reduxError = useSelector(selectAuthError);
   const {
     register,
     handleSubmit,
@@ -25,13 +30,12 @@ const LoginForm = () => {
   const [authError, setAuthError] = useState("");
 
   const onSubmit = async (data) => {
-    try {
-      setAuthError("");
-      const response = await loginUser(data);
+    setAuthError("");
+    const resultAction = await dispatch(loginUser(data));
+    if (loginUser.fulfilled.match(resultAction)) {
       navigate("/find-groups");
-    } catch (err) {
-      setAuthError("Authentication failed. Please check your credentials.");
-      // For preview purposes, we allow bypass if needed, but here we simulate a real check
+    } else {
+      setAuthError(resultAction.payload || "Authentication failed. Please check your credentials.");
     }
   };
 
@@ -164,10 +168,10 @@ const LoginForm = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || reduxLoading}
                 className="group flex items-center justify-center gap-4 py-4 bg-white text-black rounded-3xl text-xs font-black uppercase tracking-[0.2em] shadow-xl shadow-white/5 hover:bg-indigo-50 transition-all"
               >
-                {isSubmitting ? (
+                {isSubmitting || reduxLoading ? (
                   <Zap size={18} className="animate-spin text-indigo-600" />
                 ) : (
                   <>

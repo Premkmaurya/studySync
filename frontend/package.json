@@ -14,6 +14,7 @@
     "@mantine/core": "^7.7.1",
     "@mantine/hooks": "^7.7.1",
     "@mantine/tiptap": "^7.7.1",
+    "@reduxjs/toolkit": "^2.11.2",
     "@tailwindcss/vite": "^4.1.16",
     "@tiptap/extension-color": "^3.8.0",
     "@tiptap/extension-highlight": "^3.8.0",
@@ -37,6 +38,7 @@
     "react-hook-form": "^7.65.0",
     "react-icons": "^5.5.0",
     "react-markdown": "^10.1.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.9.4",
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.1.16"
