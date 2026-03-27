@@ -29,6 +29,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       setAuthError("");
+      console.log(data)
       const response = await dispatch(registerUser(data));
       if(response.payload.user) {
         navigate("/find-groups");
@@ -122,16 +123,16 @@ const Register = () => {
                 <div className="relative group">
                   <input
                     type="text"
-                    {...register("firstName", {
+                    {...register("firstname", {
                       required: "First Name is required",
                     })}
                     placeholder="Jane"
                     className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-4 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all placeholder:text-zinc-800"
                   />
                 </div>
-                {errors.firstName && (
+                {errors.firstname && (
                   <p className="text-[10px] text-red-500 font-bold ml-2">
-                    {errors.firstName.message}
+                    {errors.firstname.message}
                   </p>
                 )}
               </div>
@@ -142,16 +143,16 @@ const Register = () => {
                 <div className="relative group">
                   <input
                     type="text"
-                    {...register("lastName", {
+                    {...register("lastname", {
                       required: "Last Name is required",
                     })}
                     placeholder="Doe"
                     className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-4 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all placeholder:text-zinc-800"
                   />
                 </div>
-                {errors.lastName && (
+                {errors.lastname && (
                   <p className="text-[10px] text-red-500 font-bold ml-2">
-                    {errors.lastName.message}
+                    {errors.lastname.message}
                   </p>
                 )}
               </div>

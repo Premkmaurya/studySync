@@ -15,6 +15,11 @@ export const joinGroupApi = async (groupId) => {
   return response.data;
 };
 
+export const joinedGroupApi = async () => {
+  const response = await api.get("/groups/joined-groups");
+  return response.data;
+};
+
 export const fetchGroupMembersApi = async (groupId) => {
   const response = await api.get(`/groups/members`, { params: { groupId } });
   return response.data;

@@ -54,10 +54,7 @@ const GroupSettings = () => {
   const context = useOutletContext();
   const group = context?.group || { name: "Collective_Nexus", members: 42, field: "Engineering" };
 
-  const [notifications, setNotifications] = useState(true);
-  const [aiSync, setAiSync] = useState(true);
   const [publicHub, setPublicHub] = useState(false);
-  const [strictMode, setStrictMode] = useState(false);
 
   const containerVariants = {
     hidden: { opacity: 0 },

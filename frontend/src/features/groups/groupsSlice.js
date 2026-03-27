@@ -5,6 +5,7 @@ import {
   joinGroupApi,
   fetchGroupDetailsApi,
   fetchGroupMembersApi,
+  joinedGroupApi,
 } from "./groupsApi";
 
 export const fetchGroups = createAsyncThunk(
@@ -41,6 +42,19 @@ export const joinGroup = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to join group",
+      );
+    }
+  },
+);
+
+export const joinedGroup = createAsyncThunk(
+  "groups/joinedGroup",
+  async (_, thunkAPI) => {
+    try {
+      return await joinedGroupApi();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch joined groups",
       );
     }
   },

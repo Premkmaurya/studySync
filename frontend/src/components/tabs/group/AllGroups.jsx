@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate, BrowserRouter } from "react-router-dom";
+import { motion,AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux"
 import {
   Search,
   Users,
@@ -18,6 +18,8 @@ import {
   Globe,
   Sparkles,
 } from "lucide-react";
+import { selectGroups, selectGroupsLoading } from "../../../features/groups/groupsSelectors";
+import { fetchGroups } from "../../../features/groups/groupsSlice";
 
 // --- CATEGORY CONFIGURATION ---
 const CATEGORIES = [
@@ -108,85 +110,24 @@ const DiscoveryCard = ({ group, index }) => {
 };
 
 const AllGroupsContent = () => {
-  const [groups, setGroups] = useState([]);
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const loading = useSelector(selectGroupsLoading)
+  const groups = useSelector(selectGroups)
+
+  const dispatch = useDispatch()
+
   useEffect(() => {
-    const fetchGroups = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get("http://localhost:3000/api/groups/all", {
-          withCredentials: true,
-        });
-        console.log(res.data)
-        if (res.data?.groups) {
-          setGroups(res.data.groups);
-          setFilteredGroups(res.data.groups);
-        }
-      } catch (err) {
-        console.error("Discovery failed - Using Fallback Data", err);
-        // Fallback Mock Data to keep the UI beautiful even without backend
-        const mockGroups = [
-          {
-            _id: "1",
-            name: "Neural Architects",
-            field: "Neural Networks",
-            description:
-              "Deep dive into Transformer architectures and cognitive modeling.",
-            memberCount: 124,
-          },
-          {
-            _id: "2",
-            name: "Web Engineering Elite",
-            field: "Web Engineering",
-            description:
-              "Crafting high-performance distributed web systems with modern stacks.",
-            memberCount: 89,
-          },
-          {
-            _id: "3",
-            name: "Security Protocol 9",
-            field: "Security",
-            description:
-              "Zero-trust architecture and proactive threat hunting methodologies.",
-            memberCount: 56,
-          },
-          {
-            _id: "4",
-            name: "Algorithmics Pro",
-            field: "Algorithms",
-            description:
-              "Solving complex computational problems through advanced DSA.",
-            memberCount: 210,
-          },
-          {
-            _id: "5",
-            name: "Creative Systems",
-            field: "Others",
-            description:
-              "Exploring the intersection of generative art and user psychology.",
-            memberCount: 45,
-          },
-          {
-            _id: "6",
-            name: "Bio-Tech Nexus",
-            field: "Others",
-            description:
-              "Data science applications in modern molecular biology.",
-            memberCount: 32,
-          },
-        ];
-        setGroups(mockGroups);
-        setFilteredGroups(mockGroups);
-      } finally {
-        setLoading(false);
+    const fetchAllGroups = async () => {
+      const res = await dispatch(fetchGroups())
+      if(res.meta.requestStatus === "fulfilled"){
+        setFilteredGroups(res.payload.groups)
       }
     };
-    fetchGroups();
+    fetchAllGroups();
   }, []);
 
   useEffect(() => {
@@ -307,16 +248,6 @@ const AllGroupsContent = () => {
           </div>
         )}
       </main>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-      `,
-        }}
-      />
     </div>
   );
 };
