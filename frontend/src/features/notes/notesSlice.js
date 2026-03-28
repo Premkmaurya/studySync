@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchNotesApi, createNoteApi, summarizeNoteApi, searchNotesApi } from './notesApi';
+import { fetchNotesApi, createNoteApi, summarizeNoteApi, searchNotesApi, getMyNotesApi } from './notesApi';
 
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async (_, thunkAPI) => {
   try {
@@ -25,6 +25,14 @@ export const summarizeNote = createAsyncThunk('notes/summarizeNote', async (note
   }
 });
 
+export const getMyNotes = createAsyncThunk('notes/getMyNotes', async (_, thunkAPI) => {
+  try {
+    return await getMyNotesApi();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch your notes');
+  }
+});
+
 export const searchNotes = createAsyncThunk('notes/searchNotes', async (query, thunkAPI) => {
   try {
     return await searchNotesApi(query);
@@ -35,7 +43,6 @@ export const searchNotes = createAsyncThunk('notes/searchNotes', async (query, t
 
 const initialState = {
   notes: [],
-  selectedNote: null,
   loading: false,
   error: null,
 };
@@ -44,9 +51,6 @@ const notesSlice = createSlice({
   name: 'notes',
   initialState,
   reducers: {
-    setSelectedNote: (state, action) => {
-      state.selectedNote = action.payload;
-    },
     setLoading:(state,action) =>{
       state.loading = action.payload;
       state.error = null;

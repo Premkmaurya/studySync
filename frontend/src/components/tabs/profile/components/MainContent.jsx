@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileText,
@@ -11,6 +11,10 @@ import {
   Briefcase,
 } from "lucide-react";
 import StartCard from "./StartCard";
+import { useDispatch, useSelector } from "react-redux";
+import { getMyNotes } from "../../../../features/notes/notesSlice";
+import { selectJoinedGroups } from "../../../../features/groups/groupsSelectors";
+import { joinedGroup } from "../../../../features/groups/groupsSlice";
 
 const ArrowRight = ({ size, className }) => (
   <svg
@@ -29,6 +33,30 @@ const ArrowRight = ({ size, className }) => (
 );
 
 const MainContent = ({ activeTab }) => {
+  const dispatch = useDispatch();
+  const groups = useSelector(selectJoinedGroups);
+  if (groups.length === 0) {
+    const fetchGroups = async () => {
+      const res = await dispatch(joinedGroup());
+      console.log("Fetched joined groups:", res.payload);
+      groups = res.payload?.groups;
+    };
+    fetchGroups();
+  }
+  const [myNotes, setMyNotes] = useState([]);
+
+  useEffect(() => {
+    // Example: Fetch notes when the "notes" tab is active
+    const fetchMyNotes = async () => {
+      if (activeTab === "profile") {
+        const res = await dispatch(getMyNotes());
+        setMyNotes(res.payload?.notes);
+      }
+    };
+
+    fetchMyNotes();
+  }, [activeTab]);
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -43,13 +71,13 @@ const MainContent = ({ activeTab }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center ">
             <StartCard
               label="Total Notes"
-              value="124"
+              value={myNotes.length}
               icon={FileText}
               color="text-cyan-400"
             />
             <StartCard
               label="Active Groups"
-              value="12"
+              value={groups.length}
               icon={Users}
               color="text-fuchsia-400"
             />
@@ -64,26 +92,7 @@ const MainContent = ({ activeTab }) => {
 
         {activeTab === "groups" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Frontend Mavericks",
-                tag: "ENG",
-                icon: Code,
-                color: "text-blue-400",
-              },
-              {
-                name: "Design Alpha",
-                tag: "UI",
-                icon: Palette,
-                color: "text-fuchsia-400",
-              },
-              {
-                name: "Global Strategy",
-                tag: "MGMT",
-                icon: Briefcase,
-                color: "text-amber-400",
-              },
-            ].map((group, i) => (
+            {groups.map((group, i) => (
               <div
                 key={i}
                 className="group p-8 bg-zinc-900/40 border border-white/5 rounded-[40px] hover:border-white/10 transition-all cursor-pointer"

@@ -1,4 +1,4 @@
-const messageModel = require("../models/message.model");
+const messageModel = require("../models/groupChats.model");
 
 const getMessages = async (req, res) => {
   const { groupId } = req.params;

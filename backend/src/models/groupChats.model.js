@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 
-const messageSchema = new mongoose.Schema(
+const groupChatSchema = new mongoose.Schema(
   {
     text: {
       type: String,
@@ -21,6 +21,6 @@ const messageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const messageModel = mongoose.model("message", messageSchema);
+const groupChatModel = mongoose.model("groupChat", groupChatSchema);
 
-module.exports = messageModel;
+module.exports = groupChatModel;

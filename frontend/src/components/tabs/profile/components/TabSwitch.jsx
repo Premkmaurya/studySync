@@ -1,6 +1,3 @@
-import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { User, Users, FileText, Bookmark } from "lucide-react";
 
 const TabSwitch = ({ tabs, activeTab, setActiveTab }) => {
   return (

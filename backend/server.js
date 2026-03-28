@@ -6,7 +6,7 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
 
-const messageModel = require("./src/models/message.model");
+const messageModel = require("./src/models/groupChats.model");
 const aiMessageModel = require("./src/models/aiMessage.model");
 const generateResponse = require("./src/services/ai.service");
 

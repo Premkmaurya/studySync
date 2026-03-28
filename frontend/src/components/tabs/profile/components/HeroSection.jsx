@@ -1,7 +1,10 @@
 import React from "react";
-import { Zap, Code, Mail } from "lucide-react";
+import { Zap, Mail } from "lucide-react";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../../features/auth/authSelectors";
 
 const HeroSection = () => {
+  const user = useSelector(selectUser);
   return (
     <section className="flex flex-col md:flex-row items-center gap-8 mb-16">
       <div className="relative group">
@@ -18,14 +21,11 @@ const HeroSection = () => {
 
       <div className="text-center md:text-left">
         <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-2">
-          Alex Rivera
+          {user ? user.fullname.firstname + " " + user.fullname.lastname : "Loading..."}
         </h1>
         <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
-          <span className="flex items-center gap-2 bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase border border-indigo-500/20">
-            <Code size={12} /> Sr. Software Architect
-          </span>
-          <span className="text-zinc-600 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-2">
-            <Mail size={14} /> alex.n@nexus.ai
+ <span className="text-zinc-600 font-bold text-xs uppercase tracking-[0.2em] flex items-center gap-2">
+            <Mail size={14} /> {user ? user.email : "Loading..."}
           </span>
         </div>
       </div>

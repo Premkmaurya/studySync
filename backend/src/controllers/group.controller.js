@@ -1,7 +1,6 @@
 const groupModel = require("../models/group.model");
-const userGroupModel = require("../models/userGroup.model");
+const userGroupModel = require("../models/joinGroup.model");
 const uploadImage = require("../services/image.service");
-const messageModel = require("../models/message.model");
 
 async function getAllGroups(req, res) {
   const groups = await groupModel.find().skip(0).limit(10);

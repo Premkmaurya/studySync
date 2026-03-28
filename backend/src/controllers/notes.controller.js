@@ -26,6 +26,17 @@ async function getNotes(req, res) {
   });
 }
 
+async function getMyNotes(req, res) {
+  const user = req.user;
+  const notes = await noteModel
+    .find({ userId: user.id })
+    .sort({ createdAt: -1 });
+  return res.status(200).json({
+    message: "your notes fetch successfully.",
+    notes,
+  });
+}
+
 async function searchNotes(req, res) {
   const { q } = req.query;
   let filter = {};
@@ -43,5 +54,6 @@ async function searchNotes(req, res) {
 module.exports = {
   createNote,
   getNotes,
+  getMyNotes,
   searchNotes,
 };

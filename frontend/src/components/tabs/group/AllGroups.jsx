@@ -23,7 +23,7 @@ import {
   selectGroupsLoading,
   selectJoinedGroups,
 } from "../../../features/groups/groupsSelectors";
-import { fetchGroups, joinGroup } from "../../../features/groups/groupsSlice";
+import { fetchGroups, joinGroup, setJoinedGroups } from "../../../features/groups/groupsSlice";
 
 // --- CATEGORY CONFIGURATION ---
 const CATEGORIES = [
@@ -60,6 +60,7 @@ const DiscoveryCard = ({ group, index }) => {
   const handleJoinGroup = async () => {
     const res = await dispatch(joinGroup(group._id));
     if (res.meta.requestStatus === "fulfilled") {
+      dispatch(setJoinedGroups([...joinedGroups, res.payload.group]));
       navigate(`/group/${group._id}`);
     }
   };
