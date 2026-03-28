@@ -112,6 +112,9 @@ const groupsSlice = createSlice({
   name: "groups",
   initialState,
   reducers: {
+    setGroups: (state, action) => {
+      state.groups = action.payload;
+    },
     setJoinedGroups: (state, action) => {
       state.joinedGroups = action.payload;
     },
@@ -145,8 +148,25 @@ const groupsSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteGroup.fulfilled, (state) => {
+      .addCase(updateGroup.fulfilled, (state, action) => {
         state.loading = false;
+        // Handle both response formats: { group: {...} } or just {...}
+        const updatedGroup = action.payload.group || action.payload;
+        if (updatedGroup && updatedGroup._id) {
+          const index = state.groups.findIndex(g => g._id === updatedGroup._id);
+          if (index !== -1) {
+            state.groups[index] = updatedGroup;
+          }
+          // Also update in joinedGroups if present
+          const joinedIndex = state.joinedGroups.findIndex(g => g._id === updatedGroup._id);
+          if (joinedIndex !== -1) {
+            state.joinedGroups[joinedIndex] = updatedGroup;
+          }
+        }
+      })
+      .addCase(deleteGroup.fulfilled, (state, action) => {
+        state.loading = false;
+        // Optionally remove the deleted group from state
       })
       .addCase(deleteGroup.rejected, (state, action) => {
         state.loading = false;
@@ -155,6 +175,6 @@ const groupsSlice = createSlice({
   },
 });
 
-export const { setJoinedGroups, clearGroupsError } = groupsSlice.actions;
+export const { setJoinedGroups, clearGroupsError,setGroups } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Trash2, Info, ChevronRight, Check, AlertCircle } from "lucide-react";
-import { updateGroup } from "../../../features/groups/groupsSlice";
+import { deleteGroup, updateGroup } from "../../../features/groups/groupsSlice";
 
 const SectionHeader = ({
   icon: Icon,
@@ -59,15 +59,10 @@ const Toggle = ({ enabled, setEnabled, label, subLabel }) => (
 
 const GroupSettings = () => {
   const context = useOutletContext();
-  const group = context?.group || {
-    _id: "",
-    name: "Collective_Nexus",
-    members: 42,
-    field: "Engineering",
-  };
+  const { group, setGroup } = context || {};
 
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.groups);
+  const navigate = useNavigate();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -79,6 +74,7 @@ const GroupSettings = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
 
   // Update form when context changes
   useEffect(() => {
@@ -118,6 +114,16 @@ const GroupSettings = () => {
         }),
       ).unwrap();
 
+      // Update local context immediately with the updated group data
+      const updatedGroup = result.group || result;
+      setGroup((prev) => ({ ...prev, ...updatedGroup }));
+
+      // Also update form data to reflect changes
+      setFormData({
+        name: updatedGroup.name || formData.name,
+        field: updatedGroup.field || formData.field,
+      });
+
       // Update success
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
@@ -140,8 +146,8 @@ const GroupSettings = () => {
       navigate("/home");
     } else {
       // Handle error (e.g., show error message)
-      setSaveError(res.payload || "Failed to delete group");
-      setTimeout(() => setSaveError(null), 3000);
+      setDeleteError(res.payload || "Failed to delete group");
+      setTimeout(() => setDeleteError(null), 3000);
     }
   };
 
@@ -208,11 +214,30 @@ const GroupSettings = () => {
                     onChange={(e) => handleInputChange("field", e.target.value)}
                     className="w-full bg-zinc-950 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold text-white outline-none appearance-none focus:border-indigo-500/50 transition-all"
                   >
-                    <option>Engineering</option>
-                    <option>Research</option>
-                    <option>Strategic Ops</option>
-                    <option>Marketing</option>
-                    <option>Sales</option>
+                    <option value="" disabled selected className="bg-zinc-900">
+                      Select Domain
+                    </option>
+                    <option value="web-dev" className="bg-zinc-900">
+                      Web Engineering
+                    </option>
+                    <option value="dsa" className="bg-zinc-900">
+                      Algorithms
+                    </option>
+                    <option value="ai-ml" className="bg-zinc-900">
+                      Neural Networks
+                    </option>
+                    <option value="cybersecurity" className="bg-zinc-900">
+                      Security
+                    </option>
+                    <option value="design" className="bg-zinc-900">
+                      Visual Systems
+                    </option>
+                    <option value="bio" className="bg-zinc-900">
+                      Bio-Tech
+                    </option>
+                    <option value="other" className="bg-zinc-900">
+                      Others
+                    </option>
                   </select>
                   <ChevronRight
                     size={16}
@@ -306,7 +331,7 @@ const GroupSettings = () => {
                 Once deleted, all data associated with this hub will be
                 permanently removed and cannot be recovered.
               </p>
-              {setSaveError && (
+              {deleteError && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -314,7 +339,7 @@ const GroupSettings = () => {
                   className="flex items-center gap-2 text-red-400 mt-4"
                 >
                   <AlertCircle size={18} />
-                  <span className="text-sm font-bold">{saveError}</span>
+                  <span className="text-sm font-bold">{deleteError}</span>
                 </motion.div>
               )}
             </div>

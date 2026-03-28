@@ -198,7 +198,7 @@ const SingleGroupPage = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <Outlet context={{ group }} />
+              <Outlet context={{ group, setGroup }} />
             </motion.div>
           </AnimatePresence>
         </div>
