@@ -1,4 +1,5 @@
 const noteModel = require("../models/note.model");
+const savedNoteModel = require("../models/savedNote.model");
 
 async function createNote(req, res) {
   const user = req.user;
@@ -51,9 +52,55 @@ async function searchNotes(req, res) {
   }
 }
 
+async function saveNote(req, res) {
+  const user = req.user;
+  const { noteId } = req.params;
+
+  const note = await noteModel.findById(noteId);
+
+  if (!note) {
+    return res.status(404).json({
+      message: "Note not found.",
+    });
+  }
+  if (note.userId.toString() === user.id.toString()) {
+    return res.status(400).json({
+      message: "You cannot save your own note.",
+    });
+  }
+
+  const isAlreadySaved = await savedNoteModel.findOne({ userId: user.id, noteId });
+
+  if (isAlreadySaved) {
+    return res.status(400).json({
+      message: "You have already saved this note.",
+    });
+  }
+
+  await savedNoteModel.create({
+    userId: user.id,
+    noteId,
+  });
+  
+  return res.status(200).json({
+    message: "Note saved successfully.",
+  });
+}
+
+async function getSavedNotes(req, res) {
+  const user = req.user;
+  const savedNotes = await savedNoteModel.find({ userId: user.id }).populate("noteId").sort({ createdAt: -1 });
+  return res.status(200).json({
+    message: "Your saved notes fetched successfully.",
+    savedNotes,
+  });
+}
+
 module.exports = {
   createNote,
   getNotes,
   getMyNotes,
+  saveNote,
+  getSavedNotes,
   searchNotes,
 };

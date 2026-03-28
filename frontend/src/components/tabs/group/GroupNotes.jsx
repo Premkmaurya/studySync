@@ -12,14 +12,17 @@ import {
   Filter,
   ArrowUpRight,
   Database,
+  Bookmark,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectNotes } from "../../../features/notes/notesSelectors";
-import { fetchNotes, setLoading} from "../../../features/notes/notesSlice";
+import {
+  fetchNotes,
+  setLoading,
+  saveNote,
+} from "../../../features/notes/notesSlice";
 
 dayjs.extend(relativeTime);
-
-// --- COMPONENT LOGIC ---
 
 const GroupNotes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,20 +30,30 @@ const GroupNotes = () => {
 
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes);
-  const loading = useSelector((state)=>state.notes.loading);
+  const loading = useSelector((state) => state.notes.loading);
 
   useEffect(() => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
       const res = await dispatch(fetchNotes());
-      if(res?.payload?.success || res?.payload){
+      if (res?.payload?.success || res?.payload) {
         dispatch(setLoading(false));
-      }else{
+      } else {
         dispatch(setLoading(false));
       }
     };
     loadNotes();
   }, []);
+
+  const handleSaveNote = async (noteId) => {
+    try {
+      const res = await dispatch(saveNote(noteId));
+      console.log("note saved successfully!!", res);
+      // Maybe show a toast or something, but for now just dispatch
+    } catch (error) {
+      console.error("Failed to save note:", error);
+    }
+  };
 
   const filteredArticles = notes.filter((article) =>
     (article.title || "").toLowerCase().includes(searchTerm.toLowerCase()),
@@ -112,10 +125,17 @@ const GroupNotes = () => {
                     <div className="p-4 bg-zinc-800 rounded-2xl text-indigo-400 group-hover:bg-white group-hover:text-black transition-all duration-300">
                       <FileText size={24} />
                     </div>
-                    <div className="flex flex-col items-end">
+                    <div className="flex flex-col items-end gap-2">
                       <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-1.5">
                         <Clock size={10} /> {dayjs(article.createdAt).fromNow()}
                       </span>
+                      <button
+                        onClick={() => handleSaveNote(article._id)}
+                        className="p-3 bg-zinc-800 w-10 h-10 rounded-full cursor-pointer text-zinc-400 hover:text-indigo-400 hover:bg-zinc-700 transition-all duration-300"
+                        title="Save Note"
+                      >
+                        <Bookmark size={16} />
+                      </button>
                     </div>
                   </div>
 

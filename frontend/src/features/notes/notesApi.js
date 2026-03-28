@@ -24,3 +24,13 @@ export const searchNotesApi = async (query) => {
   const response = await api.get(`/notes/search?q=${query}`);
   return response.data;
 };
+
+export const saveNoteApi = async (noteId) => {
+  const response = await api.post(`/notes/save-note/${noteId}`);
+  return response.data;
+};
+
+export const getSavedNotesApi = async () => {
+  const response = await api.get('/notes/saved-notes');
+  return response.data;
+};

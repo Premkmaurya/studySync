@@ -34,12 +34,14 @@ const ArrowRight = ({ size, className }) => (
 
 const MainContent = ({ activeTab }) => {
   const dispatch = useDispatch();
-  const groups = useSelector(selectJoinedGroups);
-  if (groups.length === 0) {
+  const [joinedGroups, setJoinedGroups] = useState(
+    useSelector(selectJoinedGroups) || [],
+  );
+  if (joinedGroups.length === 0) {
     const fetchGroups = async () => {
       const res = await dispatch(joinedGroup());
       console.log("Fetched joined groups:", res.payload);
-      groups = res.payload?.groups;
+      setJoinedGroups(res.payload.groups);
     };
     fetchGroups();
   }
@@ -77,7 +79,7 @@ const MainContent = ({ activeTab }) => {
             />
             <StartCard
               label="Active Groups"
-              value={groups.length}
+              value={joinedGroups.length}
               icon={Users}
               color="text-fuchsia-400"
             />
@@ -92,7 +94,7 @@ const MainContent = ({ activeTab }) => {
 
         {activeTab === "groups" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {groups.map((group, i) => (
+            {joinedGroups.map((group, i) => (
               <div
                 key={i}
                 className="group p-8 bg-zinc-900/40 border border-white/5 rounded-[40px] hover:border-white/10 transition-all cursor-pointer"
@@ -100,14 +102,14 @@ const MainContent = ({ activeTab }) => {
                 <div
                   className={`p-4 bg-zinc-800 rounded-3xl w-fit mb-6 ${group.color} group-hover:bg-white group-hover:text-black transition-all`}
                 >
-                  <group.icon size={28} />
+                  <Code size={20} />
                 </div>
                 <h4 className="text-2xl font-black tracking-tighter text-white mb-2">
                   {group.name}
                 </h4>
                 <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/5">
                   <span className="text-[10px] font-black text-zinc-500 tracking-widest">
-                    {group.tag}
+                    {group.field}
                   </span>
                   <ArrowUpRight
                     size={18}

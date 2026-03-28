@@ -10,6 +10,10 @@ router.get("/get",authMiddleware,notesController.getNotes)
 
 router.get('/my-notes', authMiddleware, notesController.getMyNotes)
 
+router.post('/save-note/:noteId',authMiddleware,notesController.saveNote)
+
+router.get('/saved-notes', authMiddleware, notesController.getSavedNotes)
+
 router.get("/search",authMiddleware,notesController.searchNotes)
 
 module.exports = router;

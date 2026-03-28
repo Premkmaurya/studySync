@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchNotesApi, createNoteApi, summarizeNoteApi, searchNotesApi, getMyNotesApi } from './notesApi';
+import { fetchNotesApi, createNoteApi, summarizeNoteApi, searchNotesApi, getMyNotesApi, saveNoteApi, getSavedNotesApi } from './notesApi';
 
 export const fetchNotes = createAsyncThunk('notes/fetchNotes', async (_, thunkAPI) => {
   try {
@@ -41,8 +41,25 @@ export const searchNotes = createAsyncThunk('notes/searchNotes', async (query, t
   }
 });
 
+export const saveNote = createAsyncThunk('notes/saveNote', async (noteId, thunkAPI) => {
+  try {
+    return await saveNoteApi(noteId);
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to save note');
+  }
+});
+
+export const getSavedNotes = createAsyncThunk('notes/getSavedNotes', async (_, thunkAPI) => {
+  try {
+    return await getSavedNotesApi();
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch saved notes');
+  }
+});
+
 const initialState = {
   notes: [],
+  savedNotes: [],
   loading: false,
   error: null,
 };
@@ -54,6 +71,9 @@ const notesSlice = createSlice({
     setLoading:(state,action) =>{
       state.loading = action.payload;
       state.error = null;
+    },
+    setSavedNotes:(state,action) =>{
+      state.savedNotes = action.payload;
     },
     clearNotesError: (state) => {
       state.error = null;
