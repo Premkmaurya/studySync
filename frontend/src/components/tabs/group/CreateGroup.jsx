@@ -146,10 +146,12 @@ const CreateGroup = () => {
                      >
                        <option value="" disabled selected className="bg-zinc-900">Select Domain</option>
                        <option value="web-dev" className="bg-zinc-900">Web Engineering</option>
+                       <option value="dsa" className="bg-zinc-900">Algorithms</option>
                        <option value="ai-ml" className="bg-zinc-900">Neural Networks</option>
+                       <option value="cybersecurity" className="bg-zinc-900">Security</option>
                        <option value="design" className="bg-zinc-900">Visual Systems</option>
-                       <option value="cyber" className="bg-zinc-900">Security Protocol</option>
                        <option value="bio" className="bg-zinc-900">Bio-Tech</option>
+                       <option value="other" className="bg-zinc-900">Others</option>
                      </select>
                      <Zap size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none" />
                    </div>

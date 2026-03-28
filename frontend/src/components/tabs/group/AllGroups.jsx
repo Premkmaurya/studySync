@@ -47,6 +47,8 @@ const CATEGORIES = [
     icon: Shield,
     color: "text-emerald-400",
   },
+  { id: "design", label: "Visual Systems", icon: Palette, color: "text-fuchsia-400" },
+  { id: "bio", label: "Bio-Tech", icon: Globe, color: "text-emerald-300" },
   { id: "other", label: "Others", icon: Globe, color: "text-zinc-400" },
 ];
 
@@ -139,7 +141,6 @@ const AllGroupsContent = () => {
   useEffect(() => {
     const fetchAllGroups = async () => {
       const res = await dispatch(fetchGroups());
-      console.log(res.payload.groups)
       if (res.meta.requestStatus === "fulfilled") {
         setFilteredGroups(res.payload.groups);
       }
@@ -212,12 +213,9 @@ const AllGroupsContent = () => {
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() =>
-                  setSelectedCategory(cat.id === "All" ? "All" : cat.label)
-                }
+                onClick={() => setSelectedCategory(cat.id)}
                 className={`flex items-center gap-3 px-5 py-2 rounded-2xl text-[0.5rem] font-black uppercase tracking-widest transition-all whitespace-nowrap flex-shrink-0 border-2 ${
-                  selectedCategory === cat.label ||
-                  (selectedCategory === "All" && cat.id === "All")
+                  selectedCategory === cat.id
                     ? "bg-white text-black border-white"
                     : "bg-zinc-900/50 text-zinc-500 border-zinc-700 hover:border-white/20 hover:text-white"
                 }`}
