@@ -4,7 +4,7 @@ import { MessageSquare, FileText, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 
-const GroupCard = () => {
+const GroupCard = ({ group, isSuggested=false }) => {
   const navigate = useNavigate();
   return (
     <motion.div

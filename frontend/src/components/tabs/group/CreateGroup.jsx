@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { useNavigate, BrowserRouter, Routes, Route } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { 
-  ChevronLeft, 
   Camera, 
   X, 
   Sparkles, 
   Zap, 
-  Users, 
-  ShieldCheck, 
-  Globe,
+  Users,
   Rocket
 } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { createGroup } from '../../../features/groups/groupsSlice';
 
 // --- CREATE GROUP COMPONENT ---
 const CreateGroup = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm();
   
@@ -28,6 +26,8 @@ const CreateGroup = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [isPublic, setIsPublic] = useState(true);
+
+  const dispatch = useDispatch();
   
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -50,16 +50,9 @@ const CreateGroup = () => {
     formData.append('privacy', isPublic ? 'public' : 'private');
     if (imageFile) formData.append('image', imageFile);
 
-    try {
-      // In a real app, this would be your production API endpoint
-      await axios.post('http://localhost:3000/api/groups/create', formData, {
-        withCredentials: true,
-      });
-      navigate('/dashboard'); 
-    } catch (error) {
-      console.error("Group creation failed", error);
-      // For preview purposes, we simulate success
-      alert("Hub initialization sequence complete (Simulated)");
+    const res = await dispatch(createGroup(formData));
+    if (res.meta.requestStatus === 'fulfilled') {
+      navigate(`/find-groups`);
     }
   };
 

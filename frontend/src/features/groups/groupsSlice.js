@@ -3,9 +3,10 @@ import {
   fetchGroupsApi,
   createGroupApi,
   joinGroupApi,
-  fetchGroupDetailsApi,
   fetchGroupMembersApi,
   joinedGroupApi,
+  deleteGroupApi,
+  updateGroupApi,
 } from "./groupsApi";
 
 export const fetchGroups = createAsyncThunk(
@@ -66,7 +67,7 @@ export const fetchGroupMembers = createAsyncThunk(
     try {
       return await fetchGroupMembersApi(groupId);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch group members",
       );
@@ -74,14 +75,27 @@ export const fetchGroupMembers = createAsyncThunk(
   },
 );
 
-export const fetchGroupDetails = createAsyncThunk(
-  "groups/fetchGroupDetails",
-  async (groupId, thunkAPI) => {
+export const updateGroup = createAsyncThunk(
+  "groups/updateGroup",
+  async ({ groupId, groupData }, thunkAPI) => {
     try {
-      return await fetchGroupDetailsApi(groupId);
+      return await updateGroupApi(groupId, groupData);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to fetch group details",
+        error.response?.data?.message || "Failed to update group",
+      );
+    }
+  },
+);
+
+export const deleteGroup = createAsyncThunk(
+  "groups/deleteGroup",
+  async (groupId, thunkAPI) => {
+    try {
+      return await deleteGroupApi(groupId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to delete group",
       );
     }
   },
@@ -89,8 +103,7 @@ export const fetchGroupDetails = createAsyncThunk(
 
 const initialState = {
   groups: [],
-  currentGroup: null,
-  members: [],
+  joinedGroups: [],
   loading: false,
   error: null,
 };
@@ -99,8 +112,8 @@ const groupsSlice = createSlice({
   name: "groups",
   initialState,
   reducers: {
-    setCurrentGroup: (state, action) => {
-      state.currentGroup = action.payload;
+    setJoinedGroups: (state, action) => {
+      state.joinedGroups = action.payload;
     },
     clearGroupsError: (state) => {
       state.error = null;
@@ -120,14 +133,28 @@ const groupsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(fetchGroupDetails.fulfilled, (state, action) => {
-        // Assume API returns group and members inside payload
-        state.currentGroup = action.payload.group || action.payload;
-        state.members = action.payload.members || [];
+      .addCase(updateGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateGroup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteGroup.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(deleteGroup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { setCurrentGroup, clearGroupsError } = groupsSlice.actions;
+export const { setJoinedGroups, clearGroupsError } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

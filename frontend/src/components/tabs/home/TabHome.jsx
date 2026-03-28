@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, ArrowUpRight, Compass } from "lucide-react";
-import { joinedGroup } from "../../../features/groups/groupsSlice";
+import { joinedGroup,setJoinedGroups } from "../../../features/groups/groupsSlice";
 
-import GroupCard from "./components/GoupCard";
+import GroupCard from "./components/GroupCard"
+
+import { selectJoinedGroups } from "../../../features/groups/groupsSelectors";
 
 // --- SUB-COMPONENTS ---
 
 const Home = () => {
-  const [joinedGroups, setJoinedGroups] = useState([]);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const joinedGroups = useSelector(selectJoinedGroups);
 
   useEffect(() => {
     // Simulate fetching joined groups
@@ -21,6 +24,7 @@ const Home = () => {
       const res = await dispatch(joinedGroup());
       if (res.payload && res.payload.groups) {
         setJoinedGroups(res.payload.groups);
+        dispatch(setJoinedGroups(res.payload.groups))
       }
     };
 

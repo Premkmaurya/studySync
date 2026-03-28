@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { motion,AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
 import {
   Search,
   Users,
@@ -18,7 +18,11 @@ import {
   Globe,
   Sparkles,
 } from "lucide-react";
-import { selectGroups, selectGroupsLoading } from "../../../features/groups/groupsSelectors";
+import {
+  selectGroups,
+  selectGroupsLoading,
+  selectJoinedGroups,
+} from "../../../features/groups/groupsSelectors";
 import { fetchGroups, joinGroup } from "../../../features/groups/groupsSlice";
 
 // --- CATEGORY CONFIGURATION ---
@@ -48,22 +52,27 @@ const CATEGORIES = [
 
 const DiscoveryCard = ({ group, index }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const joinedGroups = useSelector(selectJoinedGroups);
 
   const handleJoinGroup = async () => {
-    const res = await dispatch(joinGroup(group._id))
-    if(res.meta.requestStatus === "fulfilled"){
-      navigate(`/group/${group._id}`)
+    const res = await dispatch(joinGroup(group._id));
+    if (res.meta.requestStatus === "fulfilled") {
+      navigate(`/group/${group._id}`);
     }
-  }
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-      style={{ willChange: 'transform, background-color' }}
+      transition={{
+        delay: index * 0.08,
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
+      style={{ willChange: "transform, background-color" }}
       className="group relative bg-zinc-900/30 border border-white/5 rounded-[40px] p-8 shadow-2xl transition-all duration-300 overflow-hidden"
     >
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full group-hover:bg-indigo-500/10 transition-all" />
@@ -85,7 +94,7 @@ const DiscoveryCard = ({ group, index }) => {
             Live Now
           </div>
           <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-1">
-            <Users size={10} /> {group.memberCount || 0} Members
+            <Users size={10} /> {group.members || 0} Members
           </span>
         </div>
       </div>
@@ -103,10 +112,10 @@ const DiscoveryCard = ({ group, index }) => {
       <div className="flex gap-3">
         <button
           onClick={handleJoinGroup}
-          className="flex-1 py-4 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
-          style={{ willChange: 'transform' }}
+          className="flex-1 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
+          style={{ willChange: "transform" }}
         >
-          Join Group
+          {joinedGroups.some((g) => g._id === group._id) ? "Enter Hub" : "Join Hub"}
         </button>
         <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-zinc-500 hover:text-white transition-all">
           <ArrowUpRight size={18} />
@@ -122,16 +131,17 @@ const AllGroupsContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const navigate = useNavigate();
 
-  const loading = useSelector(selectGroupsLoading)
-  const groups = useSelector(selectGroups)
+  const loading = useSelector(selectGroupsLoading);
+  const groups = useSelector(selectGroups);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchAllGroups = async () => {
-      const res = await dispatch(fetchGroups())
-      if(res.meta.requestStatus === "fulfilled"){
-        setFilteredGroups(res.payload.groups)
+      const res = await dispatch(fetchGroups());
+      console.log(res.payload.groups)
+      if (res.meta.requestStatus === "fulfilled") {
+        setFilteredGroups(res.payload.groups);
       }
     };
     fetchAllGroups();
@@ -189,7 +199,13 @@ const AllGroupsContent = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 overflow-x-auto pb-6 custom-scrollbar no-scrollbar" style={{ willChange: 'scroll-position', WebkitTransform: 'translate3d(0,0,0)' }}>
+          <div
+            className="flex items-center gap-3 overflow-x-auto pb-6 custom-scrollbar no-scrollbar"
+            style={{
+              willChange: "scroll-position",
+              WebkitTransform: "translate3d(0,0,0)",
+            }}
+          >
             <div className="p-4 bg-zinc-900 border border-white/10 rounded-2xl text-zinc-600 shrink-0">
               <Filter size={18} />
             </div>
@@ -205,7 +221,7 @@ const AllGroupsContent = () => {
                     ? "bg-white text-black border-white"
                     : "bg-zinc-900/50 text-zinc-500 border-zinc-700 hover:border-white/20 hover:text-white"
                 }`}
-                style={{ willChange: 'background-color, border-color' }}
+                style={{ willChange: "background-color, border-color" }}
               >
                 <cat.icon size={16} className={cat.color} />
                 {cat.label}
@@ -222,7 +238,10 @@ const AllGroupsContent = () => {
             </span>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start" style={{ WebkitTransform: 'translate3d(0,0,0)' }}>
+          <div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start"
+            style={{ WebkitTransform: "translate3d(0,0,0)" }}
+          >
             <AnimatePresence>
               {filteredGroups.length > 0 ? (
                 filteredGroups.map((group, i) => (

@@ -25,7 +25,12 @@ export const fetchGroupMembersApi = async (groupId) => {
   return response.data;
 };
 
-export const fetchGroupDetailsApi = async (groupId) => {
-  const response = await api.get(`/groups/${groupId}`);
+export const updateGroupApi = async (groupId, groupData) => {
+  const response = await api.patch(`/groups/update/${groupId}`, groupData);
   return response.data;
-};
+} 
+
+export const deleteGroupApi = async (groupId) => {
+  const response = await api.delete(`/groups/delete/${groupId}`);
+  return response.data;
+}

@@ -94,24 +94,34 @@ async function deleteGroup(req, res) {
 
 async function updateGroup(req, res) {
   const { groupId } = req.params;
-  const { name, description } = req.body;
+  const { name, description, field } = req.body;
   const image = req.file;
   const user = req.user;
+
+  // Validate groupId
+  if (!groupId || groupId.length < 24) {
+    return res.status(400).json({
+      message: "Invalid group ID",
+    });
+  }
+
+  const updateData = {};
+  if (name) updateData.name = name;
+  if (description) updateData.description = description;
+  if (field) updateData.field = field;
+
   const group = await groupModel.findOneAndUpdate(
     {
       _id: groupId,
       owner: user.id,
     },
-    {
-      name,
-      description,
-    },
+    updateData,
     { new: true }
   );
 
   if (!group) {
     return res.status(404).json({
-      message: "Group not found",
+      message: "Group not found or you don't have permission to update it",
     });
   }
 
