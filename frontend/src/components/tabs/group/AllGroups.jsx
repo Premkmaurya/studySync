@@ -19,7 +19,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { selectGroups, selectGroupsLoading } from "../../../features/groups/groupsSelectors";
-import { fetchGroups } from "../../../features/groups/groupsSlice";
+import { fetchGroups, joinGroup } from "../../../features/groups/groupsSlice";
 
 // --- CATEGORY CONFIGURATION ---
 const CATEGORIES = [
@@ -48,7 +48,14 @@ const CATEGORIES = [
 
 const DiscoveryCard = ({ group, index }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
+  const handleJoinGroup = async () => {
+    const res = await dispatch(joinGroup(group._id))
+    if(res.meta.requestStatus === "fulfilled"){
+      navigate(`/group/${group._id}`)
+    }
+  }
 
   return (
     <motion.div
@@ -95,11 +102,11 @@ const DiscoveryCard = ({ group, index }) => {
 
       <div className="flex gap-3">
         <button
-          onClick={() => navigate(`/group/${group._id}`)}
+          onClick={handleJoinGroup}
           className="flex-1 py-4 bg-white text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
           style={{ willChange: 'transform' }}
         >
-          Sync to Hub
+          Join Group
         </button>
         <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-zinc-500 hover:text-white transition-all">
           <ArrowUpRight size={18} />

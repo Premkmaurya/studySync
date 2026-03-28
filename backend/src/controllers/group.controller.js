@@ -147,9 +147,6 @@ async function joinGroup(req, res) {
     },
     { new: true }
   );
-  const io = req.app.get("io");
-
-  io.emit("groupUpdated", group);
 
   return res.status(200).json({
     message: "Joined group successfully",
@@ -166,9 +163,11 @@ async function joinedGroup(req, res) {
     });
   }
 
+  const groupDetails = await groupModel.find({ _id: { $in: groups.map(g => g.groupId) } });
+
   return res.status(200).json({
     message: "groups fetched successfully.",
-    groups,
+    groups: groupDetails,
   });
 }
 

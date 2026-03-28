@@ -89,7 +89,6 @@ const GroupMembers = () => {
   useEffect(() => {
     async function getMembers() {
       const res = await dispatch(fetchGroupMembers(group._id));
-      console.log(res);
       
       if (res.meta.requestStatus === "fulfilled" && res.payload?.members) {
         setMembers(res.payload.members);

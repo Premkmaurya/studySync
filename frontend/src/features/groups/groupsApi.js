@@ -11,7 +11,7 @@ export const createGroupApi = async (groupData) => {
 };
 
 export const joinGroupApi = async (groupId) => {
-  const response = await api.post(`/groups/${groupId}/join`);
+  const response = await api.post(`/groups/join/${groupId}`);
   return response.data;
 };
 
