@@ -33,7 +33,7 @@ const LoginForm = () => {
     setAuthError("");
     const resultAction = await dispatch(loginUser(data));
     if (loginUser.fulfilled.match(resultAction)) {
-      navigate("/find-groups");
+      navigate("/home");
     } else {
       setAuthError(resultAction.payload || "Authentication failed. Please check your credentials.");
     }

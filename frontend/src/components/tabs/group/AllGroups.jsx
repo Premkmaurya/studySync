@@ -113,7 +113,13 @@ const DiscoveryCard = ({ group, index }) => {
 
       <div className="flex gap-3">
         <button
-          onClick={handleJoinGroup}
+          onClick={()=>{
+            if(joinedGroups.some((g) => g._id === group._id)){
+              navigate(`/group/${group._id}`);
+            } else {
+              handleJoinGroup();
+            }
+          }}
           className="flex-1 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
           style={{ willChange: "transform" }}
         >

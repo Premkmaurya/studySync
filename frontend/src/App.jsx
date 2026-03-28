@@ -20,14 +20,18 @@ function App() {
   ];
 
   useEffect(() => {
+    const initialPath = location.pathname;
     const fetchUser = async () => {
       const res = await dispatch(fetchCurrentUser());
-      if (res.payload.user) {
-        navigate("/home");
+      if (res.payload?.user) {
+        const loginPaths = ["/", "/login", "/register"];
+        if (loginPaths.includes(initialPath)) {
+          navigate("/home");
+        }
       }
     };
     fetchUser();
-  }, []);
+  }, [dispatch, navigate, location.pathname]);
 
   const shouldHideNavbar =
     hideNavbarRoutes.includes(location.pathname) ||
