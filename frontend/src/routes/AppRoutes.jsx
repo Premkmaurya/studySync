@@ -12,7 +12,7 @@ import SingleGroup from "../components/tabs/group/SingleGroup";
 import GroupNotes from "../components/tabs/group/GroupNotes";
 import Profile from "../components/tabs/profile/Profile";
 import TabHome from "../components/tabs/home/TabHome";
-import SavedNotesContent from "../components/tabs/notes/SavedNotes";
+import SavedNotesContent from "../components/tabs/notes/Notes";
 
 import Home from "../pages/Home";
 import About from "../pages/About";

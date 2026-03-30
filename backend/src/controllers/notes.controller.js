@@ -20,6 +20,7 @@ async function createNote(req, res) {
 async function getNotes(req, res) {
   const notes = await noteModel
     .find({})
+    .limit(10)
     .sort({ createdAt: -1 });
   return res.status(200).json({
     message: "notes fetch successfully.",
