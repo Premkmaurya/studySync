@@ -34,7 +34,7 @@ async function generateResponse(prompt) {
 async function createVector(content) {
 
     const response = await ai.models.embedContent({
-        model: 'models/embedding-001',
+        model: 'gemini-embedding-001',
         contents: { 
           parts: [{ text: content }] 
         },

@@ -83,19 +83,19 @@ io.on("connection", (socket) => {
     const [userMessage, vectors] = await Promise.all([
       aiMessageModel.create({
         userId: socket.user.id,
-        chatId: messagePayload.chatId,
+        groupId: messagePayload.groupId,
         role: "user",
-        text: messagePayload.content,
+        text: messagePayload.text,
       }),
-      createVector(messagePayload.content),
+      createVector(messagePayload.text),
     ]);
     await createMemory({
       messageId: userMessage._id,
       vectors,
       metadata: {
-        chat: messagePayload.chatId,
+        chat: messagePayload.groupId,
         user: socket.user.id,
-        text: messagePayload.content,
+        text: messagePayload.text,
       },
     });
     const [memory, chatHistory] = await Promise.all([
@@ -107,7 +107,7 @@ io.on("connection", (socket) => {
       aiMessageModel
         .find({ chatId: messagePayload.chatId })
         .sort({ createdAt: -1 })
-        .limit(20)
+        .limit(10)
         .lean()
         .then((results) => results.reverse()),
     ]);
@@ -136,13 +136,13 @@ io.on("connection", (socket) => {
 
     socket.emit("ai-response", {
       content: response,
-      chatId: messagePayload.chatId,
+      groupId: messagePayload.groupId,
     });
 
     const [responseMessage, responseVector] = await Promise.all([
       aiMessageModel.create({
         userId: socket.user.id,
-        chatId: messagePayload.chatId,
+        groupId: messagePayload.groupId,
         role: "model",
         text: response,
       }),
@@ -152,7 +152,7 @@ io.on("connection", (socket) => {
       vectors: responseVector,
       messageId: responseMessage._id,
       metadata: {
-        chat: messagePayload.chatId,
+        chat: messagePayload.groupId,
         user: socket.user.id,
         text: response,
       },

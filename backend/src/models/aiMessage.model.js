@@ -10,7 +10,7 @@ const aiMessageSchema = new Schema(
             required: true, 
             index: true 
         },
-        chatId: {
+        groupId: {
             type: Schema.Types.ObjectId,
             ref: 'group',
             index: true

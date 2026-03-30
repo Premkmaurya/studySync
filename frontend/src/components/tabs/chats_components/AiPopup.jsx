@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import { useParams } from "react-router-dom";
 
 // Icons (Inline SVG for Zero Dependencies)
 const SparklesIcon = () => (
@@ -21,6 +22,8 @@ export default function AIPopup({ isOpen, onClose, setContent }) {
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef();
+
+  const {groupId} = useParams(); 
 
   // Socket Logic
 useEffect(() => {
@@ -51,9 +54,13 @@ useEffect(() => {
   }, [onClose]);
 
   const handleSend = () => {
+    const messagePayload = {
+      groupId: groupId,
+      text: inputValue,
+    }; 
     if (!inputValue.trim() || loading) return;
     setLoading(true);
-    socket?.emit("aiMessage", inputValue);
+    socket?.emit("ai-message", messagePayload);
   };
 
   const suggestions = ["create notes on React", "summarize my last note", "what are my upcoming deadlines?"];
