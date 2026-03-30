@@ -209,6 +209,68 @@ async function getGroupMembers(req, res) {
   }
 }
 
+async function getSuggestedGroups(req, res) {
+  const user = req.user;
+  
+  try {
+    // Get all groups user has joined
+    const joinedGroupsRecords = await userGroupModel.find({ userId: user.id });
+    
+    // If user hasn't joined any group, return all groups
+    if (joinedGroupsRecords.length === 0) {
+      const allGroups = await groupModel.find().limit(5).sort({ members: -1 });
+      return res.status(200).json({
+        message: "No groups joined yet. Here are popular groups",
+        fieldPercentages: {},
+        suggestedGroups: allGroups
+      });
+    }
+    
+    const joinedGroupIds = joinedGroupsRecords.map(g => g.groupId);
+    
+    // Get details of joined groups to analyze field distribution
+    const joinedGroups = await groupModel.find({ _id: { $in: joinedGroupIds } });
+    // Calculate field percentages
+    const fieldCount = {};
+    joinedGroups.forEach(group => {
+      const field = group.field || "Engineering";
+      fieldCount[field] = (fieldCount[field] || 0) + 1;
+    });
+    
+    const totalJoinedGroups = joinedGroups.length;
+    const fieldPercentages = {};
+    
+    Object.keys(fieldCount).forEach(field => {
+      fieldPercentages[field] = Math.round((fieldCount[field] / totalJoinedGroups) * 100);
+    });
+    
+    // Get all groups not joined by user
+    const suggestedGroups = await groupModel.find({ 
+      _id: { $nin: joinedGroupIds } 
+    });
+    
+    // Sort by field percentage (highest first)
+    const sortedSuggestions = suggestedGroups.sort((a, b) => {
+      const fieldA = a.field || "Engineering";
+      const fieldB = b.field || "Engineering";
+      const percentA = fieldPercentages[fieldA] || 0;
+      const percentB = fieldPercentages[fieldB] || 0;
+      return percentB - percentA;
+    });
+    
+    return res.status(200).json({
+      message: "Suggested groups fetched successfully",
+      fieldPercentages,
+      suggestedGroups: sortedSuggestions
+    });
+  } catch (error) {
+    return res.status(500).json({ 
+      message: "Error fetching suggested groups", 
+      error: error.message
+    });
+  }
+}
+
 module.exports = {
   createGroup,
   getGroups,
@@ -219,5 +281,6 @@ module.exports = {
   searchGroup,
   joinedGroup,
   getGroupMembers,
-  searchGroupById
+  searchGroupById,
+  getSuggestedGroups
 };

@@ -12,7 +12,10 @@ import {
 } from "lucide-react";
 import StartCard from "./StartCard";
 import { useDispatch, useSelector } from "react-redux";
-import { getMyNotes } from "../../../../features/notes/notesSlice";
+import {
+  getMyNotes,
+  getSavedNotes,
+} from "../../../../features/notes/notesSlice";
 import { selectJoinedGroups } from "../../../../features/groups/groupsSelectors";
 import { joinedGroup } from "../../../../features/groups/groupsSlice";
 
@@ -46,17 +49,27 @@ const MainContent = ({ activeTab }) => {
     fetchGroups();
   }
   const [myNotes, setMyNotes] = useState([]);
+  const [savedNotes, setSavedNotes] = useState([]);
 
   useEffect(() => {
     // Example: Fetch notes when the "notes" tab is active
     const fetchMyNotes = async () => {
       if (activeTab === "profile") {
         const res = await dispatch(getMyNotes());
+        console.log(res.payload);
         setMyNotes(res.payload?.notes);
       }
     };
 
+    const fetchSavedNotes = async () => {
+      const res = await dispatch(getSavedNotes());
+      if (res.payload && res.payload.savedNotes) {
+        setSavedNotes(res.payload.savedNotes);
+      }
+    };
+
     fetchMyNotes();
+    fetchSavedNotes();
   }, [activeTab]);
 
   return (
@@ -85,7 +98,7 @@ const MainContent = ({ activeTab }) => {
             />
             <StartCard
               label="Saved Items"
-              value="56"
+              value={savedNotes.length}
               icon={Bookmark}
               color="text-emerald-400"
             />
@@ -123,36 +136,51 @@ const MainContent = ({ activeTab }) => {
 
         {activeTab === "notes" && (
           <div className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-[24px] hover:bg-white/5 transition-all cursor-pointer group"
-              >
-                <div className="flex items-center gap-6">
-                  <div className="p-3 bg-white/5 rounded-xl text-zinc-500 group-hover:text-indigo-400">
-                    <FileText size={20} />
+            {myNotes.length > 0 ? (
+              myNotes.map((i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-[24px] hover:bg-white/5 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-6">
+                    <div className="p-3 bg-white/5 rounded-xl text-zinc-500 group-hover:text-indigo-400">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white tracking-tight">
+                        Quantum Computing Briefing #{i}
+                      </h4>
+                      <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                        Last edited 2h ago
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-lg font-bold text-white tracking-tight">
-                      Quantum Computing Briefing #{i}
-                    </h4>
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
-                      Last edited 2h ago
-                    </p>
-                  </div>
+                  <MoreVertical
+                    size={18}
+                    className="text-zinc-700 hover:text-white"
+                  />
                 </div>
-                <MoreVertical
-                  size={18}
-                  className="text-zinc-700 hover:text-white"
-                />
+              ))
+            ) : (
+              <div className="text-center py-20">
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  No Notes Created Yet
+                </h3>
+                <p className="text-zinc-500 mb-6">
+                  Start creating notes to see them here. Your notes will be
+                  displayed in this section once you have created them.
+                </p>
+                <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                  Create Your First Note
+                </button>
               </div>
-            ))}
+            )}
           </div>
         )}
 
         {activeTab === "saved" && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[1, 2].map((i) => (
+            {savedNotes.map((note, i) => (
               <div
                 key={i}
                 className="p-8 bg-zinc-900/40 border border-white/5 rounded-[40px] relative group overflow-hidden"
@@ -161,11 +189,10 @@ const MainContent = ({ activeTab }) => {
                   <Bookmark size={20} fill="currentColor" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">
-                  Saved: Distributed Systems Design
+                  Saved: {note.noteId.title}
                 </h4>
                 <p className="text-sm text-zinc-400 leading-relaxed mb-8">
-                  Highly relevant to the Nexus AI architecture. Shared by Jordan
-                  from Group Alpha.
+                  {note.noteId.summary || "No summary available for this note."}
                 </p>
                 <button className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2 group-hover:gap-4 transition-all">
                   View Source <ArrowRight size={14} />

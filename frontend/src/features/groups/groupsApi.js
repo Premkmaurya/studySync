@@ -20,6 +20,11 @@ export const joinedGroupApi = async () => {
   return response.data;
 };
 
+export const fetchSuggestedGroupsApi = async () => {
+  const response = await api.get("/groups/suggested-groups");
+  return response.data;
+};
+
 export const fetchGroupMembersApi = async (groupId) => {
   const response = await api.get(`/groups/members`, { params: { groupId } });
   return response.data;

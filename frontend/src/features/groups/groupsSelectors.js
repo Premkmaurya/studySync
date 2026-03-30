@@ -1,5 +1,7 @@
 export const selectGroups = (state) => state.groups.groups;
 export const selectJoinedGroups = (state) => state.groups.joinedGroups;
+export const selectSuggestedGroups = (state) => state.groups.suggestedGroups;
+export const selectFieldPercentages = (state) => state.groups.fieldPercentages;
 export const selectCurrentGroup = (state) => state.groups.currentGroup;
 export const selectGroupMembers = (state) => state.groups.members;
 export const selectGroupsLoading = (state) => state.groups.loading;

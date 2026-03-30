@@ -7,6 +7,7 @@ import {
   joinedGroupApi,
   deleteGroupApi,
   updateGroupApi,
+  fetchSuggestedGroupsApi,
 } from "./groupsApi";
 
 export const fetchGroups = createAsyncThunk(
@@ -101,9 +102,24 @@ export const deleteGroup = createAsyncThunk(
   },
 );
 
+export const fetchSuggestedGroups = createAsyncThunk(
+  "groups/fetchSuggestedGroups",
+  async (_, thunkAPI) => {
+    try {
+      return await fetchSuggestedGroupsApi();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch suggested groups",
+      );
+    }
+  },
+);
+
 const initialState = {
   groups: [],
   joinedGroups: [],
+  suggestedGroups: [],
+  fieldPercentages: {},
   loading: false,
   error: null,
 };
@@ -117,6 +133,12 @@ const groupsSlice = createSlice({
     },
     setJoinedGroups: (state, action) => {
       state.joinedGroups = action.payload;
+    },
+    setSuggestedGroups: (state, action) => {
+      state.suggestedGroups = action.payload;
+    },
+    setFieldPercentages: (state, action) => {
+      state.fieldPercentages = action.payload;
     },
     clearGroupsError: (state) => {
       state.error = null;
@@ -171,10 +193,23 @@ const groupsSlice = createSlice({
       .addCase(deleteGroup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchSuggestedGroups.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchSuggestedGroups.fulfilled, (state, action) => {
+        state.loading = false;
+        state.suggestedGroups = action.payload.suggestedGroups || [];
+        state.fieldPercentages = action.payload.fieldPercentages || {};
+      })
+      .addCase(fetchSuggestedGroups.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { setJoinedGroups, clearGroupsError,setGroups } = groupsSlice.actions;
+export const { setJoinedGroups, clearGroupsError, setGroups, setSuggestedGroups, setFieldPercentages } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

@@ -1,58 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, ArrowUpRight, Compass } from "lucide-react";
-import { joinedGroup,setJoinedGroups } from "../../../features/groups/groupsSlice";
+import {
+  joinedGroup,
+  setFieldPercentages,
+  setJoinedGroups,
+  setSuggestedGroups,
+} from "../../../features/groups/groupsSlice";
+import { fetchSuggestedGroups } from "../../../features/groups/groupsSlice";
+import GroupCard from "./components/GroupCard";
 
-import GroupCard from "./components/GroupCard"
-
-import { selectJoinedGroups } from "../../../features/groups/groupsSelectors";
-
-// --- SUB-COMPONENTS ---
+import {
+  selectJoinedGroups,
+  selectSuggestedGroups,
+  selectFieldPercentages,
+} from "../../../features/groups/groupsSelectors";
 
 const Home = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const joinedGroups = useSelector(selectJoinedGroups);
+  const suggestedGroups = useSelector(selectSuggestedGroups);
+  const fieldPercentages = useSelector(selectFieldPercentages);
 
   useEffect(() => {
-    // Simulate fetching joined groups
+    // Fetch joined groups
     const fetchJoinedGroups = async () => {
-      // Simulated API call delay
       const res = await dispatch(joinedGroup());
       if (res.payload && res.payload.groups) {
-        setJoinedGroups(res.payload.groups);
-        dispatch(setJoinedGroups(res.payload.groups))
+        dispatch(setJoinedGroups(res.payload.groups));
       }
     };
 
     fetchJoinedGroups();
-  }, []);
+  }, [dispatch]);
 
-  const suggestedGroups = [
-    {
-      id: 4,
-      name: "Rust Core Devs",
-      field: "Engineering",
-      members: 89,
-      match: 98,
-      image:
-        "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=200",
-      accent: "bg-orange-500",
-    },
-    {
-      id: 5,
-      name: "Quantum Labs",
-      field: "Research",
-      members: 34,
-      match: 85,
-      image:
-        "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=200",
-      accent: "bg-cyan-500",
-    },
-  ];
+  useEffect(() => {
+    // Fetch suggested groups
+    const fetchSuggestions = async () => {
+      
+    const res = await dispatch(fetchSuggestedGroups());
+    console.log("Suggested Groups Response:", res);
+      if (res.payload) {
+        dispatch(setSuggestedGroups(res.payload.suggestedGroups));
+        dispatch(setFieldPercentages(res.payload.fieldPercentages));
+      }
+    };
+
+    fetchSuggestions();
+  }, [dispatch]);
+
+  // Helper function to add UI properties to suggested groups
+  const enrichedSuggestedGroups = suggestedGroups.map((group, index) => {
+    const accentColors = [
+      "bg-indigo-500",
+      "bg-purple-500",
+      "bg-pink-500",
+      "bg-blue-500",
+      "bg-cyan-500",
+    ];
+    return {
+      ...group,
+      id: group._id,
+      accent: accentColors[index % accentColors.length] || "bg-indigo-500",
+    };
+  });
 
   return (
     <div className="relative pt-26 min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-x-hidden">
@@ -88,9 +102,15 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {joinedGroups.map((group) => (
-              <GroupCard key={group.id} group={group} />
-            ))}
+            {joinedGroups && joinedGroups.length > 0 ? (
+              joinedGroups.map((group) => (
+                <GroupCard key={group._id || group.id} group={group} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-zinc-400">Join groups to see them here</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -115,9 +135,22 @@ const Home = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {suggestedGroups.map((group) => (
-                <GroupCard key={group.id} group={group} isSuggested />
-              ))}
+              {enrichedSuggestedGroups && enrichedSuggestedGroups.length > 0 ? (
+                enrichedSuggestedGroups.map((group) => {
+                  const matchPercentage = fieldPercentages[group.field] || 0;
+                  return (
+                    <GroupCard
+                      key={group._id}
+                      group={{ ...group, match: matchPercentage }}
+                      isSuggested
+                    />
+                  );
+                })
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-zinc-400">No suggested groups available</p>
+                </div>
+              )}
 
               {/* Promotion/Stats Bento Card */}
               <div className="p-8 bg-gradient-to-br from-indigo-600 to-fuchsia-600 rounded-[32px] shadow-2xl relative overflow-hidden group">
@@ -127,15 +160,32 @@ const Home = () => {
                   <h3 className="text-2xl font-black tracking-tighter text-white mb-2 leading-tight">
                     Professional Velocity
                   </h3>
-                  <p className="text-xs text-white/70 font-medium mb-8">
-                    Users in AI groups have increased note output by 40% this
-                    month.
-                  </p>
+                  <div className="text-xs text-white/70 font-medium mb-8">
+                    {Object.keys(fieldPercentages).length > 0 ? (
+                      <div>
+                        <p className="mb-2">Your interests:</p>
+                        <div className="space-y-1">
+                          {Object.entries(fieldPercentages)
+                            .sort(([, a], [, b]) => b - a)
+                            .map(([field, percentage]) => (
+                              <div key={field} className="flex justify-between">
+                                <span>{field}:</span>
+                                <span className="text-indigo-300 font-bold">
+                                  {percentage}%
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p>Join groups to get personalized suggestions</p>
+                    )}
+                  </div>
                   <button
                     onClick={() => navigate("/find-groups")}
                     className="mt-auto w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black hover:text-white transition-all"
                   >
-                    Explore Trending
+                    Explore All Groups
                   </button>
                 </div>
               </div>

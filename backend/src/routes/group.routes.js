@@ -18,6 +18,8 @@ router.post("/join/:groupId",authMiddleware,groupController.joinGroup)
 
 router.get("/joined-groups",authMiddleware,groupController.joinedGroup)
 
+router.get("/suggested-groups",authMiddleware,groupController.getSuggestedGroups)
+
 router.get("/members",authMiddleware,groupController.getGroupMembers)
 
 router.post("/create",authMiddleware,upload.single("image"), groupCreateValidation, groupController.createGroup)
