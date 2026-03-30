@@ -8,7 +8,8 @@ const cookie = require("cookie");
 
 const messageModel = require("./src/models/groupChats.model");
 const aiMessageModel = require("./src/models/aiMessage.model");
-const generateResponse = require("./src/services/ai.service");
+const { generateResponse, createVector } = require("./src/services/ai.service");
+const { createMemory, queryMemory } = require("./src/services/vector.service");
 
 const httpServer = http.createServer(app);
 
@@ -78,32 +79,83 @@ io.on("connection", (socket) => {
   });
 
   // // 🤖 AI Chat
-  socket.on("aiMessage", async (message) => {
-    await aiMessageModel.create({
-      userId: socket.user.id,
-      role: "user",
-      text: message,
+  socket.on("ai-message", async (messagePayload) => {
+    const [userMessage, vectors] = await Promise.all([
+      aiMessageModel.create({
+        userId: socket.user.id,
+        chatId: messagePayload.chatId,
+        role: "user",
+        text: messagePayload.content,
+      }),
+      createVector(messagePayload.content),
+    ]);
+    await createMemory({
+      messageId: userMessage._id,
+      vectors,
+      metadata: {
+        chat: messagePayload.chatId,
+        user: socket.user.id,
+        text: messagePayload.content,
+      },
+    });
+    const [memory, chatHistory] = await Promise.all([
+      queryMemory({
+        queryVector: vectors,
+        limit: 3,
+        metadata: {},
+      }),
+      aiMessageModel
+        .find({ chatId: messagePayload.chatId })
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .lean()
+        .then((results) => results.reverse()),
+    ]);
+
+    const stm = chatHistory.map((item) => {
+      return {
+        role: item.role,
+        parts: [{ text: item.text }],
+      };
     });
 
-    const chatHistory = await aiMessageModel
-      .find({ userId: socket.user.id })
-      .sort({ createdAt: -1 })
-      .limit(6)
-      .lean();
+    const ltm = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `these are some previous messages from the chat, use them to generate a response
+             ${memory.map((item) => item.metadata.text).join("\n")}
+					`,
+          },
+        ],
+      },
+    ];
 
-    const formatted = chatHistory.reverse().map((item) => ({
-      role: item.role,
-      parts: [{ text: item.text }],
-    }));
+    const response = await generateResponse([...ltm, ...stm]);
 
-    const response = await generateResponse(formatted);
+    socket.emit("ai-response", {
+      content: response,
+      chatId: messagePayload.chatId,
+    });
 
-    socket.emit("ai-response", { text: response });
-
-    await aiMessageModel.create({
-      userId: socket.user.id,
-      role: "model",
-      text: response,
+    const [responseMessage, responseVector] = await Promise.all([
+      aiMessageModel.create({
+        userId: socket.user.id,
+        chatId: messagePayload.chatId,
+        role: "model",
+        text: response,
+      }),
+      createVector(response),
+    ]);
+    await createMemory({
+      vectors: responseVector,
+      messageId: responseMessage._id,
+      metadata: {
+        chat: messagePayload.chatId,
+        user: socket.user.id,
+        text: response,
+      },
     });
   });
 

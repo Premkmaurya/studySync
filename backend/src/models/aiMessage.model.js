@@ -10,6 +10,11 @@ const aiMessageSchema = new Schema(
             required: true, 
             index: true 
         },
+        chatId: {
+            type: Schema.Types.ObjectId,
+            ref: 'group',
+            index: true
+        },
         role:{
             type:String,
             enum:["user","model"],

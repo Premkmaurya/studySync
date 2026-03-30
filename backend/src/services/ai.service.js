@@ -20,7 +20,7 @@ If the user shares a topic or asks to generate notes, use this structure:
 3. CONTINUING CONTENT:
 If the user asks for 'more data' or 'continue', ONLY provide the next set of raw HTML tags to be appended (e.g., more <li> or <p> tags).`;
 
-async function genrateResponse(prompt) {
+async function generateResponse(prompt) {
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: prompt,
@@ -31,4 +31,21 @@ async function genrateResponse(prompt) {
   return response.text;
 }
 
-module.exports = genrateResponse;
+async function createVector(content) {
+
+    const response = await ai.models.embedContent({
+        model: 'models/embedding-001',
+        contents: { 
+          parts: [{ text: content }] 
+        },
+         outputDimensionality: 768,
+    });
+    
+    
+    return response.embeddings[0].values ;
+}
+
+module.exports = {
+    generateResponse,
+    createVector
+};
