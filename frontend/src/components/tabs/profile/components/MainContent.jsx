@@ -7,10 +7,10 @@ import {
   ArrowUpRight,
   Code,
   MoreVertical,
-  Palette,
-  Briefcase,
 } from "lucide-react";
 import StartCard from "./StartCard";
+
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getMyNotes,
@@ -36,6 +36,8 @@ const ArrowRight = ({ size, className }) => (
 );
 
 const MainContent = ({ activeTab }) => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const [joinedGroups, setJoinedGroups] = useState(
     useSelector(selectJoinedGroups) || [],
@@ -43,7 +45,6 @@ const MainContent = ({ activeTab }) => {
   if (joinedGroups.length === 0) {
     const fetchGroups = async () => {
       const res = await dispatch(joinedGroup());
-      console.log("Fetched joined groups:", res.payload);
       setJoinedGroups(res.payload.groups);
     };
     fetchGroups();
@@ -56,7 +57,6 @@ const MainContent = ({ activeTab }) => {
     const fetchMyNotes = async () => {
       if (activeTab === "profile") {
         const res = await dispatch(getMyNotes());
-        console.log(res.payload);
         setMyNotes(res.payload?.notes);
       }
     };
@@ -109,6 +109,9 @@ const MainContent = ({ activeTab }) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {joinedGroups.map((group, i) => (
               <div
+              onClick={()=>{
+                navigate(`/group/${group._id}`);
+              }}
                 key={i}
                 className="group p-8 bg-zinc-900/40 border border-white/5 rounded-[40px] hover:border-white/10 transition-all cursor-pointer"
               >

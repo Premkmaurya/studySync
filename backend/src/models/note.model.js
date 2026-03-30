@@ -5,6 +5,10 @@ const noteSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"user"
     },
+    groupId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"group"
+    },
     title:{
         type:String,
         required:true

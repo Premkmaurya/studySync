@@ -44,7 +44,6 @@ io.use((socket, next) => {
 
 // 🚀 Connection
 io.on("connection", (socket) => {
-  console.log("User connected");
 
   // // Join Room
   socket.on("joinRoom", (roomId) => {
@@ -74,7 +73,8 @@ io.on("connection", (socket) => {
       .findById(createMsg._id)
       .populate("user", "fullname");
 
-    io.to(roomId).emit("newMessage", populatedMsg);
+    // send message to everyone else in the room, not the sender
+    socket.to(roomId).emit("newMessage", populatedMsg);
   });
 
   // // 🤖 AI Chat

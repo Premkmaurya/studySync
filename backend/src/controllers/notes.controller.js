@@ -28,6 +28,20 @@ async function getNotes(req, res) {
   });
 }
 
+async function getNoteById(req, res) {
+  const { id } = req.params;
+  const note = await noteModel.findById({groupId: id });
+  if (!note) {
+    return res.status(404).json({
+      message: "Note not found.",
+    });
+  }
+  return res.status(200).json({
+    message: "Note fetched successfully.",
+    note,
+  });
+}
+
 async function getMyNotes(req, res) {
   const user = req.user;
   const notes = await noteModel
@@ -102,6 +116,7 @@ module.exports = {
   getNotes,
   getMyNotes,
   saveNote,
+  getNoteById,
   getSavedNotes,
   searchNotes,
 };

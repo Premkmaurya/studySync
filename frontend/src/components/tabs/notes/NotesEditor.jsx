@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState,useEffect} from "react";
 
 // Framer Motion
 import { AnimatePresence } from "framer-motion";
@@ -12,11 +12,11 @@ import { useLocation } from "react-router-dom";
 // Custom Components
 import AIPopup from "../chats_components/AiPopup";
 import ChatSidebar from "../chats_components/ChatSidebar";
-import Share from "./components/Share";
 import Header from "./components/Header";
 
 // Axios and Socket.io
 import axios from "axios";
+import { io } from "socket.io-client";
 import Editor from "./components/Editor";
 
 export default function NotesEditor({
@@ -57,7 +57,6 @@ export default function NotesEditor({
     setIsSaving(false);
     setIsModalOpen(false);
   };
-
 
 
   return (
@@ -103,10 +102,8 @@ export default function NotesEditor({
           aiText={aiText}
           setAiText={setAiText}
           setEditor={setEditor}
+          content={content}
         />
-
-        {/* share your notes with others */}
-        <Share isShareOpen={isShareOpen} setIsShareOpen={setIsShareOpen} />
         {/* AI Summary Sidebar */}
         <AnimatePresence>
           {isAiPanelOpen && (

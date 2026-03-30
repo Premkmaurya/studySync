@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
 import {
   Plus,
@@ -20,6 +20,7 @@ import {
   fetchNotes,
   setLoading,
   saveNote,
+  getNoteById,
 } from "../../../features/notes/notesSlice";
 
 dayjs.extend(relativeTime);
@@ -27,6 +28,9 @@ dayjs.extend(relativeTime);
 const GroupNotes = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  
+  const { groupId } = useParams();
+  
 
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes);
@@ -35,7 +39,8 @@ const GroupNotes = () => {
   useEffect(() => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
-      const res = await dispatch(fetchNotes());
+      const res = await dispatch(getNoteById(groupId)); // Just to test fetching a single note by ID
+      console.log("Fetched note by ID:", res);
       if (res?.payload?.success || res?.payload) {
         dispatch(setLoading(false));
       } else {
@@ -185,7 +190,7 @@ const GroupNotes = () => {
       {/* 3. QUANTUM FLOATING ACTION BUTTON */}
       {createPortal(
         <motion.button
-          onClick={() => navigate("/create-notes")}
+          onClick={() => navigate(`/group/${groupId}/create-note`)}
           className="fixed bottom-10 right-10 z-[100] p-4 bg-white text-black rounded-full hover:bg-indigo-500 hover:text-white group"
         >
           <Plus size={20} className="transition-transform" />

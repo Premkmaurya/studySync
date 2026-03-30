@@ -51,19 +51,20 @@ import "@mantine/core/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/core/styles.css";
 
+// Socket.IO setup
+import { io } from "socket.io-client";
+
 const Editor = ({
   isViewOnly,
   contentFromState,
-  content,
   title,
   setTitle,
   isAIOpen,
   setIsAIOpen,
-  isAisummarize,
   setIsAisummarize,
-  aiText,
   setAiText,
   setEditor,
+  content
 }) => {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -83,6 +84,7 @@ const Editor = ({
     editable: !isViewOnly,
   });
 
+    
   useEffect(() => {
     if (editor && content) {
       editor.commands.focus("end");
@@ -127,68 +129,67 @@ const Editor = ({
               }}
             >
               <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-50 h-8 flex items-center justify-center">
-                <RichTextEditor.Bold icon={() => <FaBold size={14} />} />
-                <RichTextEditor.Italic icon={() => <FaItalic size={14} />} />
+                <RichTextEditor.Bold icon={() => <FaBold size={14} color="black" />} />
+                <RichTextEditor.Italic icon={() => <FaItalic size={14} color="black" />} />
                 <RichTextEditor.Underline
-                  icon={() => <FaUnderline size={14} />}
+                  icon={() => <FaUnderline size={14} color="black" />}
                 />
                 <RichTextEditor.Strikethrough
-                  icon={() => <FaStrikethrough size={14} />}
+                  icon={() => <FaStrikethrough size={14} color="black" />}
                 />
                 <RichTextEditor.ClearFormatting
-                  icon={() => <TbClearFormatting size={14} />}
-                />
+                  icon={() => <TbClearFormatting size={14} color="black" />} />
                 <RichTextEditor.Highlight
-                  icon={() => <FaHighlighter size={14} />}
+                  icon={() => <FaHighlighter size={14} color="black" />}
                 />
-                <RichTextEditor.Code icon={() => <FaCode size={14} />} />
+                <RichTextEditor.Code icon={() => <FaCode size={14} color="black" />} />
               </RichTextEditor.ControlsGroup>
 
               <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-42 h-8 flex items-center justify-center">
-                <RichTextEditor.H1 icon={() => <TbH1 size={18} />} />
-                <RichTextEditor.H2 icon={() => <TbH2 size={18} />} />
-                <RichTextEditor.H3 icon={() => <TbH3 size={18} />} />
-                <RichTextEditor.H4 icon={() => <TbH4 size={18} />} />
-                <RichTextEditor.H5 icon={() => <TbH5 size={18} />} />
-                <RichTextEditor.H6 icon={() => <TbH6 size={18} />} />
+                <RichTextEditor.H1 icon={() => <TbH1 size={18} color="black" />} />
+                <RichTextEditor.H2 icon={() => <TbH2 size={18} color="black" />} />
+                <RichTextEditor.H3 icon={() => <TbH3 size={18} color="black" />} />
+                <RichTextEditor.H4 icon={() => <TbH4 size={18} color="black" />} />
+                <RichTextEditor.H5 icon={() => <TbH5 size={18} color="black" />} />
+                <RichTextEditor.H6 icon={() => <TbH6 size={18} color="black" />} />
               </RichTextEditor.ControlsGroup>
 
               <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-29 h-8 flex items-center justify-center">
                 <RichTextEditor.Blockquote
-                  icon={() => <TbBlockquote size={14} />}
+                  icon={() => <TbBlockquote size={14} color="black" />}
                 />
                 <RichTextEditor.Hr />
                 <RichTextEditor.BulletList
-                  icon={() => <MdFormatListBulleted size={14} />}
+                  icon={() => <MdFormatListBulleted size={14} color="black" />}
                 />
                 <RichTextEditor.OrderedList
-                  icon={() => <GoListOrdered size={14} />}
+                  icon={() => <GoListOrdered size={14} color="black" />}
                 />
               </RichTextEditor.ControlsGroup>
 
               <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-20 h-8 flex items-center justify-center gap-2">
-                <RichTextEditor.Link icon={() => <FaLink size={14} />} />
-                <RichTextEditor.Unlink icon={() => <FaUnlink size={14} />} />
+                <RichTextEditor.Link icon={() => <FaLink size={14} color="black" />} />
+                <RichTextEditor.Unlink icon={() => <FaUnlink size={14} color="black" />} />
               </RichTextEditor.ControlsGroup>
 
               <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-32 h-8 flex items-center justify-center gap-2">
                 <RichTextEditor.AlignLeft
-                  icon={() => <FaAlignLeft size={14} />}
+                  icon={() => <FaAlignLeft size={14} color="black" />}
                 />
                 <RichTextEditor.AlignCenter
-                  icon={() => <FaAlignCenter size={14} />}
+                  icon={() => <FaAlignCenter size={14} color="black" />}
                 />
                 <RichTextEditor.AlignJustify
-                  icon={() => <FaAlignJustify size={14} />}
+                  icon={() => <FaAlignJustify size={14} color="black" />}
                 />
                 <RichTextEditor.AlignRight
-                  icon={() => <FaAlignRight size={14} />}
+                  icon={() => <FaAlignRight size={14} color="black" />}
                 />
               </RichTextEditor.ControlsGroup>
 
               <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-15 h-8 flex items-center justify-center">
-                <RichTextEditor.Undo icon={() => <LuUndo2 size={14} />} />
-                <RichTextEditor.Redo icon={() => <LuRedo2 size={14} />} />
+                <RichTextEditor.Undo icon={() => <LuUndo2 size={14} color="black" />} />
+                <RichTextEditor.Redo icon={() => <LuRedo2 size={14} color="black" />} />
               </RichTextEditor.ControlsGroup>
             </RichTextEditor.Toolbar>
             <motion.button

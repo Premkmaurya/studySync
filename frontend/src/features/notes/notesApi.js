@@ -20,6 +20,11 @@ export const getMyNotesApi = async () => {
   return response.data;
 }
 
+export const getNoteByIdApi = async (noteId) => {
+  const response = await api.get(`/notes/${noteId}`);
+  return response.data;
+};
+
 export const searchNotesApi = async (query) => {
   const response = await api.get(`/notes/search?q=${query}`);
   return response.data;

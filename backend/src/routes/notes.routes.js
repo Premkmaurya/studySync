@@ -10,6 +10,8 @@ router.get("/get",authMiddleware,notesController.getNotes)
 
 router.get('/my-notes', authMiddleware, notesController.getMyNotes)
 
+router.get("/get/:groupId",authMiddleware,notesController.getNoteById)
+
 router.post('/save-note/:noteId',authMiddleware,notesController.saveNote)
 
 router.get('/saved-notes', authMiddleware, notesController.getSavedNotes)
