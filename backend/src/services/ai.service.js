@@ -32,20 +32,25 @@ async function generateResponse(prompt) {
 }
 
 async function createVector(content) {
+  if (!content || !String(content).trim()) {
+    return [];
+  }
 
-    const response = await ai.models.embedContent({
-        model: 'gemini-embedding-001',
-        contents: { 
-          parts: [{ text: content }] 
-        },
-         outputDimensionality: 768,
-    });
-    
-    
-    return response.embeddings[0].values ;
+  const response = await ai.models.embedContent({
+    model: 'gemini-embedding-001',
+    contents: {
+      parts: [{ text: content }]
+    },
+    config: {
+      outputDimensionality: 768,
+    }
+  });
+
+
+  return response.embeddings[0].values;
 }
 
 module.exports = {
-    generateResponse,
-    createVector
+  generateResponse,
+  createVector
 };

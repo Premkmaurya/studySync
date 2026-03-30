@@ -55,7 +55,6 @@ useEffect(() => {
 
   const handleSend = () => {
     const messagePayload = {
-      groupId: groupId,
       text: inputValue,
     }; 
     if (!inputValue.trim() || loading) return;
