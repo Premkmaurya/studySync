@@ -1,66 +1,68 @@
-const { Pinecone } = require('@pinecone-database/pinecone');
-const { v4: uuidv4 } = require('uuid');
+const aiMessageModel = require("../models/aiMessage.model");
 
-const pc = new Pinecone({
-  apiKey: process.env.PINECONE_API_KEY,
-});
-
-const studySyncIndex = pc.index('studysync');
-
-async function createMemory({ vectors, metadata }) {
+// ✅ store vector inside existing document
+async function createMemory({ vectors, metadata, messageId }) {
   try {
-    // 1. validate vectors
-    if (!vectors || !Array.isArray(vectors) || vectors.length === 0) {
-      console.warn("Skipping upsert: invalid vectors");
-      return;
-    }
-    // 2. flatten if nested (common bug)
-    if (Array.isArray(vectors[0])) {
-      vectors = vectors.flat();
-    }
-    // 3. ensure no empty after flatten
-    if (vectors.length === 0) {
-      console.warn("Skipping upsert: vectors empty after flatten");
-      return;
-    }
-    // 4. ensure numeric values
-    if (typeof vectors[0] !== "number" || !vectors.every(v => typeof v === "number" && isFinite(v))) {
-      console.warn("Skipping upsert: vectors not all finite numbers");
-      return;
-    }
+    if (!vectors?.length || !messageId) return;
 
-   await studySyncIndex.upsert([
+    await aiMessageModel.findByIdAndUpdate(
+      messageId,
       {
-        id: `3343434`,
-        values: vectors, // replace with actual vectors
-        metadata:{
-          text: "This is a sample memory entry",
-          user: "34344",
-        },
+        embedding: vectors, // 🔥 store vector here
+        ...(metadata && {
+          text: metadata.text,
+          userId: metadata.user,
+          chatId: metadata.chat,
+        }),
       },
-    ]);
+      { new: true }
+    );
   } catch (err) {
-    console.error("Pinecone upsert error:", err.message);
+    console.error("MongoDB vector store error:", err.message);
   }
 }
 
+// ✅ vector search using MongoDB Atlas
 async function queryMemory({ queryVector, limit = 5, metadata }) {
   try {
-    if (!queryVector || queryVector.length === 0) return [];
+    if (!queryVector?.length) return [];
 
-    const data = await studySyncIndex.query({
-      vector: queryVector,
-      topK: limit,
-      filter:
-        metadata && Object.keys(metadata).length > 0
-          ? metadata
-          : undefined,
-      includeMetadata: true,
-    });
+    const pipeline = [
+      {
+        $vectorSearch: {
+          index: "vector_index", // 🔥 your Atlas index name
+          queryVector,
+          path: "embedding",
+          numCandidates: 100,
+          limit,
+          ...(metadata &&
+            Object.keys(metadata).length > 0 && {
+              filter: metadata, // optional filtering
+            }),
+        },
+      },
+      {
+        $project: {
+          text: 1,
+          chatId: 1,
+          userId: 1,
+          score: { $meta: "vectorSearchScore" },
+        },
+      },
+    ];
 
-    return data.matches || [];
+    const results = await aiMessageModel.aggregate(pipeline);
+
+    return results.map((item) => ({
+      metadata: {
+        text: item.text,
+        chat: item.chatId,
+        user: item.userId,
+      },
+      score: item.score,
+    }));
   } catch (err) {
-    console.error("Pinecone query error:", err.message);
+    console.error("MongoDB vector query error:", err.message);
     return [];
   }
 }
