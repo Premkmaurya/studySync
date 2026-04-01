@@ -21,7 +21,7 @@ export const getMyNotesApi = async () => {
 }
 
 export const getNoteByIdApi = async (noteId) => {
-  const response = await api.get(`/notes/${noteId}`);
+  const response = await api.get(`/notes/get/${noteId}`);
   return response.data;
 };
 

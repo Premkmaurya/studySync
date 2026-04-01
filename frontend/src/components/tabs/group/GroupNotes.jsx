@@ -17,10 +17,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectNotes } from "../../../features/notes/notesSelectors";
 import {
-  fetchNotes,
   setLoading,
   saveNote,
   getNoteById,
+  setNotes,
 } from "../../../features/notes/notesSlice";
 
 dayjs.extend(relativeTime);
@@ -33,19 +33,16 @@ const GroupNotes = () => {
   
 
   const dispatch = useDispatch();
-  const notes = useSelector(selectNotes);
+  let notes = useSelector(selectNotes);
   const loading = useSelector((state) => state.notes.loading);
 
   useEffect(() => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
-      const res = await dispatch(getNoteById(groupId)); // Just to test fetching a single note by ID
-      console.log("Fetched note by ID:", res);
-      if (res?.payload?.success || res?.payload) {
-        dispatch(setLoading(false));
-      } else {
-        dispatch(setLoading(false));
-      }
+      const res = await dispatch(getNoteById(groupId)); 
+      await dispatch(setNotes(res.payload.note)); // Wrap in array for consistency
+      console.log("Fetched notes for group:", res.payload.note);
+      dispatch(setLoading(false));
     };
     loadNotes();
   }, []);
@@ -59,10 +56,8 @@ const GroupNotes = () => {
       console.error("Failed to save note:", error);
     }
   };
+  console.log("Rendering GroupNotes with notes:", notes);
 
-  const filteredArticles = notes.filter((article) =>
-    (article.title || "").toLowerCase().includes(searchTerm.toLowerCase()),
-  );
 
   return (
     <div className="relative w-full min-h-screen text-slate-200 bg-[#030303] p-6 md:p-12">
@@ -105,8 +100,8 @@ const GroupNotes = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
           <AnimatePresence>
-            {filteredArticles.length > 0 ? (
-              filteredArticles.map((article, index) => (
+            {notes.length > 0 ? (
+              notes.map((article, index) => (
                 <motion.div
                   key={String(article._id || index)}
                   initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -152,9 +147,7 @@ const GroupNotes = () => {
 
                   <button
                     onClick={() =>
-                      navigate("/home", {
-                        state: { content: article.content, isViewOnly: true },
-                      })
+                     console.log("Inspecting note:", article) // Placeholder for inspect action
                     }
                     className="w-full flex items-center justify-between px-6 py-4 bg-white/5 border border-white/5 group-hover:border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white hover:text-black"
                   >

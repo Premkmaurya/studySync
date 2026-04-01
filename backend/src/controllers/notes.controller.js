@@ -4,10 +4,11 @@ const savedNoteModel = require("../models/savedNote.model");
 async function createNote(req, res) {
   const user = req.user;
 
-  const { content, title } = req.body;
+  const { content, title, groupId } = req.body;
 
   const note = await noteModel.create({
     userId: user.id,
+    groupId,
     content,
     title,
   });
@@ -29,8 +30,8 @@ async function getNotes(req, res) {
 }
 
 async function getNoteById(req, res) {
-  const { id } = req.params;
-  const note = await noteModel.findById({groupId: id });
+  const { groupId } = req.params;
+  const note = await noteModel.find({groupId: groupId }).sort({ createdAt: -1 }).populate("userId", "fullname");
   if (!note) {
     return res.status(404).json({
       message: "Note not found.",

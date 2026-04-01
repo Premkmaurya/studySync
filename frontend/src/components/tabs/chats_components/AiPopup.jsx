@@ -34,7 +34,7 @@ useEffect(() => {
   });
 
   socketInstance.on("ai-response", (data) => {
-    setContent(data.text);
+    setContent(data.content);
     setLoading(false);
     onClose();
   });

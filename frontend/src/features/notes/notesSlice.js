@@ -1,69 +1,118 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchNotesApi, createNoteApi, summarizeNoteApi, searchNotesApi, getMyNotesApi, saveNoteApi, getSavedNotesApi, getNoteByIdApi } from './notesApi';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  fetchNotesApi,
+  createNoteApi,
+  summarizeNoteApi,
+  searchNotesApi,
+  getMyNotesApi,
+  saveNoteApi,
+  getSavedNotesApi,
+  getNoteByIdApi,
+} from "./notesApi";
 
-export const fetchNotes = createAsyncThunk('notes/fetchNotes', async (_, thunkAPI) => {
-  try {
-    return await fetchNotesApi();
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch notes');
-  }
-});
+export const fetchNotes = createAsyncThunk(
+  "notes/fetchNotes",
+  async (_, thunkAPI) => {
+    try {
+      return await fetchNotesApi();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch notes",
+      );
+    }
+  },
+);
 
-export const createNote = createAsyncThunk('notes/createNote', async (noteData, thunkAPI) => {
-  try {
-    return await createNoteApi(noteData);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to create note');
-  }
-});
+export const createNote = createAsyncThunk(
+  "notes/createNote",
+  async (noteData, thunkAPI) => {
+    try {
+      return await createNoteApi(noteData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to create note",
+      );
+    }
+  },
+);
 
-export const summarizeNote = createAsyncThunk('notes/summarizeNote', async (noteId, thunkAPI) => {
-  try {
-    return await summarizeNoteApi(noteId);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to summarize note');
-  }
-});
+export const summarizeNote = createAsyncThunk(
+  "notes/summarizeNote",
+  async (noteId, thunkAPI) => {
+    try {
+      return await summarizeNoteApi(noteId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to summarize note",
+      );
+    }
+  },
+);
 
-export const getMyNotes = createAsyncThunk('notes/getMyNotes', async (_, thunkAPI) => {
-  try {
-    return await getMyNotesApi();
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch your notes');
-  }
-});
+export const getMyNotes = createAsyncThunk(
+  "notes/getMyNotes",
+  async (_, thunkAPI) => {
+    try {
+      return await getMyNotesApi();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch your notes",
+      );
+    }
+  },
+);
 
-export const getNoteById = createAsyncThunk('notes/getNoteById', async (noteId, thunkAPI) => {
-  try {
-    return await getNoteByIdApi(noteId);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch note');
-  }
-});
+export const getNoteById = createAsyncThunk(
+  "notes/getNoteById",
+  async (noteId, thunkAPI) => {
+    try {
+      return await getNoteByIdApi(noteId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch note",
+      );
+    }
+  },
+);
 
-export const searchNotes = createAsyncThunk('notes/searchNotes', async (query, thunkAPI) => {
-  try {
-    return await searchNotesApi(query);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to search notes');
-  }
-});
+export const searchNotes = createAsyncThunk(
+  "notes/searchNotes",
+  async (query, thunkAPI) => {
+    try {
+      return await searchNotesApi(query);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to search notes",
+      );
+    }
+  },
+);
 
-export const saveNote = createAsyncThunk('notes/saveNote', async (noteId, thunkAPI) => {
-  try {
-    return await saveNoteApi(noteId);
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to save note');
-  }
-});
+export const saveNote = createAsyncThunk(
+  "notes/saveNote",
+  async (noteId, thunkAPI) => {
+    try {
+      return await saveNoteApi(noteId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to save note",
+      );
+    }
+  },
+);
 
-export const getSavedNotes = createAsyncThunk('notes/getSavedNotes', async (_, thunkAPI) => {
-  try {
-    return await getSavedNotesApi();
-  } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch saved notes');
-  }
-});
+export const getSavedNotes = createAsyncThunk(
+  "notes/getSavedNotes",
+  async (_, thunkAPI) => {
+    try {
+      return await getSavedNotesApi();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to fetch saved notes",
+      );
+    }
+  },
+);
 
 const initialState = {
   notes: [],
@@ -73,19 +122,22 @@ const initialState = {
 };
 
 const notesSlice = createSlice({
-  name: 'notes',
+  name: "notes",
   initialState,
   reducers: {
-    setLoading:(state,action) =>{
+    setNotes: (state, action) => {
+      state.notes = action.payload;
+    },
+    setLoading: (state, action) => {
       state.loading = action.payload;
       state.error = null;
     },
-    setSavedNotes:(state,action) =>{
+    setSavedNotes: (state, action) => {
       state.savedNotes = action.payload;
     },
     clearNotesError: (state) => {
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -101,10 +153,16 @@ const notesSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
-      // Handle other thunks minimally
-  }
+    // Handle other thunks minimally
+  },
 });
 
-export const { setSelectedNote,setLoading, clearNotesError,setSavedNotes } = notesSlice.actions;
+export const {
+  setNotes,
+  setSelectedNote,
+  setLoading,
+  clearNotesError,
+  setSavedNotes,
+} = notesSlice.actions;
 
 export default notesSlice.reducer;

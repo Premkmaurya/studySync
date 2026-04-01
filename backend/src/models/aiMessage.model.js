@@ -23,10 +23,6 @@ const aiMessageSchema = new Schema(
             type: String, 
             required: true, 
             trim: true 
-        },
-        embeddings: {
-            type:[Number],
-            default: []
         }
     },
     { timestamps: true }

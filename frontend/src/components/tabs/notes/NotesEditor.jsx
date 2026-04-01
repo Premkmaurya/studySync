@@ -1,11 +1,10 @@
-import { useState,useEffect} from "react";
+import { useState, useEffect } from "react";
 
 // Framer Motion
 import { AnimatePresence } from "framer-motion";
 
 // React Router
-import { useLocation } from "react-router-dom";
-
+import { useLocation, useParams } from "react-router-dom";
 
 // Using lucide-react as the primary, stable icon engine
 
@@ -42,13 +41,15 @@ export default function NotesEditor({
   const [isSaving, setIsSaving] = useState(false);
   const [editor, setEditor] = useState(null);
 
+  const { groupId } = useParams();
+
   const handleSave = async () => {
     setIsSaving(true);
     if (!editor || !title) return;
     const editorContent = editor.getHTML();
     const response = await axios.post(
       "http://localhost:3000/api/notes/create",
-      { content: editorContent, title },
+      { content: editorContent, title, groupId },
       {
         withCredentials: true,
       },
@@ -57,7 +58,6 @@ export default function NotesEditor({
     setIsSaving(false);
     setIsModalOpen(false);
   };
-
 
   return (
     <>
