@@ -31,9 +31,11 @@ const ChatSidebar = ({
     });
     socketInstance.emit("ai-message", aiText);
     socketInstance.on("ai-response", (data) => {
+      if (!data || !data.text || data.text.trim() === "") return;
+
       const newMsg = {
         id: data._id,
-        text: data.text,
+        text: data.text.trim(),
         isYou: false,
       };
       setMessages((prevMessages) => [...prevMessages, newMsg]);
@@ -48,14 +50,17 @@ const ChatSidebar = ({
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (newMessage.trim() === "") return;
+    const text = newMessage.trim();
+    if (text === "") return;
 
     const newMessageObj = {
       id: messages.length + 1,
-      text: newMessage,
+      text,
       isYou: true,
     };
-    socket.emit("ai-message", newMessage);
+    if (socket) {
+      socket.emit("ai-message", text);
+    }
     scrollToBottom();
     setMessages([...messages, newMessageObj]);
     setNewMessage("");
@@ -123,7 +128,7 @@ const ChatSidebar = ({
         </span>
       </div>
 
-      {messages.length <= 0 ? (
+      {messages.filter((msg) => msg.text && msg.text.trim() !== "").length === 0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <MessageSquare size={48} className="text-zinc-800" />
           <h3 className="text-sm font-bold text-zinc-600 uppercase tracking-widest">
@@ -138,32 +143,27 @@ const ChatSidebar = ({
           ref={messagesEndRef}
           className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2"
         >
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
-            >
-              {!msg.isYou && (
-                <>
-                  <div className={`max-w-[70%] px-4 py-2 rounded-2xl ${
+          {messages
+            .filter((msg) => msg.text && msg.text.trim() !== "")
+            .map((msg) => (
+              <div
+                key={msg.id}
+                className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-[70%] px-4 py-2 rounded-2xl ${
                     msg.isYou ? "bg-white/10 text-white self-end" : "bg-zinc-800 text-white"
-                  }`}>
-                    {msg.text}
-                  </div>
-                </>
-              )}
-              {msg.isYou && (
-                <>
-                  <div className={`max-w-[70%] px-4 py-2 rounded-2xl bg-white/10 text-white self-end`}>
-                    {msg.text}
-                  </div>
+                  }`}
+                >
+                  {msg.text}
+                </div>
+                {msg.isYou && (
                   <div className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]">
                     <Wand2 size={16} className="text-white" />
                   </div>
-                </>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
         </div>
       )}
 
