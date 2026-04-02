@@ -110,10 +110,6 @@ function setSocketServer(httpServer) {
         text: response,
       });
     });
-
-    socket.on("disconnect", () => {
-      console.log("User disconnected");
-    });
   });
 }
 

@@ -43,7 +43,7 @@ const AppRoutes = () => {
             <Route path="chats" element={<GroupChat />} />
             <Route path="members" element={<GroupMembers />} />
             <Route path="settings" element={<GroupSettings />} />
-            <Route path="create-note" element={<NotesEditor />} />
+            <Route path="note" element={<NotesEditor />} />
           </Route>
         </Route>
         {/* <Route path="/create-notes" element={<NotesEditor />} /> */}

@@ -235,16 +235,6 @@ const Editor = ({
           </div>
         </motion.div>
       </div>
-      {isViewOnly && (
-        <div
-          onClick={handleAiSummarize}
-          className="fixed cursor-pointer bottom-[0.8rem] right-5 text-black font-semibold"
-        >
-          <p>
-            Summarize with <span className="text-orange-700">AI ✨</span>
-          </p>
-        </div>
-      )}
     </RichTextEditor>
   );
 };

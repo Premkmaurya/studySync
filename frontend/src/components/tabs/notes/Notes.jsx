@@ -22,9 +22,6 @@ const SavedNotesContent = () => {
   useEffect(()=>{
     const fetchAllNotes = async () => {
       const res = await dispatch(fetchNotes());
-      if(res.payload && res.payload.notes){
-        console.log("Fetched Notes:", res.payload.notes);
-      }
     }
     fetchAllNotes();
   },[])

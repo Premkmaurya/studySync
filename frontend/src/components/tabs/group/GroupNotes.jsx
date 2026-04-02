@@ -22,6 +22,7 @@ import {
   getNoteById,
   setNotes,
 } from "../../../features/notes/notesSlice";
+import { isVirtualColor } from "@mantine/core";
 
 dayjs.extend(relativeTime);
 
@@ -40,8 +41,7 @@ const GroupNotes = () => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
       const res = await dispatch(getNoteById(groupId)); 
-      await dispatch(setNotes(res.payload.note)); // Wrap in array for consistency
-      console.log("Fetched notes for group:", res.payload.note);
+      await dispatch(setNotes(res.payload.note)); 
       dispatch(setLoading(false));
     };
     loadNotes();
@@ -50,13 +50,11 @@ const GroupNotes = () => {
   const handleSaveNote = async (noteId) => {
     try {
       const res = await dispatch(saveNote(noteId));
-      console.log("note saved successfully!!", res);
       // Maybe show a toast or something, but for now just dispatch
     } catch (error) {
       console.error("Failed to save note:", error);
     }
   };
-  console.log("Rendering GroupNotes with notes:", notes);
 
 
   return (
@@ -147,7 +145,7 @@ const GroupNotes = () => {
 
                   <button
                     onClick={() =>
-                     console.log("Inspecting note:", article) // Placeholder for inspect action
+                     navigate(`/group/${groupId}/note`,{state:{isViewOnly:true,content:article.content,title:article.title}})
                     }
                     className="w-full flex items-center justify-between px-6 py-4 bg-white/5 border border-white/5 group-hover:border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white hover:text-black"
                   >
@@ -183,7 +181,7 @@ const GroupNotes = () => {
       {/* 3. QUANTUM FLOATING ACTION BUTTON */}
       {createPortal(
         <motion.button
-          onClick={() => navigate(`/group/${groupId}/create-note`)}
+          onClick={() => navigate(`/group/${groupId}/note`)}
           className="fixed bottom-10 right-10 z-[100] p-4 bg-white text-black rounded-full hover:bg-indigo-500 hover:text-white group"
         >
           <Plus size={20} className="transition-transform" />

@@ -36,7 +36,7 @@ export default function NotesEditor({
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
-  const [title, setTitle] = useState("AI Strategy Memo 2024");
+  const [title, setTitle] = useState(location.state?.title || "Untitled Note");
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editor, setEditor] = useState(null);
@@ -54,7 +54,6 @@ export default function NotesEditor({
         withCredentials: true,
       },
     );
-    console.log("Note saved:", response);
     setIsSaving(false);
     setIsModalOpen(false);
   };

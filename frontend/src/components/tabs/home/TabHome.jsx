@@ -42,7 +42,6 @@ const Home = () => {
     const fetchSuggestions = async () => {
       
     const res = await dispatch(fetchSuggestedGroups());
-    console.log("Suggested Groups Response:", res);
       if (res.payload) {
         dispatch(setSuggestedGroups(res.payload.suggestedGroups));
         dispatch(setFieldPercentages(res.payload.fieldPercentages));

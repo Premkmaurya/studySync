@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { FaRegWindowRestore } from "react-icons/fa";
 
 import {
   Maximize2,
@@ -26,25 +25,26 @@ const ChatSidebar = ({
   const [socket, setSocket] = useState();
   const [isMaximize, setIsMaximize] = useState(false);
 
-  // useEffect(() => {
-  //   const socketInstance = io("http://localhost:3000", {
-  //     withCredentials: true,
-  //   });
-  //   socketInstance.emit("aiMessage", aiText);
-  //   socketInstance.on("ai-response", (data) => {
-  //     const newMsg = {
-  //       id: data._id,
-  //       text: data.text,
-  //       isYou: false,
-  //     };
-  //     setMessages((prevMessages) => [...prevMessages, newMsg]);
-  //   });
-  //   setSocket(socketInstance);
+  useEffect(() => {
+    const socketInstance = io("http://localhost:3000", {
+      withCredentials: true,
+    });
+    socketInstance.emit("ai-message", aiText);
+    socketInstance.on("ai-response", (data) => {
+      const newMsg = {
+        id: data._id,
+        text: data.text,
+        isYou: false,
+      };
+      setMessages((prevMessages) => [...prevMessages, newMsg]);
+    });
+    setSocket(socketInstance);
 
-  //   return () => {
-  //     socketInstance.disconnect();
-  //   };
-  // }, []);
+
+    return () => {
+      socketInstance.disconnect();
+    };
+  }, []);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ const ChatSidebar = ({
       text: newMessage,
       isYou: true,
     };
-    socket.emit("aiMessage", newMessage);
+    socket.emit("ai-message", newMessage);
     scrollToBottom();
     setMessages([...messages, newMessageObj]);
     setNewMessage("");
@@ -123,57 +123,67 @@ const ChatSidebar = ({
         </span>
       </div>
 
-      <div className="flex-1 space-y-5 overflow-y-auto pr-2 custom-scrollbar">
-        {[
-          {
-            icon: Wand2,
-            title: "GENERATE SUMMARY",
-            desc: "Extract the core pillars.",
-            color: "bg-fuchsia-500/10 text-fuchsia-400",
-          },
-          {
-            icon: MessageSquare,
-            title: "CHANGE TONE",
-            desc: "Switch to executive speak.",
-            color: "bg-cyan-500/10 text-cyan-400",
-          },
-          {
-            icon: LayoutGrid,
-            title: "BENTO GRID",
-            desc: "Convert note to structured blocks.",
-            color: "bg-amber-500/10 text-amber-400",
-          },
-        ].map((action, i) => (
-          <motion.div
-            key={i}
-            whileHover={{ y: -4, backgroundColor: "rgba(255,255,255,0.03)" }}
-            className="p-6 border border-white/5 rounded-3xl cursor-pointer transition-all group"
-          >
-            <div className={`p-3 w-fit rounded-xl mb-4 ${action.color}`}>
-              <action.icon size={20} />
+      {messages.length <= 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center gap-4">
+          <MessageSquare size={48} className="text-zinc-800" />
+          <h3 className="text-sm font-bold text-zinc-600 uppercase tracking-widest">
+            No messages yet
+          </h3>
+          <p className="text-xs text-zinc-700">
+            Start the conversation by sending a message to the AI.
+          </p>
+        </div>
+      ) : (
+        <div
+          ref={messagesEndRef}
+          className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2"
+        >
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
+            >
+              {!msg.isYou && (
+                <>
+                  <div className={`max-w-[70%] px-4 py-2 rounded-2xl ${
+                    msg.isYou ? "bg-white/10 text-white self-end" : "bg-zinc-800 text-white"
+                  }`}>
+                    {msg.text}
+                  </div>
+                </>
+              )}
+              {msg.isYou && (
+                <>
+                  <div className={`max-w-[70%] px-4 py-2 rounded-2xl bg-white/10 text-white self-end`}>
+                    {msg.text}
+                  </div>
+                  <div className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]">
+                    <Wand2 size={16} className="text-white" />
+                  </div>
+                </>
+              )}
             </div>
-            <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-white mb-2">
-              {action.title}
-            </h4>
-            <p className="text-[12px] text-zinc-500 leading-relaxed group-hover:text-zinc-300 transition-colors">
-              {action.desc}
-            </p>
-          </motion.div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
-      <div className="mt-8">
+      <form onSubmit={handleSendMessage} className="mt-8 absolute bottom-8 left-8 right-8">
         <div className="relative group">
           <input
             type="text"
             placeholder="Prompt AI..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
             className="w-full bg-white/5 border text-white border-white/10 rounded-2xl py-4 px-6 text-xs outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium"
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 rounded-xl cursor-pointer">
+          <button
+            type="submit"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 rounded-xl cursor-pointer"
+          >
             <Sparkles size={16} className="text-white" />
-          </div>
+          </button>
         </div>
-      </div>
+      </form>
     </motion.aside>
   );
 };
