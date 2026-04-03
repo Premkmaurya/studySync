@@ -35,6 +35,7 @@ function setSocketServer(httpServer) {
 
   // 🚀 Connection
   io.on("connection", (socket) => {
+    console.log(`User connected`);
     // // Join Room
     socket.on("joinRoom", (roomId) => {
       if (socket.currentRoom) {
@@ -68,9 +69,9 @@ function setSocketServer(httpServer) {
     });
 
     // // 🤖 AI Chat
-    socket.on("ai-message", async (messagePayload) => {
+    socket.on("ai-notes-request", async (messagePayload) => {
       if (!messagePayload?.text?.trim()) {
-        socket.emit("ai-response", {
+        socket.emit("ai-notes-response", {
           content: "Please send a message first so I can help you.",
           groupId: messagePayload?.groupId,
         });
@@ -98,7 +99,7 @@ function setSocketServer(httpServer) {
 
       const response = await generateResponse([...stm]);
 
-      socket.emit("ai-response", {
+      socket.emit("ai-notes-response", {
         content: response,
         groupId: messagePayload.groupId,
       });
@@ -109,6 +110,52 @@ function setSocketServer(httpServer) {
         role: "model",
         text: response,
       });
+    });
+
+    socket.on('ai-conversation', async (messagePayload) => {
+      if (!messagePayload?.text?.trim()) {
+        socket.emit("ai-conversation-response", {
+          text: "Please send a message first so I can help you.",
+        });
+        return;
+      }
+      console.log(messagePayload)
+      await aiMessageModel.create({
+        userId: socket.user.id,
+        role: "user",
+        text: messagePayload.text,
+      });
+
+      const chatHistory = await aiMessageModel
+        .find({ chatId: messagePayload.chatId })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .lean()
+        .then((results) => results.reverse());
+
+      const stm = chatHistory.map((item) => {
+        return {
+          role: item.role,
+          parts: [{ text: item.text }],
+        };
+      }
+      );
+
+      const response = await generateResponse([...stm], "conversation");
+
+      socket.emit("ai-conversation-response", {
+        text: response,
+      });
+      await aiMessageModel.create({
+        userId: socket.user.id,
+        role: "model",
+        text: response,
+      });
+
+    })
+
+    socket.on("disconnect", () => {
+      console.log(`User disconnected`);
     });
   });
 }

@@ -33,7 +33,7 @@ useEffect(() => {
     withCredentials: true,
   });
 
-  socketInstance.on("ai-response", (data) => {
+  socketInstance.on("ai-notes-response", (data) => {
     setContent(data.content);
     setLoading(false);
     onClose();
@@ -59,7 +59,7 @@ useEffect(() => {
     }; 
     if (!inputValue.trim() || loading) return;
     setLoading(true);
-    socket?.emit("ai-message", messagePayload);
+    socket?.emit("ai-notes-request", messagePayload);
   };
 
   const suggestions = ["create notes on React", "summarize my last note", "what are my upcoming deadlines?"];

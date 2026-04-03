@@ -12,16 +12,10 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const ChatSidebar = ({
-  aiText,
-  setIsAisummarize,
-  isAiPanelOpen,
-  setIsAiPanelOpen,
-}) => {
+const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
-  const mainRef = useRef(null);
   const [socket, setSocket] = useState();
   const [isMaximize, setIsMaximize] = useState(false);
 
@@ -29,8 +23,8 @@ const ChatSidebar = ({
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
-    socketInstance.emit("ai-message", aiText);
-    socketInstance.on("ai-response", (data) => {
+    socketInstance.emit("ai-conversation", { text: aiText });
+    socketInstance.on("ai-conversation-response", (data) => {
       if (!data || !data.text || data.text.trim() === "") return;
 
       const newMsg = {
@@ -41,7 +35,6 @@ const ChatSidebar = ({
       setMessages((prevMessages) => [...prevMessages, newMsg]);
     });
     setSocket(socketInstance);
-
 
     return () => {
       socketInstance.disconnect();
@@ -59,7 +52,7 @@ const ChatSidebar = ({
       isYou: true,
     };
     if (socket) {
-      socket.emit("ai-message", text);
+      socket.emit("ai-conversation", { text });
     }
     scrollToBottom();
     setMessages([...messages, newMessageObj]);
@@ -77,17 +70,17 @@ const ChatSidebar = ({
 
   return (
     <motion.aside
-     layout // This makes the size change animate smoothly
+      layout // This makes the size change animate smoothly
       initial={{ x: 400, opacity: 0 }}
-      animate={{ 
-        x: 0, 
+      animate={{
+        x: 0,
         opacity: 1,
         // We can dynamically adjust these based on state
         width: isMaximize ? "100%" : "340px",
-        inset: isMaximize ? "0px" : "128px 32px 40px auto" // top-32(128px) right-8(32px) bottom-10(40px)
+        inset: isMaximize ? "0px" : "128px 32px 40px auto", // top-32(128px) right-8(32px) bottom-10(40px)
       }}
       exit={{ x: 400, opacity: 0 }}
-      className={`fixed bg-zinc-950/80 backdrop-blur-3xl border border-white/10 p-8 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
+      className={`fixed bg-zinc-950/80 backdrop-blur-3xl border border-white/10 p-6 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
         isMaximize ? "rounded-0" : "rounded-[40px]"
       }`}
       style={{
@@ -98,7 +91,7 @@ const ChatSidebar = ({
         left: isMaximize ? 0 : undefined,
       }}
     >
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]">
             <Zap size={20} className="text-white" />
@@ -128,7 +121,8 @@ const ChatSidebar = ({
         </span>
       </div>
 
-      {messages.filter((msg) => msg.text && msg.text.trim() !== "").length === 0 ? (
+      {messages.filter((msg) => msg.text && msg.text.trim() !== "").length ===
+      0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <MessageSquare size={48} className="text-zinc-800" />
           <h3 className="text-sm font-bold text-zinc-600 uppercase tracking-widest">
@@ -141,7 +135,7 @@ const ChatSidebar = ({
       ) : (
         <div
           ref={messagesEndRef}
-          className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2"
+          className="flex-1 overflow-y-auto space-y-3 mb-14 pr-2"
         >
           {messages
             .filter((msg) => msg.text && msg.text.trim() !== "")
@@ -151,8 +145,10 @@ const ChatSidebar = ({
                 className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[70%] px-4 py-2 rounded-2xl ${
-                    msg.isYou ? "bg-white/10 text-white self-end" : "bg-zinc-800 text-white"
+                  className={`max-w-[70%] px-4 py-2 text-sm rounded-2xl ${
+                    msg.isYou
+                      ? "bg-white/10 text-white  self-end"
+                      : "bg-zinc-800 text-white"
                   }`}
                 >
                   {msg.text}
@@ -167,14 +163,17 @@ const ChatSidebar = ({
         </div>
       )}
 
-      <form onSubmit={handleSendMessage} className="mt-8 absolute bottom-8 left-8 right-8">
+      <form
+        onSubmit={handleSendMessage}
+        className="mt-8 absolute bottom-3 left-3 right-3"
+      >
         <div className="relative group">
           <input
             type="text"
             placeholder="Prompt AI..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="w-full bg-white/5 border text-white border-white/10 rounded-2xl py-4 px-6 text-xs outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium"
+            className="w-full bg-black/5 border text-white border-white/10 rounded-2xl py-4 px-6 text-xs outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium"
           />
           <button
             type="submit"
