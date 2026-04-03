@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import Markdown from "react-markdown";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
 
 import {
   Maximize2,
@@ -28,12 +31,13 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
       if (!data || !data.text || data.text.trim() === "") return;
 
       const newMsg = {
-        id: data._id,
+        id: data._id || Date.now(),
         text: data.text.trim(),
         isYou: false,
       };
       setMessages((prevMessages) => [...prevMessages, newMsg]);
     });
+
     setSocket(socketInstance);
 
     return () => {
@@ -145,13 +149,15 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
                 className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[70%] px-4 py-2 text-sm rounded-2xl ${
+                  className={`max-w-[70%] px-4 py-2 text-md rounded-2xl ${
                     msg.isYou
-                      ? "bg-white/10 text-white  self-end"
+                      ? "bg-white/10 text-white self-end"
                       : "bg-zinc-800 text-white"
                   }`}
                 >
-                  {msg.text}
+                  <Markdown rehypePlugins={[rehypeHighlight]}>
+                    {msg.text}
+                  </Markdown>
                 </div>
                 {msg.isYou && (
                   <div className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]">

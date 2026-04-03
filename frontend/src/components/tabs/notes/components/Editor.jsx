@@ -51,8 +51,6 @@ import "@mantine/core/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/core/styles.css";
 
-// Socket.IO setup
-import { io } from "socket.io-client";
 
 const Editor = ({
   isViewOnly,
@@ -61,7 +59,6 @@ const Editor = ({
   setTitle,
   isAIOpen,
   setIsAIOpen,
-  setIsAisummarize,
   setAiText,
   setEditor,
   content
@@ -84,6 +81,10 @@ const Editor = ({
     editable: !isViewOnly,
   });
 
+  useEffect(() => {
+    console.log("Content from state:", contentFromState);
+    setAiText(contentFromState || content);
+  },[]);
     
   useEffect(() => {
     if (editor && content) {
@@ -98,16 +99,7 @@ const Editor = ({
     }
   }, [editor, setEditor]);
 
-  const handleAiSummarize = async () => {
-    if (!editor) return;
-    const content = editor.getHTML();
-    setAiText(
-      content +
-        " Create a structured summary of the above note. Use short bullet points, highlight key ideas, and remove any unnecessary detail. Keep it concise and easy to study.",
-    );
 
-    setTimeout(() => setIsAisummarize(true), 500);
-  };
 
   return (
     <RichTextEditor editor={editor} className="border border-transparent">

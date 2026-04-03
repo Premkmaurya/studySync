@@ -35,7 +35,6 @@ function setSocketServer(httpServer) {
 
   // 🚀 Connection
   io.on("connection", (socket) => {
-    console.log(`User connected`);
     // // Join Room
     socket.on("joinRoom", (roomId) => {
       if (socket.currentRoom) {
@@ -119,7 +118,6 @@ function setSocketServer(httpServer) {
         });
         return;
       }
-      console.log(messagePayload)
       await aiMessageModel.create({
         userId: socket.user.id,
         role: "user",
@@ -138,8 +136,7 @@ function setSocketServer(httpServer) {
           role: item.role,
           parts: [{ text: item.text }],
         };
-      }
-      );
+      });
 
       const response = await generateResponse([...stm], "conversation");
 
@@ -153,10 +150,6 @@ function setSocketServer(httpServer) {
       });
 
     })
-
-    socket.on("disconnect", () => {
-      console.log(`User disconnected`);
-    });
   });
 }
 
