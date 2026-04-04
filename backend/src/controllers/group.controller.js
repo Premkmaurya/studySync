@@ -1,5 +1,9 @@
 const groupModel = require("../models/group.model");
 const userGroupModel = require("../models/joinGroup.model");
+const noteModel = require("../models/note.model");
+const aiMessageModel = require("../models/aiMessage.model");
+const groupChatsModel = require("../models/groupChats.model");
+const savedNoteModel = require("../models/savedNote.model");
 const uploadImage = require("../services/image.service");
 
 async function getAllGroups(req, res) {
@@ -74,20 +78,35 @@ async function getGroups(req, res) {
 async function deleteGroup(req, res) {
   const { groupId } = req.params;
   const user = req.user;
-  const group = await groupModel.findOneAndDelete({
+
+  // Check if group exists and user is owner
+  const group = await groupModel.findOne({
     _id: groupId,
     owner: user.id,
   });
 
   if (!group) {
     return res.status(404).json({
-      message: "Group not found",
+      message: "Group not found or you are not the owner",
     });
   }
 
+  // Get all note IDs in the group for deleting savedNotes
+  const notes = await noteModel.find({ groupId }, '_id');
+  const noteIds = notes.map(note => note._id);
+
+  // Delete all related data
+  await noteModel.deleteMany({ groupId });
+  await aiMessageModel.deleteMany({ groupId });
+  await groupChatsModel.deleteMany({ group: groupId });
+  await savedNoteModel.deleteMany({ noteId: { $in: noteIds } });
+  await userGroupModel.deleteMany({ groupId });
+
+  // Now delete the group
+  await groupModel.findByIdAndDelete(groupId);
+
   return res.status(200).json({
-    message: "Group deleted successfully",
-    group,
+    message: "Group and all related data deleted successfully",
   });
 }
 

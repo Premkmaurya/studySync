@@ -96,7 +96,7 @@ function setSocketServer(httpServer) {
         };
       });
 
-      const response = await generateResponse([...stm]);
+      const response = await generateResponse([...stm],"notes");
 
       socket.emit("ai-notes-response", {
         content: response,

@@ -19,10 +19,7 @@ async function createNote(req, res) {
 }
 
 async function getNotes(req, res) {
-  const notes = await noteModel
-    .find({})
-    .limit(10)
-    .sort({ createdAt: -1 });
+  const notes = await noteModel.find({}).limit(10).sort({ createdAt: -1 });
   return res.status(200).json({
     message: "notes fetch successfully.",
     notes,
@@ -31,7 +28,10 @@ async function getNotes(req, res) {
 
 async function getNoteById(req, res) {
   const { groupId } = req.params;
-  const note = await noteModel.find({groupId: groupId }).sort({ createdAt: -1 }).populate("userId", "fullname");
+  const note = await noteModel
+    .find({ groupId: groupId })
+    .sort({ createdAt: -1 })
+    .populate("userId", "fullname");
   if (!note) {
     return res.status(404).json({
       message: "Note not found.",
@@ -61,7 +61,11 @@ async function searchNotes(req, res) {
     filter.$text = { $search: q };
   }
   try {
-    const notes = await noteModel.find(filter).skip(0).populate("userId", "fullname").sort({ createdAt: -1 });
+    const notes = await noteModel
+      .find(filter)
+      .skip(0)
+      .populate("userId", "fullname")
+      .sort({ createdAt: -1 });
     return res.status(200).json({ notes });
   } catch (error) {
     return res.status(500).json({ message: "Error fetching notes", error });
@@ -85,7 +89,10 @@ async function saveNote(req, res) {
     });
   }
 
-  const isAlreadySaved = await savedNoteModel.findOne({ userId: user.id, noteId });
+  const isAlreadySaved = await savedNoteModel.findOne({
+    userId: user.id,
+    noteId,
+  });
 
   if (isAlreadySaved) {
     return res.status(400).json({
@@ -97,7 +104,7 @@ async function saveNote(req, res) {
     userId: user.id,
     noteId,
   });
-  
+
   return res.status(200).json({
     message: "Note saved successfully.",
   });
@@ -105,7 +112,10 @@ async function saveNote(req, res) {
 
 async function getSavedNotes(req, res) {
   const user = req.user;
-  const savedNotes = await savedNoteModel.find({ userId: user.id }).populate("noteId").sort({ createdAt: -1 });
+  const savedNotes = await savedNoteModel
+    .find({ userId: user.id })
+    .populate("userId", "fullname")
+    .sort({ createdAt: -1 });
   return res.status(200).json({
     message: "Your saved notes fetched successfully.",
     savedNotes,

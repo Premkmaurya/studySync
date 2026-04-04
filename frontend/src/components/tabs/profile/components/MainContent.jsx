@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FileText,
@@ -35,6 +37,8 @@ const ArrowRight = ({ size, className }) => (
   </svg>
 );
 
+dayjs.extend(relativeTime);
+
 const MainContent = ({ activeTab }) => {
   const navigate = useNavigate();
 
@@ -66,6 +70,7 @@ const MainContent = ({ activeTab }) => {
       if (res.payload && res.payload.savedNotes) {
         setSavedNotes(res.payload.savedNotes);
       }
+      console.log(res.payload.savedNotes);
     };
 
     fetchMyNotes();
@@ -140,7 +145,7 @@ const MainContent = ({ activeTab }) => {
         {activeTab === "notes" && (
           <div className="space-y-4">
             {myNotes.length > 0 ? (
-              myNotes.map((i) => (
+              myNotes.map((note,i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-[24px] hover:bg-white/5 transition-all cursor-pointer group"
@@ -151,10 +156,10 @@ const MainContent = ({ activeTab }) => {
                     </div>
                     <div>
                       <h4 className="text-lg font-bold text-white tracking-tight">
-                        Quantum Computing Briefing #{i}
+                        {note.title} #{i}
                       </h4>
                       <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
-                        Last edited 2h ago
+                        {dayjs(note.createdAt).fromNow()}
                       </p>
                     </div>
                   </div>
@@ -192,10 +197,10 @@ const MainContent = ({ activeTab }) => {
                   <Bookmark size={20} fill="currentColor" />
                 </div>
                 <h4 className="text-xl font-bold text-white mb-4">
-                  Saved: {note.noteId.title}
+                  Saved: {note.noteId}
                 </h4>
                 <p className="text-sm text-zinc-400 leading-relaxed mb-8">
-                  {note.noteId.summary || "No summary available for this note."}
+                  {note.noteId || "No summary available for this note."}
                 </p>
                 <button className="text-[10px] font-black text-indigo-400 uppercase tracking-[0.2em] flex items-center gap-2 group-hover:gap-4 transition-all">
                   View Source <ArrowRight size={14} />
