@@ -14,6 +14,9 @@ import {
   LayoutGrid,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { useGSAP} from "@gsap/react";
+import { SplitText } from "gsap/all";
 
 const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
   const [newMessage, setNewMessage] = useState("");
@@ -71,6 +74,25 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  gsap.registerPlugin(useGSAP);
+  gsap.registerPlugin(SplitText);
+
+  let split = SplitText.create(".split", {
+  type: "words, lines",
+});
+
+  useGSAP(()=>{
+    if(isAiPanelOpen){
+      gsap.to(split.words, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.05,
+        ease: "power2.out",
+        autoAlpha: 1, 
+      });
+    }
+  },[messages])
 
   return (
     <motion.aside
@@ -148,8 +170,11 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
                 key={msg.id}
                 className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`max-w-[70%] px-4 py-2 text-md rounded-2xl ${
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`split max-w-[70%] px-4 py-2 text-md rounded-2xl ${
                     msg.isYou
                       ? "bg-white/10 text-white self-end"
                       : "bg-zinc-800 text-white"
@@ -158,11 +183,16 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
                   <Markdown rehypePlugins={[rehypeHighlight]}>
                     {msg.text}
                   </Markdown>
-                </div>
+                </motion.div>
                 {msg.isYou && (
-                  <div className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
+                    className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]"
+                  >
                     <Wand2 size={16} className="text-white" />
-                  </div>
+                  </motion.div>
                 )}
               </div>
             ))}

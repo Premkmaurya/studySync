@@ -11,8 +11,10 @@ import {
   Circle
 } from "lucide-react";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchGroupMembers } from "../../../features/groups/groupsSlice";
+import { selectNotes } from "../../../features/notes/notesSelectors";
+import { getNoteById, setNotes } from "../../../features/notes/notesSlice";
 
 // --- SUB-COMPONENTS ---
 
@@ -84,7 +86,17 @@ const GroupMembers = () => {
   const [loading, setLoading] = useState(true);
 
   const dispatch = useDispatch();
+  const notes = useSelector(selectNotes)
 
+  useEffect(() => {
+    if(notes.length === 0) {
+      const fetchNotesForGroup = async () => {
+        const res = await dispatch(getNoteById(group._id));
+        await dispatch(setNotes([...res.payload.note]))
+      }
+      fetchNotesForGroup();
+    }
+  }, [notes]);
 
   useEffect(() => {
     async function getMembers() {
@@ -122,7 +134,7 @@ const GroupMembers = () => {
                  <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Total</div>
               </div>
               <div className="text-center">
-                 <div className="text-xs font-black text-indigo-400">{members.filter(m => m.role === "Admin").length}</div>
+                 <div className="text-xs font-black text-indigo-400">{notes.length}</div>
                  <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Notes</div>
               </div>
            </div>
