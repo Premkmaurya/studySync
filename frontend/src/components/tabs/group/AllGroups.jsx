@@ -23,7 +23,12 @@ import {
   selectGroupsLoading,
   selectJoinedGroups,
 } from "../../../features/groups/groupsSelectors";
-import { fetchGroups, joinGroup, setJoinedGroups } from "../../../features/groups/groupsSlice";
+import {
+  fetchGroups,
+  searchGroups,
+  joinGroup,
+  setJoinedGroups,
+} from "../../../features/groups/groupsSlice";
 
 // --- CATEGORY CONFIGURATION ---
 const CATEGORIES = [
@@ -149,24 +154,32 @@ const AllGroupsContent = () => {
     const fetchAllGroups = async () => {
       const res = await dispatch(fetchGroups());
       if (res.meta.requestStatus === "fulfilled") {
-        setFilteredGroups(res.payload.groups);
+        setFilteredGroups(res.payload.groups || res.payload || []);
       }
     };
     fetchAllGroups();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
+    if (searchTerm.trim()) {
+      const timer = setTimeout(async () => {
+        const res = await dispatch(searchGroups(searchTerm.trim()));
+        const searchResults = res.payload?.groups || res.payload || [];
+        const filtered =
+          selectedCategory !== "All"
+            ? searchResults.filter((g) => g.field === selectedCategory)
+            : searchResults;
+        setFilteredGroups(filtered);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+
     let result = groups;
     if (selectedCategory !== "All") {
       result = result.filter((g) => g.field === selectedCategory);
     }
-    if (searchTerm) {
-      result = result.filter((g) =>
-        g.name.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-    }
     setFilteredGroups(result);
-  }, [selectedCategory, searchTerm, groups]);
+  }, [dispatch, groups, searchTerm, selectedCategory]);
 
   return (
     <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-hidden">
@@ -190,11 +203,10 @@ const AllGroupsContent = () => {
             </div>
 
             <div className="relative w-full lg:w-[400px] group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-fuchsia-500 rounded-3xl blur opacity-20 group-focus-within:opacity-40 transition-opacity" />
-              <div className="relative bg-zinc-900 border border-white/10 rounded-3xl py-6 pl-16 pr-8">
+              <div className="relative bg-transparent border-b border-white/10 py-2 pl-14 pr-8">
                 <Search
                   size={24}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
                 />
                 <input
                   type="text"

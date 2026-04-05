@@ -77,9 +77,9 @@ export const getNoteById = createAsyncThunk(
 
 export const searchNotes = createAsyncThunk(
   "notes/searchNotes",
-  async (query, thunkAPI) => {
+  async ({ query, groupId }, thunkAPI) => {
     try {
-      return await searchNotesApi(query);
+      return await searchNotesApi(query, groupId);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to search notes",
@@ -150,6 +150,18 @@ const notesSlice = createSlice({
         state.notes = action.payload.notes || action.payload;
       })
       .addCase(fetchNotes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(searchNotes.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchNotes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.notes = action.payload.notes || action.payload;
+      })
+      .addCase(searchNotes.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

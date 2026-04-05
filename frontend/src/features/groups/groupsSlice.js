@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
   fetchGroupsApi,
+  searchGroupsApi,
   createGroupApi,
   joinGroupApi,
   fetchGroupMembersApi,
@@ -57,6 +58,19 @@ export const joinedGroup = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch joined groups",
+      );
+    }
+  },
+);
+
+export const searchGroups = createAsyncThunk(
+  "groups/searchGroups",
+  async (query, thunkAPI) => {
+    try {
+      return await searchGroupsApi(query);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to search groups",
       );
     }
   },
@@ -155,6 +169,17 @@ const groupsSlice = createSlice({
         state.groups = action.payload.groups || action.payload;
       })
       .addCase(fetchGroups.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(searchGroups.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(searchGroups.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(searchGroups.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

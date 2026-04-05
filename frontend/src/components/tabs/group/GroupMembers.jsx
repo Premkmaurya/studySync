@@ -134,7 +134,7 @@ const GroupMembers = () => {
                  <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Total</div>
               </div>
               <div className="text-center">
-                 <div className="text-xs font-black text-indigo-400">{notes.length}</div>
+                 <div className="text-xs font-black text-indigo-400">{notes?.length}</div>
                  <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Notes</div>
               </div>
            </div>

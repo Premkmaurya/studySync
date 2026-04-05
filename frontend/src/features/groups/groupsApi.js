@@ -5,6 +5,13 @@ export const fetchGroupsApi = async () => {
   return response.data;
 };
 
+export const searchGroupsApi = async (query) => {
+  const response = await api.get("/groups/search", {
+    params: { q: query },
+  });
+  return response.data;
+};
+
 export const createGroupApi = async (groupData) => {
   const response = await api.post("/groups/create", groupData);
   return response.data;

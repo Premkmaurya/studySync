@@ -100,8 +100,11 @@ async function getMyNotes(req, res) {
 }
 
 async function searchNotes(req, res) {
-  const { q = "" } = req.query;
-  const cacheKey = buildCacheKey("notes:search", q.trim().toLowerCase());
+  const { q = "", groupId } = req.query;
+  const cacheKey = buildCacheKey(
+    "notes:search",
+    `${q.trim().toLowerCase()}:${groupId || "all"}`,
+  );
   const cached = await getCachedData(cacheKey);
 
   if (cached) {
@@ -112,6 +115,10 @@ async function searchNotes(req, res) {
   if (q) {
     filter.$text = { $search: q };
   }
+  if (groupId) {
+    filter.groupId = groupId;
+  }
+
   try {
     const notes = await noteModel
       .find(filter)

@@ -40,7 +40,7 @@ const groupSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-groupSchema.index({ name: "text" });
+groupSchema.index({ name: "text", description: "text", field: "text" });
 
 const groupModel = mongoose.model("group", groupSchema);
 

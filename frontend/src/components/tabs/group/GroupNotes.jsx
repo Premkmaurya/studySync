@@ -20,6 +20,7 @@ import {
   setLoading,
   saveNote,
   getNoteById,
+  searchNotes,
   setNotes,
 } from "../../../features/notes/notesSlice";
 import { isVirtualColor } from "@mantine/core";
@@ -40,12 +41,25 @@ const GroupNotes = () => {
   useEffect(() => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
-      const res = await dispatch(getNoteById(groupId)); 
-      await dispatch(setNotes(res.payload.note)); 
+      if (searchTerm.trim()) {
+        const res = await dispatch(
+          searchNotes({ query: searchTerm.trim(), groupId }),
+        );
+        if (res.payload?.notes) {
+          dispatch(setNotes(res.payload.notes));
+        } else {
+          dispatch(setNotes([]));
+        }
+      } else {
+        const res = await dispatch(getNoteById(groupId));
+        dispatch(setNotes(res.payload?.note || []));
+      }
       dispatch(setLoading(false));
     };
-    loadNotes();
-  }, []);
+
+    const timer = setTimeout(loadNotes, 300);
+    return () => clearTimeout(timer);
+  }, [dispatch, groupId, searchTerm]);
 
   const handleSaveNote = async (noteId) => {
     try {
@@ -98,7 +112,7 @@ const GroupNotes = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
           <AnimatePresence>
-            {notes.length > 0 ? (
+            {notes?.length > 0 ? (
               notes.map((article, index) => (
                 <motion.div
                   key={String(article._id || index)}
