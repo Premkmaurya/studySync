@@ -4,6 +4,7 @@ const { Server } = require("socket.io");
 const messageModel = require("../models/groupChats.model");
 const aiMessageModel = require("../models/aiMessage.model");
 const { generateResponse } = require("../services/ai.service");
+const { invalidateByPrefix } = require("../services/cache.service");
 
 function setSocketServer(httpServer) {
   // Socket init
@@ -62,6 +63,8 @@ function setSocketServer(httpServer) {
       const populatedMsg = await messageModel
         .findById(createMsg._id)
         .populate("user", "fullname");
+
+      await invalidateByPrefix(`messages:group:${roomId}`);
 
       // send message to everyone else in the room, not the sender
       socket.to(roomId).emit("newMessage", populatedMsg);
