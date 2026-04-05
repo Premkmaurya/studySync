@@ -11,7 +11,7 @@ const httpServer = http.createServer(app);
 // DB connect
 connectDB();
 
-// Cache init
+// cache
 initCache();
 
 // socket server
