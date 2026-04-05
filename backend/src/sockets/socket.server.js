@@ -4,6 +4,7 @@ const { Server } = require("socket.io");
 const messageModel = require("../models/groupChats.model");
 const aiMessageModel = require("../models/aiMessage.model");
 const { generateResponse } = require("../services/ai.service");
+const { invalidateByPrefix } = require("../services/cache.service");
 
 function setSocketServer(httpServer) {
   // Socket init
@@ -63,6 +64,8 @@ function setSocketServer(httpServer) {
         .findById(createMsg._id)
         .populate("user", "fullname");
 
+      await invalidateByPrefix(`messages:group:${roomId}`);
+
       // send message to everyone else in the room, not the sender
       socket.to(roomId).emit("newMessage", populatedMsg);
     });
@@ -96,7 +99,7 @@ function setSocketServer(httpServer) {
         };
       });
 
-      const response = await generateResponse([...stm],"notes");
+      const response = await generateResponse([...stm], "notes");
 
       socket.emit("ai-notes-response", {
         content: response,
@@ -111,7 +114,7 @@ function setSocketServer(httpServer) {
       });
     });
 
-    socket.on('ai-conversation', async (messagePayload) => {
+    socket.on("ai-conversation", async (messagePayload) => {
       if (!messagePayload?.text?.trim()) {
         socket.emit("ai-conversation-response", {
           text: "Please send a message first so I can help you.",
@@ -148,8 +151,7 @@ function setSocketServer(httpServer) {
         role: "model",
         text: response,
       });
-
-    })
+    });
   });
 }
 

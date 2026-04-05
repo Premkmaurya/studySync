@@ -7,6 +7,7 @@ const cors = require("cors")
 const authMiddleware = require("./middlewares/auth.middleware")
 const getMessages = require("./controllers/message.controller")
 
+
 const app = express()
 
 app.use(cors({
