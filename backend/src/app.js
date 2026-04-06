@@ -6,7 +6,7 @@ const noteRoutes = require("./routes/notes.routes")
 const cors = require("cors")
 const authMiddleware = require("./middlewares/auth.middleware")
 const getMessages = require("./controllers/message.controller")
-
+const compression = require("compression")
 
 const app = express()
 
@@ -17,7 +17,7 @@ app.use(cors({
 
 app.use(cookieParser())
 app.use(express.json())
-
+app.use(compression())
 
 app.use("/api/auth",authRoutes)
 app.use("/api/groups",groupRoutes)
