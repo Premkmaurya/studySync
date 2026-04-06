@@ -117,6 +117,7 @@ export const getSavedNotes = createAsyncThunk(
 const initialState = {
   notes: [],
   savedNotes: [],
+  myNotes: [],
   loading: false,
   error: null,
 };
@@ -127,6 +128,9 @@ const notesSlice = createSlice({
   reducers: {
     setNotes: (state, action) => {
       state.notes = action.payload;
+    },
+    setMyNotes: (state, action) => {
+      state.myNotes = action.payload;
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
@@ -171,6 +175,7 @@ const notesSlice = createSlice({
 
 export const {
   setNotes,
+  setMyNotes,
   setSelectedNote,
   setLoading,
   clearNotesError,

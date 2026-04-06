@@ -7,7 +7,7 @@ import {
   FileText,
   Bookmark,
 } from "lucide-react";
-import MainContent from "./components/MainContent";
+import MainContent from "./components/mainContent/MainContent";
 import HeroSection from "./components/HeroSection";
 import TabSwitch from "./components/TabSwitch";
 

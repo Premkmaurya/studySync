@@ -1,16 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { List } from "react-window";
 import {
   Search,
   Filter,
   Bot,
   Zap,
 } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectNotes } from "../../../features/notes/notesSelectors";
 import { fetchNotes } from "../../../features/notes/notesSlice";
 
+
 import NoteCard from "./components/NoteCard";
+
+const NotesRow = ({ index, style, data }) => {
+  const notes = data;
+  const note1 = notes[index * 3];
+  const note2 = notes[index * 3 + 1];
+  const note3 = notes[index * 3 + 2];
+
+  return (
+    <div style={style} className="px-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        {note1 && <NoteCard note={note1} index={index * 3} />}
+        {note2 && <NoteCard note={note2} index={index * 3 + 1} />}
+        {note3 && <NoteCard note={note3} index={index * 3 + 2} />}
+      </div>
+    </div>
+  );
+};
 
 const SavedNotesContent = () => {
   const navigate = useNavigate();
@@ -98,14 +117,17 @@ const SavedNotesContent = () => {
         </section>
 
         {/* 4. The Grid */}
-        <div
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start"
-          style={{ WebkitTransform: "translate3d(0,0,0)" }}
-        >
+        <div style={{ WebkitTransform: "translate3d(0,0,0)" }}>
           {notes.length > 0 ? (
-            notes.map((note, i) => (
-              <NoteCard key={note.id} note={note} index={i} />
-            ))
+            <List
+              height={Math.min(Math.ceil(notes.length / 3) * 320, 800)} // Max height of 800px, row height ~320px
+              itemCount={Math.ceil(notes.length / 3)} // Each row contains up to 3 items
+              itemSize={320} // Height of each row
+              itemData={notes}
+              className="w-full"
+            >
+              {NotesRow}
+            </List>
           ) : (
             <p className="text-zinc-500">No notes found.</p>
           )}
