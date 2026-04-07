@@ -18,12 +18,6 @@ const Header = ({
     <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
       <div className="bg-zinc-900/40 backdrop-blur-3xl border rounded-[24px] px-6 py-3 flex items-center justify-between shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
         <div className="flex items-center gap-4">
-          <button className="p-2.5 hover:bg-white/5 rounded-xl transition-colors text-slate-400 group">
-            <ChevronLeft
-              size={22}
-              className="group-hover:-translate-x-1 transition-transform"
-            />
-          </button>
           <div className="flex flex-col border-l border-white/10 pl-5">
             <span className="text-[10px] uppercase tracking-[0.3em] text-indigo-400 font-black leading-none mb-1">
               {profession}
@@ -35,16 +29,6 @@ const Header = ({
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex -space-x-2 mr-2">
-            {[1, 2, 3].map((i) => (
-              <motion.img
-                key={i}
-                whileHover={{ y: -4, scale: 1.1 }}
-                src={`https://i.pravatar.cc/100?u=${i + 20}`}
-                className="w-9 h-9 rounded-full border-2 border-zinc-900 shadow-2xl cursor-pointer"
-              />
-            ))}
-          </div>
           {!isViewOnly ? (
             <button
               onClick={handleSave}

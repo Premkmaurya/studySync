@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 
 // Icons
 import {
@@ -82,7 +82,6 @@ const Editor = ({
   });
 
   useEffect(() => {
-    console.log("Content from state:", contentFromState);
     setAiText(contentFromState || content);
   },[]);
     
@@ -99,18 +98,20 @@ const Editor = ({
     }
   }, [editor, setEditor]);
 
-
+  const constraintsRef = useRef(null);
 
   return (
     <RichTextEditor editor={editor} className="border border-transparent">
       {!isViewOnly && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50">
+        <div ref={constraintsRef} className="fixed inset-0 z-50 pointer-events-none">
           <motion.div
             drag
+            dragConstraints={constraintsRef}
+            dragElastic={0}
             dragMomentum={false}
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="flex items-center gap-1 bg-white/50 backdrop-blur-3xl p-2 rounded-[24px]"
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-1 bg-white/50 backdrop-blur-3xl p-2 rounded-[24px]"
           >
             <RichTextEditor.Toolbar
               style={{

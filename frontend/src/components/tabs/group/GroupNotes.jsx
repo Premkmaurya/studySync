@@ -30,9 +30,8 @@ dayjs.extend(relativeTime);
 const GroupNotes = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
-  
+
   const { groupId } = useParams();
-  
 
   const dispatch = useDispatch();
   let notes = useSelector(selectNotes);
@@ -69,7 +68,6 @@ const GroupNotes = () => {
       console.error("Failed to save note:", error);
     }
   };
-
 
   return (
     <div className="relative w-full min-h-screen text-slate-200 bg-[#030303] p-6 md:p-12">
@@ -159,7 +157,15 @@ const GroupNotes = () => {
 
                   <button
                     onClick={() =>
-                     navigate(`/group/${groupId}/note`,{state:{isViewOnly:true,content:article.content,title:article.title}})
+                      navigate(`/group/${groupId}/note`, {
+                        state: {
+                          isViewOnly: true,
+                          content: article.content,
+                          title: article.title,
+                          groupName: article.groupId.title,
+                          profession: article.groupId.field,
+                        },
+                      })
                     }
                     className="w-full flex items-center justify-between px-6 py-4 bg-white/5 border border-white/5 group-hover:border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white hover:text-black"
                   >

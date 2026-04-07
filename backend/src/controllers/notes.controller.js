@@ -62,12 +62,17 @@ async function getNoteById(req, res) {
   const note = await noteModel
     .find({ groupId: groupId })
     .sort({ createdAt: -1 })
-    .populate("userId", "fullname");
+    .populate("userId", "fullname")
+    .populate("groupId")
+    .lean()
+
   if (!note || note.length === 0) {
     return res.status(404).json({
       message: "Note not found.",
     });
   }
+
+  console.log("Fetched note:", note);
 
   const payload = {
     message: "Note fetched successfully.",

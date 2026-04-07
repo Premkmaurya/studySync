@@ -44,24 +44,6 @@ const GroupCard = ({ group, isSuggested=false }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 mb-8">
-        <div className="flex -space-x-2">
-          {[1, 2, 3].map((i) => (
-            <img
-              key={i}
-              src={`https://i.pravatar.cc/100?u=${group.id + i}`}
-              className="w-7 h-7 rounded-full border-2 border-zinc-950"
-            />
-          ))}
-          <div className="w-7 h-7 rounded-full bg-zinc-800 flex items-center justify-center text-[8px] font-bold text-zinc-400 border-2 border-zinc-950">
-            +{group.members}
-          </div>
-        </div>
-        <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">
-          Active Now
-        </span>
-      </div>
-
       <div className="flex gap-2 mt-auto">
         <button
           onClick={() => navigate(`/group/${group._id}/chats`)}

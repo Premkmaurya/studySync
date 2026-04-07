@@ -18,10 +18,7 @@ import axios from "axios";
 import { io } from "socket.io-client";
 import Editor from "./components/Editor";
 
-export default function NotesEditor({
-  groupName = "Design Engineers",
-  profession = "Software Development",
-}) {
+export default function NotesEditor() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aiText, setAiText] = useState("");
   const [content, setContent] = useState("");
@@ -42,6 +39,8 @@ export default function NotesEditor({
   const [editor, setEditor] = useState(null);
 
   const { groupId } = useParams();
+  const groupName = location.state?.groupName || "Unknown Group";
+  const profession = location.state?.profession || "Unknown Profession";
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -59,7 +58,7 @@ export default function NotesEditor({
   };
 
   return (
-    <>
+    <div className="overflow-hidden">
       <div>
         <AIPopup
           isOpen={isAIOpen}
@@ -115,6 +114,6 @@ export default function NotesEditor({
           )}
         </AnimatePresence>
       </div>
-    </>
+    </div>
   );
 }
