@@ -79,7 +79,7 @@ async function searchGroupById(req, res) {
 }
 
 async function createGroup(req, res) {
-  const { name, description } = req.body;
+  const { name, description, field } = req.body;
   const image = req.file;
   const user = req.user;
   let response = {};
@@ -90,6 +90,7 @@ async function createGroup(req, res) {
     name,
     description,
     image: response.url,
+    field,
     owner: user.id,
     members: 1,
   });

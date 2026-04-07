@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { motion, AnimatePresence } from "framer-motion";
-import GroupSection from "./GroupSection";
+import GroupSection from "./components/GroupSection";
 import ProfileSection from "./components/ProfileSection";
 import NoteSection from "./components/NoteSection";
 import SavedNote from "./components/SavedNote";

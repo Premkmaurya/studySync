@@ -18,9 +18,9 @@ import {
   setJoinedGroups,
 } from "../../../../../../features/groups/groupsSlice";
 
-const ProfileSection = ({ activeTab }) => {
+const ProfileSection = () => {
   const dispatch = useDispatch();
-  const joinedGroups = useSelector(selectJoinedGroups);
+  const [localJoinedGroups, setLocalJoinedGroups] = useState(useSelector(selectJoinedGroups) || []);
   const myNotes = useSelector(selectMyNotes);
   const savedNotes = useSelector(selectSavedNotes);
 
@@ -44,14 +44,15 @@ const ProfileSection = ({ activeTab }) => {
       fetchSavedNotes();
     }
 
-    if (joinedGroups.length === 0) {
+    if (localJoinedGroups.length === 0) {
       const fetchGroups = async () => {
         const res = await dispatch(joinedGroup());
-        setJoinedGroups(res.payload.groups);
+        setLocalJoinedGroups([...res.payload.groups]);
+        setJoinedGroups([...res.payload.groups]);
       };
       fetchGroups();
     }
-  }, [activeTab]);
+  }, []);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center ">
@@ -63,7 +64,7 @@ const ProfileSection = ({ activeTab }) => {
       />
       <StartCard
         label="Active Groups"
-        value={joinedGroups.length}
+        value={localJoinedGroups.length}
         icon={Users}
         color="text-fuchsia-400"
       />

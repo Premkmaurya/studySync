@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { List } from "react-window";
-import {
-  Search,
-  Filter,
-  Bot,
-  Zap,
-} from "lucide-react";
+import { Search, Filter, Bot, Zap } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectNotes } from "../../../features/notes/notesSelectors";
-import { fetchNotes } from "../../../features/notes/notesSlice";
-
+import { fetchNotes, searchNotes } from "../../../features/notes/notesSlice";
 
 import NoteCard from "./components/NoteCard";
 
@@ -33,17 +27,41 @@ const NotesRow = ({ index, style, data }) => {
 
 const SavedNotesContent = () => {
   const navigate = useNavigate();
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredNotes, setFilteredNotes] = useState([]);
 
   const notes = useSelector(selectNotes);
   const dispatch = useDispatch();
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchAllNotes = async () => {
       const res = await dispatch(fetchNotes());
-    }
+    };
     fetchAllNotes();
-  },[])
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      const timer = setTimeout(async () => {
+        const res = await dispatch(searchNotes(searchTerm.trim()));
+        const searchResults = res.payload?.notes || res.payload || [];
+        const filtered =
+          selectedCategory !== "All"
+            ? searchResults.filter((g) => g.field === selectedCategory)
+            : searchResults;
+        setFilteredNotes(filtered);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+
+    let result = notes;
+    if (selectedCategory !== "All") {
+      result = result.filter((g) => g.field === selectedCategory);
+    }
+    setFilteredNotes(result);
+  }, [dispatch, notes, searchTerm, selectedCategory]);
 
   const filters = ["all", "engineering", "design", "management", "research"];
 
@@ -61,7 +79,6 @@ const SavedNotesContent = () => {
         />
       </div>
 
-
       <main className="relative z-10 pt-36 pb-32 px-6 max-w-6xl mx-auto">
         {/* 3. Hero & Search */}
         <section className="mb-16">
@@ -76,16 +93,20 @@ const SavedNotesContent = () => {
               </p>
             </div>
 
-            <div className="relative w-full md:w-80 group">
-              <Search
-                size={18}
-                className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-emerald-500 transition-colors"
-              />
-              <input
-                type="text"
-                placeholder="Filter vault..."
-                className="w-full bg-zinc-900/50 backdrop-blur-lg border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-sm outline-none focus:border-emerald-500/40 transition-all placeholder:text-zinc-700"
-              />
+            <div className="relative w-full lg:w-[400px] group">
+              <div className="relative bg-transparent border-b border-white/10 py-2 pl-14 pr-8">
+                <Search
+                  size={24}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
+                />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search by name..."
+                  className="w-full bg-transparent text-lg font-bold outline-none text-white placeholder:text-zinc-800"
+                />
+              </div>
             </div>
           </div>
 
@@ -103,9 +124,9 @@ const SavedNotesContent = () => {
             {filters.map((filter) => (
               <button
                 key={filter}
-                onClick={() => setActiveFilter(filter)}
+                onClick={() => setSelectedCategory(filter)}
                 className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
-                  activeFilter === filter
+                  selectedCategory === filter
                     ? "bg-white text-black border-white"
                     : "bg-white/5 text-zinc-500 border-zinc-700 hover:border-white/20"
                 }`}

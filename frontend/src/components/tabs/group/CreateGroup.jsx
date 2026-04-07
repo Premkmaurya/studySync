@@ -145,7 +145,7 @@ const CreateGroup = () => {
                         className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-6 text-sm font-bold outline-none appearance-none focus:border-indigo-500/50 transition-all text-white"
                      >
                        <option value="" disabled selected className="bg-zinc-900">Select Domain</option>
-                       <option value="web-dev" className="bg-zinc-900">Web Engineering</option>
+                       <option value="Engineering" className="bg-zinc-900">Web Engineering</option>
                        <option value="dsa" className="bg-zinc-900">Algorithms</option>
                        <option value="ai-ml" className="bg-zinc-900">Neural Networks</option>
                        <option value="cybersecurity" className="bg-zinc-900">Security</option>

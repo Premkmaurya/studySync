@@ -28,6 +28,7 @@ import {
   searchGroups,
   joinGroup,
   setJoinedGroups,
+  joinedGroup,
 } from "../../../features/groups/groupsSlice";
 
 // --- CATEGORY CONFIGURATION ---
@@ -147,39 +148,39 @@ const AllGroupsContent = () => {
 
   const loading = useSelector(selectGroupsLoading);
   const groups = useSelector(selectGroups);
+  const joinedGroups = useSelector(selectJoinedGroups);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchAllGroups = async () => {
-      const res = await dispatch(fetchGroups());
-      if (res.meta.requestStatus === "fulfilled") {
-        setFilteredGroups(res.payload.groups || res.payload || []);
-      }
-    };
-    fetchAllGroups();
-  }, [dispatch]);
+    if (joinedGroups.length === 0) {
+      const fetchJoined = async () => {
+        const res = await dispatch(joinedGroup());
+        if (res.meta.requestStatus === "fulfilled") {
+          dispatch(setJoinedGroups(res.payload.groups || []));
+        }
+      };
+      fetchJoined();
+    }
+  }, [dispatch, joinedGroups.length]);
 
   useEffect(() => {
-    if (searchTerm.trim()) {
-      const timer = setTimeout(async () => {
+    const fetchAndSet = async () => {
+      if (searchTerm.trim()) {
         const res = await dispatch(searchGroups(searchTerm.trim()));
         const searchResults = res.payload?.groups || res.payload || [];
-        const filtered =
-          selectedCategory !== "All"
-            ? searchResults.filter((g) => g.field === selectedCategory)
-            : searchResults;
+        let filtered = selectedCategory !== "All" ? searchResults.filter((g) => g.field === selectedCategory) : searchResults;
         setFilteredGroups(filtered);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-
-    let result = groups;
-    if (selectedCategory !== "All") {
-      result = result.filter((g) => g.field === selectedCategory);
-    }
-    setFilteredGroups(result);
-  }, [dispatch, groups, searchTerm, selectedCategory]);
+      } else {
+        const res = await dispatch(fetchGroups());
+        const allGroups = res.payload?.groups || res.payload || [];
+        let filtered = selectedCategory !== "All" ? allGroups.filter((g) => g.field === selectedCategory) : allGroups;
+        setFilteredGroups(filtered);
+      }
+    };
+    const timer = setTimeout(fetchAndSet, searchTerm.trim() ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [dispatch, searchTerm, selectedCategory]);
 
   return (
     <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-hidden">
