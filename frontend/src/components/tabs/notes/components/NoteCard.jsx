@@ -14,14 +14,14 @@ const NoteCard = ({ note, index }) => {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         delay: index * 0.08,
         duration: 0.4,
         ease: [0.22, 1, 0.36, 1],
       }}
-      whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
+      whileHover={{ scale: 1.012, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
       style={{ willChange: "transform, background-color" }}
       className="group relative p-5 bg-zinc-900/30 border border-white/5 rounded-[40px] hover:border-emerald-500/30 transition-all duration-300 shadow-2xl overflow-hidden"
     >
@@ -36,7 +36,7 @@ const NoteCard = ({ note, index }) => {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-black tracking-[0.3em] text-emerald-500 uppercase">
             {note.group}
@@ -46,7 +46,7 @@ const NoteCard = ({ note, index }) => {
             {dayjs(note.createdAt).fromNow()}
           </span>
         </div>
-        <h3 className="text-2xl font-black tracking-tighter text-white leading-tight group-hover:text-emerald-400 transition-colors">
+        <h3 className="text-2xl tracking-tight text-white leading-tight group-hover:text-emerald-400 transition-colors">
           {note.title}
         </h3>
         <p className="text-sm text-zinc-500 leading-relaxed line-clamp-3 font-medium">
@@ -54,7 +54,7 @@ const NoteCard = ({ note, index }) => {
         </p>
       </div>
 
-      <div className="mt-10 pt-8 border-t border-white/5 flex items-center justify-end">
+      <div className="mt-7 pt-5 border-t border-white/5 flex items-center justify-end">
         <button className="flex items-center gap-2 text-[7px] font-black text-white uppercase tracking-[0.2em] group/btn">
           OPEN INSIGHT{" "}
           <ArrowUpRight

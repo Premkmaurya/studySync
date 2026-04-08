@@ -1,6 +1,4 @@
-import React from "react";
-import { List } from "react-window";
-import { useSelector } from "react-redux";
+import React from "react";import { useSelector } from "react-redux";
 import { selectMyNotes } from "../../../../../../features/notes/notesSelectors";
 
 const NoteSection = () => {

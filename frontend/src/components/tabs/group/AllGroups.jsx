@@ -53,7 +53,12 @@ const CATEGORIES = [
     icon: Shield,
     color: "text-emerald-400",
   },
-  { id: "design", label: "Visual Systems", icon: Palette, color: "text-fuchsia-400" },
+  {
+    id: "design",
+    label: "Visual Systems",
+    icon: Palette,
+    color: "text-fuchsia-400",
+  },
   { id: "bio", label: "Bio-Tech", icon: Globe, color: "text-emerald-300" },
   { id: "other", label: "Others", icon: Globe, color: "text-zinc-400" },
 ];
@@ -82,7 +87,7 @@ const DiscoveryCard = ({ group, index }) => {
       }}
       whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
       style={{ willChange: "transform, background-color" }}
-      className="group relative bg-zinc-900/30 border border-white/5 rounded-[40px] p-8 shadow-2xl transition-all duration-300 overflow-hidden"
+      className="group relative bg-zinc-900/30 border border-white/5 rounded-[40px] p-5 shadow-2xl transition-all duration-300 overflow-hidden"
     >
       <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full group-hover:bg-indigo-500/10 transition-all" />
 
@@ -109,7 +114,7 @@ const DiscoveryCard = ({ group, index }) => {
       </div>
 
       <div className="space-y-3 mb-10">
-        <h4 className="text-2xl font-black tracking-tighter text-white group-hover:text-indigo-400 transition-colors leading-none">
+        <h4 className="text-2xl tracking-tight text-white group-hover:text-indigo-400 transition-colors leading-none">
           {group.name}
         </h4>
         <p className="text-xs text-zinc-500 font-medium line-clamp-2 leading-relaxed">
@@ -120,8 +125,8 @@ const DiscoveryCard = ({ group, index }) => {
 
       <div className="flex gap-3">
         <button
-          onClick={()=>{
-            if(joinedGroups.some((g) => g._id === group._id)){
+          onClick={() => {
+            if (joinedGroups.some((g) => g._id === group._id)) {
               navigate(`/group/${group._id}`);
             } else {
               handleJoinGroup();
@@ -130,7 +135,9 @@ const DiscoveryCard = ({ group, index }) => {
           className="flex-1 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
           style={{ willChange: "transform" }}
         >
-          {joinedGroups.some((g) => g._id === group._id) ? "Enter Hub" : "Join Hub"}
+          {joinedGroups.some((g) => g._id === group._id)
+            ? "Enter Hub"
+            : "Join Hub"}
         </button>
         <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-zinc-500 hover:text-white transition-all">
           <ArrowUpRight size={18} />
@@ -164,23 +171,57 @@ const AllGroupsContent = () => {
     }
   }, [dispatch, joinedGroups.length]);
 
+  // Debounced search effect - only on searchTerm changes
   useEffect(() => {
     const fetchAndSet = async () => {
       if (searchTerm.trim()) {
         const res = await dispatch(searchGroups(searchTerm.trim()));
         const searchResults = res.payload?.groups || res.payload || [];
-        let filtered = selectedCategory !== "All" ? searchResults.filter((g) => g.field === selectedCategory) : searchResults;
+        let filtered =
+          selectedCategory !== "All"
+            ? searchResults.filter((g) => g.field === selectedCategory)
+            : searchResults;
         setFilteredGroups(filtered);
       } else {
         const res = await dispatch(fetchGroups());
         const allGroups = res.payload?.groups || res.payload || [];
-        let filtered = selectedCategory !== "All" ? allGroups.filter((g) => g.field === selectedCategory) : allGroups;
+        let filtered =
+          selectedCategory !== "All"
+            ? allGroups.filter((g) => g.field === selectedCategory)
+            : allGroups;
         setFilteredGroups(filtered);
       }
     };
+    // Only debounce on search term, not on category changes
     const timer = setTimeout(fetchAndSet, searchTerm.trim() ? 300 : 0);
     return () => clearTimeout(timer);
-  }, [dispatch, searchTerm, selectedCategory]);
+  }, [searchTerm, dispatch]); // Removed selectedCategory from deps to avoid re-searching
+
+  // Apply category filter instantly without re-fetching
+  useEffect(() => {
+    const applyCategory = async () => {
+      if (searchTerm.trim()) {
+        // If searching, filter the existing search results
+        const res = await dispatch(searchGroups(searchTerm.trim()));
+        const searchResults = res.payload?.groups || res.payload || [];
+        let filtered =
+          selectedCategory !== "All"
+            ? searchResults.filter((g) => g.field === selectedCategory)
+            : searchResults;
+        setFilteredGroups(filtered);
+      } else {
+        // If not searching, filter all groups
+        const res = await dispatch(fetchGroups());
+        const allGroups = res.payload?.groups || res.payload || [];
+        let filtered =
+          selectedCategory !== "All"
+            ? allGroups.filter((g) => g.field === selectedCategory)
+            : allGroups;
+        setFilteredGroups(filtered);
+      }
+    };
+    applyCategory();
+  }, [selectedCategory, dispatch]);
 
   return (
     <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-hidden">
@@ -221,28 +262,26 @@ const AllGroupsContent = () => {
           </div>
 
           <div
-            className="flex items-center gap-3 overflow-x-auto pb-6 custom-scrollbar no-scrollbar"
+            className="flex items-center gap-3 overflow-x-auto pb-4 custom-scrollbar no-scrollbar"
             style={{
               willChange: "scroll-position",
               WebkitTransform: "translate3d(0,0,0)",
             }}
           >
-            <div className="p-4 bg-zinc-900 border border-white/10 rounded-2xl text-zinc-600 shrink-0">
-              <Filter size={18} />
+            <div className="p-2 bg-white/5 rounded-xl text-zinc-500">
+              <Filter size={16} />
             </div>
-            {CATEGORIES.map((cat) => (
+            {CATEGORIES.map((category) => (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`flex items-center gap-3 px-5 py-2 rounded-2xl text-[0.5rem] font-black uppercase tracking-widest transition-all whitespace-nowrap flex-shrink-0 border-2 ${
-                  selectedCategory === cat.id
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all border-1 ${
+                  selectedCategory === category.id
                     ? "bg-white text-black border-white"
-                    : "bg-zinc-900/50 text-zinc-500 border-zinc-700 hover:border-white/20 hover:text-white"
+                    : "bg-white/5 text-zinc-500 border-zinc-700 hover:border-white/20"
                 }`}
-                style={{ willChange: "background-color, border-color" }}
               >
-                <cat.icon size={16} className={cat.color} />
-                {cat.label}
+                {category.label}
               </button>
             ))}
           </div>

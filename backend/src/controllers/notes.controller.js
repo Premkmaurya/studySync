@@ -105,10 +105,11 @@ async function getMyNotes(req, res) {
 }
 
 async function searchNotes(req, res) {
-  const { q = "", groupId } = req.query;
+  const { q , groupId } = req.query;
+  console.log("Search query:", q, "Group ID:", groupId);
   const cacheKey = buildCacheKey(
     "notes:search",
-    `${q.trim().toLowerCase()}:${groupId || "all"}`,
+    `${q ? `q:${q}` : ""}${groupId ? `:group:${groupId}` : ""}`,
   );
   const cached = await getCachedData(cacheKey);
 
@@ -118,7 +119,7 @@ async function searchNotes(req, res) {
 
   let filter = {};
   if (q) {
-    filter.$text = { $search: q };
+    filter.$text = { $search: q.toLowerCase() };
   }
   if (groupId) {
     filter.groupId = groupId;
@@ -129,6 +130,7 @@ async function searchNotes(req, res) {
       .find(filter)
       .skip(0)
       .populate("userId", "fullname")
+      .populate("groupId")
       .sort({ createdAt: -1 });
 
     const payload = { notes };

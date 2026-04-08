@@ -19,7 +19,7 @@ const noteSchema = new mongoose.Schema({
     }
 },{timestamps:true});
 
-noteSchema.index({ title: "text", content: "text" });
+noteSchema.index({ title: "text"});
 
 const noteModel = mongoose.model('note', noteSchema);
 

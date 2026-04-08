@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { List } from "react-window";
-import { Search, Filter, Bot, Zap } from "lucide-react";
+import {
+  Search,
+  LayoutGrid,
+  Zap,
+  Filter,
+  Code,
+  Cpu,
+  Shield,
+  Palette,
+  Globe,
+  Bot,
+  Sparkles,
+} from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectNotes } from "../../../features/notes/notesSelectors";
 import { fetchNotes, searchNotes } from "../../../features/notes/notesSlice";
 
 import NoteCard from "./components/NoteCard";
-
-const NotesRow = ({ index, style, data }) => {
-  const notes = data;
-  const note1 = notes[index * 3];
-  const note2 = notes[index * 3 + 1];
-  const note3 = notes[index * 3 + 2];
-
-  return (
-    <div style={style} className="px-1">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-        {note1 && <NoteCard note={note1} index={index * 3} />}
-        {note2 && <NoteCard note={note2} index={index * 3 + 1} />}
-        {note3 && <NoteCard note={note3} index={index * 3 + 2} />}
-      </div>
-    </div>
-  );
-};
 
 const SavedNotesContent = () => {
   const navigate = useNavigate();
@@ -42,28 +36,63 @@ const SavedNotesContent = () => {
     fetchAllNotes();
   }, []);
 
+  // Combined search and filter effect with debouncing
   useEffect(() => {
-    if (searchTerm.trim()) {
-      const timer = setTimeout(async () => {
-        const res = await dispatch(searchNotes(searchTerm.trim()));
+    const fetchAndSet = async () => {
+      if (searchTerm.trim()) {
+        const query = searchTerm.trim().toLowerCase();
+        const res = await dispatch(searchNotes({ query, groupId: null }));
         const searchResults = res.payload?.notes || res.payload || [];
-        const filtered =
+        console.log("Search results:", searchResults);
+        let filtered =
           selectedCategory !== "All"
             ? searchResults.filter((g) => g.field === selectedCategory)
             : searchResults;
         setFilteredNotes(filtered);
-      }, 300);
-      return () => clearTimeout(timer);
-    }
+      } else {
+        const res = await dispatch(fetchNotes());
+        const allNotes = res.payload?.notes || res.payload || [];
+        let filtered =
+          selectedCategory !== "All"
+            ? allNotes.filter((g) => g.field === selectedCategory)
+            : allNotes;
+        setFilteredNotes(filtered);
+      }
+    };
+    const timer = setTimeout(fetchAndSet, searchTerm.trim() ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [dispatch, searchTerm, selectedCategory]);
 
-    let result = notes;
-    if (selectedCategory !== "All") {
-      result = result.filter((g) => g.field === selectedCategory);
-    }
-    setFilteredNotes(result);
-  }, [dispatch, notes, searchTerm, selectedCategory]);
-
-  const filters = ["all", "engineering", "design", "management", "research"];
+  const CATEGORIES = [
+    { id: "All", label: "All Hubs", icon: LayoutGrid, color: "text-white" },
+    {
+      id: "web-dev",
+      label: "Web Engineering",
+      icon: Code,
+      color: "text-cyan-400",
+    },
+    { id: "dsa", label: "Algorithms", icon: Cpu, color: "text-amber-400" },
+    {
+      id: "ai-ml",
+      label: "Neural Networks",
+      icon: Sparkles,
+      color: "text-indigo-400",
+    },
+    {
+      id: "cybersecurity",
+      label: "Security",
+      icon: Shield,
+      color: "text-emerald-400",
+    },
+    {
+      id: "design",
+      label: "Visual Systems",
+      icon: Palette,
+      color: "text-fuchsia-400",
+    },
+    { id: "bio", label: "Bio-Tech", icon: Globe, color: "text-emerald-300" },
+    { id: "other", label: "Others", icon: Globe, color: "text-zinc-400" },
+  ];
 
   return (
     <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-hidden">
@@ -118,20 +147,20 @@ const SavedNotesContent = () => {
               WebkitTransform: "translate3d(0,0,0)",
             }}
           >
-            <div className="p-3 bg-white/5 rounded-xl text-zinc-500">
+            <div className="p-2 bg-white/5 rounded-xl text-zinc-500">
               <Filter size={16} />
             </div>
-            {filters.map((filter) => (
+            {CATEGORIES.map((category) => (
               <button
-                key={filter}
-                onClick={() => setSelectedCategory(filter)}
-                className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border-2 ${
-                  selectedCategory === filter
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-tight transition-all border-1 ${
+                  selectedCategory === category.id
                     ? "bg-white text-black border-white"
                     : "bg-white/5 text-zinc-500 border-zinc-700 hover:border-white/20"
                 }`}
               >
-                {filter}
+                {category.label}
               </button>
             ))}
           </div>
@@ -139,16 +168,12 @@ const SavedNotesContent = () => {
 
         {/* 4. The Grid */}
         <div style={{ WebkitTransform: "translate3d(0,0,0)" }}>
-          {notes.length > 0 ? (
-            <List
-              height={Math.min(Math.ceil(notes.length / 3) * 320, 800)} // Max height of 800px, row height ~320px
-              itemCount={Math.ceil(notes.length / 3)} // Each row contains up to 3 items
-              itemSize={320} // Height of each row
-              itemData={notes}
-              className="w-full"
-            >
-              {NotesRow}
-            </List>
+          {filteredNotes?.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredNotes?.map((note, i) => (
+                <NoteCard key={note.id} note={note} index={i} />
+              ))}
+            </div>
           ) : (
             <p className="text-zinc-500">No notes found.</p>
           )}

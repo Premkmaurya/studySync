@@ -28,7 +28,8 @@ export const getNoteByIdApi = async (noteId) => {
 export const searchNotesApi = async (query, groupId) => {
   const response = await api.get(`/notes/search`, {
     params: { q: query, groupId },
-  });
+  }
+  );
   return response.data;
 };
 
