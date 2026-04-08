@@ -305,27 +305,7 @@ const AllGroupsContent = () => {
                   <DiscoveryCard key={group._id || i} group={group} index={i} />
                 ))
               ) : (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="col-span-full py-32 text-center"
-                >
-                  <div className="p-8 bg-white/5 border border-white/5 rounded-[40px] inline-block">
-                    <Compass size={40} className="text-zinc-800 mx-auto mb-6" />
-                    <h3 className="text-xl font-bold text-zinc-600">
-                      No collectives found in this domain.
-                    </h3>
-                    <button
-                      onClick={() => {
-                        setSearchTerm("");
-                        setSelectedCategory("All");
-                      }}
-                      className="mt-4 text-indigo-400 font-black text-xs uppercase tracking-widest hover:text-white transition-colors"
-                    >
-                      Clear All Filters
-                    </button>
-                  </div>
-                </motion.div>
+                <p className="text-zinc-500 text-center">No groups found.</p>
               )}
             </AnimatePresence>
           </div>

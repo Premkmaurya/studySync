@@ -63,6 +63,7 @@ const Editor = ({
   setEditor,
   content
 }) => {
+
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
     extensions: [
@@ -77,7 +78,7 @@ const Editor = ({
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content: contentFromState || content,
+    content: contentFromState || content || noteContent || "",
     editable: !isViewOnly,
   });
 

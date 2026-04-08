@@ -15,7 +15,6 @@ import Header from "./components/Header";
 
 // Axios and Socket.io
 import axios from "axios";
-import { io } from "socket.io-client";
 import Editor from "./components/Editor";
 
 export default function NotesEditor() {

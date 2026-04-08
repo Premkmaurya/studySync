@@ -39,7 +39,13 @@ async function getNotes(req, res) {
     return res.status(200).json(cached);
   }
 
-  const notes = await noteModel.find({}).limit(10).sort({ createdAt: -1 });
+  const notes = await noteModel
+    .find({})
+    .limit(10)
+    .populate("userId", "fullname")
+    .populate("groupId")
+    .sort({ createdAt: -1 });
+
   const payload = {
     message: "notes fetch successfully.",
     notes,
@@ -64,15 +70,13 @@ async function getNoteById(req, res) {
     .sort({ createdAt: -1 })
     .populate("userId", "fullname")
     .populate("groupId")
-    .lean()
+    .lean();
 
   if (!note || note.length === 0) {
     return res.status(404).json({
       message: "Note not found.",
     });
   }
-
-  console.log("Fetched note:", note);
 
   const payload = {
     message: "Note fetched successfully.",
@@ -93,7 +97,10 @@ async function getMyNotes(req, res) {
     return res.status(200).json(cached);
   }
 
-  const notes = await noteModel.find({ userId: user.id }).sort({ createdAt: -1 });
+  const notes = await noteModel
+    .find({ userId: user.id })
+    .populate("groupId")
+    .sort({ createdAt: -1 });
   const payload = {
     message: "your notes fetch successfully.",
     notes,
@@ -105,8 +112,7 @@ async function getMyNotes(req, res) {
 }
 
 async function searchNotes(req, res) {
-  const { q , groupId } = req.query;
-  console.log("Search query:", q, "Group ID:", groupId);
+  const { q, groupId } = req.query;
   const cacheKey = buildCacheKey(
     "notes:search",
     `${q ? `q:${q}` : ""}${groupId ? `:group:${groupId}` : ""}`,

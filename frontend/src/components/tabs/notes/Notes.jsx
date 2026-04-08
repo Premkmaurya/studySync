@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   Search,
   LayoutGrid,
@@ -15,23 +14,22 @@ import {
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectNotes } from "../../../features/notes/notesSelectors";
-import { fetchNotes, searchNotes } from "../../../features/notes/notesSlice";
+import { fetchNotes, searchNotes, setNotes } from "../../../features/notes/notesSlice";
 
 import NoteCard from "./components/NoteCard";
 
 const SavedNotesContent = () => {
-  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredNotes, setFilteredNotes] = useState([]);
 
-  const notes = useSelector(selectNotes);
   const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchAllNotes = async () => {
       const res = await dispatch(fetchNotes());
+      setNotes(res.payload?.notes || res.payload || []);
     };
     fetchAllNotes();
   }, []);
@@ -108,7 +106,7 @@ const SavedNotesContent = () => {
         />
       </div>
 
-      <main className="relative z-10 pt-36 pb-32 px-6 max-w-6xl mx-auto">
+      <main className="relative z-10 pt-36 pb-12 px-6 max-w-6xl mx-auto">
         {/* 3. Hero & Search */}
         <section className="mb-16">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
@@ -175,7 +173,7 @@ const SavedNotesContent = () => {
               ))}
             </div>
           ) : (
-            <p className="text-zinc-500">No notes found.</p>
+            <p className="text-zinc-500 text-center">No notes found.</p>
           )}
         </div>
 
@@ -198,7 +196,7 @@ const SavedNotesContent = () => {
                   Neural Synthesis
                 </h3>
                 <p className="text-sm text-zinc-500 max-w-md font-medium">
-                  AI analysis of your saved notes suggests you focus on{" "}
+                  AI analysis of your notes suggests you focus on{" "}
                   <span className="text-indigo-400">
                     Distributed Architectures
                   </span>{" "}
