@@ -1,0 +1,208 @@
+@font-face {
+  font-family: "Inter";
+  src: url("/font/inter.ttf") format("truetype");
+}
+
+html, body, #root {
+  font-family: "Inter";
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+@import "tailwindcss";
+
+@import "tailwindcss";
+
+/* 1. Define your theme colors (if not already there) */
+@theme {
+  --color-scrollbar-thumb: var(--color-zinc-800);
+  --color-scrollbar-hover: var(--color-indigo-600);
+}
+
+/* 2. Global Scrollbar Styling */
+@layer base {
+
+  /* For Chrome, Safari, and Edge */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    /* Zinc-800 */
+    border-radius: 10px;
+    transition: background 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4f46e6;
+    /* Indigo-600 */
+  }
+
+  /* For Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #27272a transparent;
+  }
+}
+
+/* 3. Custom Utility (Optional: if you want to hide scrollbar on specific elements) */
+@utility hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Tailwind ke Preflight ko override karna hai! */
+.ProseMirror ul,
+.ProseMirror ol {
+  /* Indentation wapas lao */
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ul {
+  /* Bullet dots wapas lao */
+  list-style-type: disc;
+}
+
+.ProseMirror ol {
+  /* Numbering wapas lao */
+  list-style-type: decimal;
+}
+
+.text-editor-container {
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  overflow-x: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.text-editor-container blockquote {
+  /* Blockquote ki styling wapas lao */
+  margin: 1.5rem 0;
+  /* Top aur bottom margin dedo */
+  padding-left: 1em;
+  /* Left padding for border */
+  border-left: 4px solid #ced4da;
+  /* Ek halka gray border dedo */
+  color: #495057;
+  /* Text ko thoda alag dikhao */
+  font-style: italic;
+  /* Text ko thoda tedha (italic) kar do */
+}
+
+.text-editor-container .mantine-RichTextEditor-content {
+  /* Jo bhi min height chahiye, yahan set karo */
+  min-height: 82vh;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  display: flex;
+  border-left: 1px solid rgba(114, 118, 122, 0.397);
+  border-right: 1px solid rgba(114, 118, 122, 0.397);
+}
+
+
+/* Custom scrollbar styling */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  /* for Firefox */
+  scrollbar-color: #99a1b0 #1b1b1f;
+  /* thumb + track */
+}
+
+.custom-scrollbar-2 {
+  scrollbar-width: thin;
+  /* for Firefox */
+  scrollbar-color: #1b1b1f #e1e3e8;
+  /* thumb + track */
+}
+
+.m_dd3f7539 {
+  border: none !important;
+}
+
+.ProseMirror p.is-empty::before,
+.ProseMirror h1.is-empty::before,
+.ProseMirror h2.is-empty::before {
+  content: attr(data-placeholder);
+
+  color: #495057;
+  font-style: italic;
+  pointer-events: none;
+  float: left;
+  font-size: 1.1rem;
+  height: 0;
+  /* Prevents affecting line height */
+}
+
+/* For Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1b1b1f;
+  /* scrollbar background */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #99a1b0;
+  /* scrollbar thumb */
+  border-radius: 10px;
+}
+
+.chat-content ul {
+  list-style-type: disc;
+  /* Shows the dots */
+  padding-left: 1.2rem;
+  /* Indent the list */
+  margin-bottom: 0.5rem;
+}
+
+.chat-content ol {
+  list-style-type: decimal;
+  /* Shows numbers */
+  padding-left: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.chat-content li {
+  margin-bottom: 0.25rem;
+  /* Spacing between items */
+}
+
+.chat-content p {
+  margin-bottom: 0.5rem;
+  /* Spacing between paragraphs */
+}
+
+.chat-content strong {
+  font-weight: bold;
+  /* Ensure bold text stands out */
+}
+
+.hero-clip {
+  clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%);
+}
+
+.hero-clip-1 {
+  clip-path: polygon(0 0, 100% 0, 100% 68%, 0 69%);
+}
+
+.rounded-t-r {
+  border-top-right-radius: 2rem;
+}
