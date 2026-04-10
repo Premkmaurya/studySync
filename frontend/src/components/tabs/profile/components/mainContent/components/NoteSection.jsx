@@ -14,10 +14,10 @@ const NoteSection = () => {
   return (
     <div className="space-y-4">
       {myNotes?.length > 0 ? (
-        myNotes.map((note) => (
+        myNotes.map((note,i) => (
           <div
             key={i}
-            className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-[24px] hover:bg-white/5 transition-all cursor-pointer group"
+            className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-3xl hover:bg-white/5 transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-6">
               <div className="p-3 bg-white/5 rounded-xl text-zinc-500 group-hover:text-indigo-400">

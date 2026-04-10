@@ -7,7 +7,7 @@ const Register = lazy(() => import("../pages/auth/Register"));
 const MainLayout = lazy(() => import("../components/tabs/common/MainLayout"));
 const CreateGroup = lazy(() => import("../components/tabs/group/create_group/CreateGroup"));
 const AllGroups = lazy(() => import("../components/tabs/group/all_group/AllGroups"));
-const GroupSettings = lazy(() => import("../components/tabs/group/GroupSettings"));
+const GroupSettings = lazy(() => import("../components/tabs/group/group_setting/GroupSettings"));
 const GroupChat = lazy(() => import("../components/tabs/group/group_chat/GroupChat"));
 const SingleGroup = lazy(() => import("../components/tabs/group/SingleGroup"));
 const GroupNotes = lazy(() => import("../components/tabs/group/GroupNotes"));
