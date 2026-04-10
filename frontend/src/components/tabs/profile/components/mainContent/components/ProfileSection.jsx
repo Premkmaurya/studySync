@@ -20,16 +20,19 @@ import {
 
 const ProfileSection = () => {
   const dispatch = useDispatch();
-  const [localJoinedGroups, setLocalJoinedGroups] = useState(useSelector(selectJoinedGroups) || []);
-  const myNotes = useSelector(selectMyNotes);
+  const [localJoinedGroups, setLocalJoinedGroups] = useState(
+    useSelector(selectJoinedGroups) || [],
+  );
+  const [notes, setNotes] = useState(useSelector(selectMyNotes) || []);
   const savedNotes = useSelector(selectSavedNotes);
 
   useEffect(() => {
     // Example: Fetch notes when the "notes" tab is active
-    if (myNotes.length === 0) {
+    if (notes.length === 0) {
       const fetchMyNotes = async () => {
         const res = await dispatch(getMyNotes());
-        setMyNotes(res.payload?.notes);
+        setNotes(res.payload?.notes);
+        await dispatch(setMyNotes(res.payload?.notes));
       };
       fetchMyNotes();
     }
@@ -38,7 +41,7 @@ const ProfileSection = () => {
       const fetchSavedNotes = async () => {
         const res = await dispatch(getSavedNotes());
         if (res.payload && res.payload.savedNotes) {
-          setSavedNotes(res.payload.savedNotes);
+          dispatch(setSavedNotes(res.payload.savedNotes));
         }
       };
       fetchSavedNotes();
@@ -48,7 +51,7 @@ const ProfileSection = () => {
       const fetchGroups = async () => {
         const res = await dispatch(joinedGroup());
         setLocalJoinedGroups([...res.payload.groups]);
-        setJoinedGroups([...res.payload.groups]);
+        await dispatch(setJoinedGroups(res.payload.groups));
       };
       fetchGroups();
     }
@@ -58,7 +61,7 @@ const ProfileSection = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center ">
       <StartCard
         label="Total Notes"
-        value={myNotes.length}
+        value={notes.length}
         icon={FileText}
         color="text-cyan-400"
       />

@@ -5,10 +5,10 @@ const NotesEditor = lazy(() => import("../components/tabs/notes/NotesEditor"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const MainLayout = lazy(() => import("../components/tabs/common/MainLayout"));
-const CreateGroup = lazy(() => import("../components/tabs/group/CreateGroup"));
+const CreateGroup = lazy(() => import("../components/tabs/group/create_group/CreateGroup"));
 const AllGroups = lazy(() => import("../components/tabs/group/all_group/AllGroups"));
 const GroupSettings = lazy(() => import("../components/tabs/group/GroupSettings"));
-const GroupChat = lazy(() => import("../components/tabs/group/GroupChat"));
+const GroupChat = lazy(() => import("../components/tabs/group/group_chat/GroupChat"));
 const SingleGroup = lazy(() => import("../components/tabs/group/SingleGroup"));
 const GroupNotes = lazy(() => import("../components/tabs/group/GroupNotes"));
 const Profile = lazy(() => import("../components/tabs/profile/Profile"));
@@ -19,7 +19,7 @@ const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/Contact"));
 const Features = lazy(() => import("../pages/Features"));
 const NotFound = lazy(() => import("../pages/NotFound"));
-const GroupMembers = lazy(() => import("../components/tabs/group/GroupMembers"));
+const GroupMembers = lazy(() => import("../components/tabs/group/group_member/GroupMembers"));
 
 const AppRoutes = () => {
   return (
