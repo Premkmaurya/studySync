@@ -9,7 +9,6 @@ dayjs.extend(relativeTime);
 
 const NoteSection = () => {
   const myNotes = useSelector(selectMyNotes);
-  console.log("My Notes in NoteSection:", myNotes);
 
   return (
     <div className="space-y-4">

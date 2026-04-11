@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-import { ChevronLeft, Share2, CloudUpload } from "lucide-react";
+import { CloudUpload } from "lucide-react";
 
 const Header = ({
   groupName,
@@ -9,8 +9,6 @@ const Header = ({
   isViewOnly,
   isAiPanelOpen,
   setIsAiPanelOpen,
-  isShareOpen,
-  setIsShareOpen,
   handleSave,
   isSaving,
 }) => {

@@ -159,11 +159,6 @@ async function saveNote(req, res) {
       message: "Note not found.",
     });
   }
-  if (note.userId.toString() === user.id.toString()) {
-    return res.status(400).json({
-      message: "You cannot save your own note.",
-    });
-  }
 
   const isAlreadySaved = await savedNoteModel.findOne({
     userId: user.id,
@@ -171,8 +166,11 @@ async function saveNote(req, res) {
   });
 
   if (isAlreadySaved) {
-    return res.status(400).json({
-      message: "You have already saved this note.",
+    await savedNoteModel.deleteOne({ _id: isAlreadySaved._id });
+    await invalidateByPrefix(`notes:saved:${user.id}`);
+
+    return res.status(200).json({
+      message: "Note unsaved successfully.",
     });
   }
 
