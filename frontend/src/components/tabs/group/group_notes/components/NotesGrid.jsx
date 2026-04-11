@@ -12,6 +12,7 @@ import {
 } from "../../../../../features/notes/notesSelectors";
 import {
   saveNote,
+  getSavedNotes,
   setSavedNotes,
 } from "../../../../../features/notes/notesSlice";
 
@@ -21,18 +22,50 @@ const NotesGrid = () => {
   const navigate = useNavigate();
   const { groupId } = useParams();
   const dispatch = useDispatch();
-  let notes = useSelector(selectNotes);
-  const [bookmark, setBookmark] = useState(false);
+  const notes = useSelector(selectNotes);
+  const savedNotes = useSelector(selectSavedNotes);
+  const [bookmarks, setBookmarks] = useState({});
 
   const handleSaveNote = async (noteId) => {
     try {
       const res = await dispatch(saveNote(noteId));
-      await dispatch(setSavedNotes(res.payload.notes));
-      setBookmark(res.payload.notes && res.payload.notes.length > 0);
+
+      if (res.meta?.requestStatus === "fulfilled") {
+        const savedRes = await dispatch(getSavedNotes());
+        if (savedRes.payload?.savedNotes) {
+          dispatch(setSavedNotes(savedRes.payload.savedNotes));
+        }
+      }
     } catch (error) {
       console.error("Failed to save note:", error);
     }
   };
+
+  useEffect(() => {
+    const loadSavedNotes = async () => {
+      if (savedNotes.length === 0) {
+        const res = await dispatch(getSavedNotes());
+        if (res.payload?.savedNotes) {
+          dispatch(setSavedNotes(res.payload.savedNotes));
+        }
+      }
+    };
+
+    loadSavedNotes();
+  }, []);
+
+  useEffect(() => {
+    const savedIds = new Set(
+      savedNotes.map((item) => item.noteId?._id || item.noteId),
+    );
+
+    const nextBookmarks = {};
+    notes?.forEach((note) => {
+      nextBookmarks[note._id] = savedIds.has(note._id);
+    });
+
+    setBookmarks(nextBookmarks);
+  }, [notes, savedNotes]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
@@ -67,9 +100,9 @@ const NotesGrid = () => {
                       handleSaveNote(article._id);
                     }}
                     className="p-3 bg-zinc-800 w-10 h-10 rounded-full text-zinc-400 cursor-pointer hover:text-indigo-400 hover:bg-zinc-700 transition-all duration-300"
-                    title="Save Note"
+                    title={bookmarks[article._id] ? "Unsave Note" : "Save Note"}
                   >
-                    {bookmark ? (
+                    {bookmarks[article._id] ? (
                       <FaBookmark size={16} />
                     ) : (
                       <FaRegBookmark size={16} />
