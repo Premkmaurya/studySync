@@ -17,6 +17,7 @@ import {
   selectFieldPercentages,
   selectGroupsLoading,
 } from "../../../features/groups/groupsSelectors";
+import { selectUser } from "../../../features/auth/authSelectors";
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -26,6 +27,8 @@ const Home = () => {
   const suggestedGroups = useSelector(selectSuggestedGroups);
   const fieldPercentages = useSelector(selectFieldPercentages);
   const loading = useSelector(selectGroupsLoading);
+  const user = useSelector(selectUser)
+  console.log(user)
 
   useEffect(() => {
     // Fetch joined groups
@@ -81,7 +84,7 @@ const Home = () => {
       <header className="relative z-10 pt-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
-            Hello, <span className="text-indigo-500">Alex</span>
+            Hello, <span className="text-indigo-500 capitalize">{user.fullname.firstname}</span>
           </h1>
         </div>
       </header>
