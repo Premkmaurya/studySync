@@ -2,14 +2,33 @@ import React from "react";
 import { selectSavedNotes } from "../../../../../../features/notes/notesSelectors";
 import { useSelector } from "react-redux";
 import { Bookmark, ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SavedNote = () => {
   const savedNotes = useSelector(selectSavedNotes);
+  const navigate = useNavigate();
+   const handleClick = (note) => {
+    // First navigate to group
+    navigate(`/group/${note.groupId._id}`);
+    // Then navigate to note after a brief delay
+    setTimeout(() => {
+      navigate(`/group/${note.groupId._id}/note`, {
+        state: {
+          title: note.noteId.title,
+          content: note.noteId.content,
+          isViewOnly: true,
+          groupName: note.groupId.name,
+          profession: note.groupId.field,
+        },
+      });
+    }, 300);
+  };
   return (
     <div className="space-y-6">
       {savedNotes.length > 0 ? (
         savedNotes.map((note, i) => (
           <div
+            onClick={() => handleClick(note)}
             key={i}
             className="p-8 bg-zinc-900/40 border border-white/5 rounded-[40px] relative group overflow-hidden"
           >

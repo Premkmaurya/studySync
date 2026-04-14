@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectMyNotes } from "../../../../../../features/notes/notesSelectors";
 import { FileText, MoreVertical } from "lucide-react";
@@ -9,12 +10,30 @@ dayjs.extend(relativeTime);
 
 const NoteSection = () => {
   const myNotes = useSelector(selectMyNotes);
+  const navigate = useNavigate();
+  const handleClick = (note) => {
+    // First navigate to group
+    navigate(`/group/${note.groupId._id}`);
+    // Then navigate to note after a brief delay
+    setTimeout(() => {
+      navigate(`/group/${note.groupId._id}/note`, {
+        state: {
+          title: note.title,
+          content: note.content,
+          isViewOnly: true,
+          groupName: note.groupId.name,
+          profession: note.groupId.field,
+        },
+      });
+    }, 300);
+  };
 
   return (
     <div className="space-y-4">
       {myNotes?.length > 0 ? (
-        myNotes.map((note,i) => (
+        myNotes.map((note, i) => (
           <div
+            onClick={() => handleClick(note)}
             key={i}
             className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-3xl hover:bg-white/5 transition-all cursor-pointer group"
           >

@@ -1,22 +1,27 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const savedNoteSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        required: true
-    },
-    noteId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'note',
-        required: true
-    },
-    savedAt: {
-        type: Date,
-        default: Date.now
-    }
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "user",
+    required: true,
+  },
+  noteId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "note",
+    required: true,
+  },
+  groupId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "group",
+    required: true,
+  },
+  savedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-const SavedNote = mongoose.model('savedNote', savedNoteSchema);
+const SavedNote = mongoose.model("savedNote", savedNoteSchema);
 
 module.exports = SavedNote;
