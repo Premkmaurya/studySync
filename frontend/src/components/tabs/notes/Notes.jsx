@@ -42,7 +42,6 @@ const SavedNotesContent = () => {
         const query = searchTerm.trim().toLowerCase();
         const res = await dispatch(searchNotes({ query, groupId: null }));
         const searchResults = res.payload?.notes || res.payload || [];
-        console.log("Search results:", searchResults);
         let filtered =
           selectedCategory !== "All"
             ? searchResults.filter((g) => g.field === selectedCategory)

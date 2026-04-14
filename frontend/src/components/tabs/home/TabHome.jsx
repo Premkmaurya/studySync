@@ -28,7 +28,6 @@ const Home = () => {
   const fieldPercentages = useSelector(selectFieldPercentages);
   const loading = useSelector(selectGroupsLoading);
   const user = useSelector(selectUser)
-  console.log(user)
 
   useEffect(() => {
     // Fetch joined groups

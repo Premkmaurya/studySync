@@ -9,7 +9,8 @@ import {
   Sparkles,
   Menu,
   X,
-  ArrowRight
+  ArrowRight,
+  User,
 } from "lucide-react";
 
 const NavBar = () => {
@@ -84,10 +85,7 @@ const NavBar = () => {
               to="/profile"
               className="relative group block"
             >
-              <div className="w-10 h-10 rounded-2xl overflow-hidden border-2 border-white/10 group-hover:border-indigo-500/50 transition-all">
-                <img src="https://i.pravatar.cc/100?u=current_user" alt="Profile" className="w-full h-full object-cover" />
-              </div>
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-500 border-2 border-zinc-900 rounded-full animate-pulse" />
+              <User color="white" size={25} />
             </NavLink>
           </div>
 

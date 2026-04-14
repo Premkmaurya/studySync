@@ -198,6 +198,7 @@ async function getSavedNotes(req, res) {
   const savedNotes = await savedNoteModel
     .find({ userId: user.id })
     .populate("userId", "fullname")
+    .populate("noteId", "title")
     .sort({ createdAt: -1 });
 
   const payload = {

@@ -31,10 +31,6 @@ const NoteSection = () => {
                 </p>
               </div>
             </div>
-            <MoreVertical
-              size={18}
-              className="text-zinc-700 hover:text-white"
-            />
           </div>
         ))
       ) : (

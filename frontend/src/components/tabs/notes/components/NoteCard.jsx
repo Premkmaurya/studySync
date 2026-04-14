@@ -73,7 +73,7 @@ const NoteCard = ({ note, index }) => {
       </div>
 
       <div className="mt-7 pt-5 border-t border-white/5 flex items-center justify-end">
-        <button className="flex items-center gap-2 text-[4px] font-black text-white uppercase tracking-[0.2em] group/btn">
+        <button className="flex items-center gap-2 text-[9px] font-black text-white uppercase tracking-[0.2em] group/btn">
           OPEN INSIGHT{" "}
           <ArrowUpRight
             size={14}
