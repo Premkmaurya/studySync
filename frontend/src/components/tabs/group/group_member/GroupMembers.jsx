@@ -28,6 +28,7 @@ const GroupMembers = () => {
   const [loading, setLoading] = useState(true);
   const [memberPage, setMemberPage] = useState(1);
   const [hasMoreMembers, setHasMoreMembers] = useState(true);
+  const [visibleMembers, setVisibleMembers] = useState(10);
 
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes)

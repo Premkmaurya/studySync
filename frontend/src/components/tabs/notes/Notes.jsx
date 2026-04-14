@@ -25,6 +25,7 @@ const SavedNotesContent = () => {
   const [filteredNotes, setFilteredNotes] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMoreNotes, setHasMoreNotes] = useState(true);
+  const [visibleNotes, setVisibleNotes] = useState(9);
 
   const dispatch = useDispatch();
   const loading = useSelector(selectNotesLoading);

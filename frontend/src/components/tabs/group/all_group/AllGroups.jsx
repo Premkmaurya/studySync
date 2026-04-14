@@ -125,8 +125,8 @@ const AllGroupsContent = () => {
             style={{ WebkitTransform: "translate3d(0,0,0)" }}
           >
             <AnimatePresence>
-              {filteredGroups.length > 0 ? (
-                filteredGroups.map((group, i) => (
+              {filteredGroups?.length > 0 ? (
+                filteredGroups?.map((group, i) => (
                   <DiscoveryCard key={group._id || i} group={group} index={i} />
                 ))
               ) : (

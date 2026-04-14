@@ -24,6 +24,11 @@ const NotesGrid = () => {
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes);
   const savedNotes = useSelector(selectSavedNotes);
+  const notesArray = Array.isArray(notes)
+    ? notes
+    : Array.isArray(notes?.notes)
+    ? notes.notes
+    : [];
   const [bookmarks, setBookmarks] = useState({});
   const [visibleNotes, setVisibleNotes] = useState(8);
 
@@ -61,18 +66,18 @@ const NotesGrid = () => {
     );
 
     const nextBookmarks = {};
-    notes?.forEach((note) => {
+    notesArray.forEach((note) => {
       nextBookmarks[note._id] = savedIds.has(note._id);
     });
 
     setBookmarks(nextBookmarks);
-  }, [notes, savedNotes]);
+  }, [notesArray, savedNotes]);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
       <AnimatePresence>
-        {notes?.length > 0 ? (
-          notes.slice(0, visibleNotes).map((article, index) => (
+        {notesArray.length > 0 ? (
+          notesArray.slice(0, visibleNotes).map((article, index) => (
             <motion.div
               key={String(article._id || index)}
               initial={{ opacity: 0, y: 30, scale: 0.95 }}

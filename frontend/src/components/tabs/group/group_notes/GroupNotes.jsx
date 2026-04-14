@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import { createPortal } from "react-dom";
@@ -26,6 +26,11 @@ const GroupNotes = () => {
 
   const loading = useSelector(selectNotesLoading);
   const notes = useSelector(selectNotes);
+  const notesRef = useRef(notes);
+
+  useEffect(() => {
+    notesRef.current = notes;
+  }, [notes]);
 
   useEffect(() => {
     setPage(1);
@@ -33,6 +38,10 @@ const GroupNotes = () => {
   }, [searchTerm, groupId]);
 
   useEffect(() => {
+    if (!groupId) return;
+
+    let isCancelled = false;
+
     const loadNotes = async () => {
       dispatch(setLoading(true));
 
@@ -47,25 +56,28 @@ const GroupNotes = () => {
           }),
         );
       } else {
-        res = await dispatch(
-          getNoteById({ noteId: groupId, page, limit: 8 }),
-        );
+        res = await dispatch(getNoteById({ noteId: groupId, page, limit: 8 }));
       }
+
+      if (isCancelled) return;
 
       const fetchedNotes = res.payload?.notes || res.payload?.note || [];
-      if (page === 1) {
-        dispatch(setNotes(fetchedNotes));
-      } else {
-        dispatch(setNotes([...notes, ...fetchedNotes]));
-      }
+      const nextNotes =
+        page === 1
+          ? fetchedNotes
+          : [...(Array.isArray(notesRef.current) ? notesRef.current : []), ...fetchedNotes];
 
+      dispatch(setNotes(nextNotes));
       setHasMoreNotes(fetchedNotes.length === 8);
       dispatch(setLoading(false));
     };
 
     const timer = setTimeout(loadNotes, 300);
-    return () => clearTimeout(timer);
-  }, [dispatch, groupId, searchTerm, page, notes]);
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
+  }, [groupId, searchTerm, page, dispatch]);
 
   return (
     <div className="relative w-full min-h-screen text-slate-200 bg-[#030303] p-6 md:p-12">
