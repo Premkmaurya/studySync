@@ -12,9 +12,9 @@ import {
 
 export const fetchNotes = createAsyncThunk(
   "notes/fetchNotes",
-  async (_, thunkAPI) => {
+  async ({ page = 1, limit = 9 } = {}, thunkAPI) => {
     try {
-      return await fetchNotesApi();
+      return await fetchNotesApi(page, limit);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch notes",
@@ -64,9 +64,12 @@ export const getMyNotes = createAsyncThunk(
 
 export const getNoteById = createAsyncThunk(
   "notes/getNoteById",
-  async (noteId, thunkAPI) => {
+  async (payload, thunkAPI) => {
     try {
-      return await getNoteByIdApi(noteId);
+      const noteId = typeof payload === "string" ? payload : payload.noteId;
+      const page = payload?.page || 1;
+      const limit = payload?.limit || 8;
+      return await getNoteByIdApi(noteId, page, limit);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch note",
@@ -77,9 +80,9 @@ export const getNoteById = createAsyncThunk(
 
 export const searchNotes = createAsyncThunk(
   "notes/searchNotes",
-  async ({ query, groupId }, thunkAPI) => {
+  async ({ query, groupId, page = 1, limit = 9 }, thunkAPI) => {
     try {
-      return await searchNotesApi(query, groupId);
+      return await searchNotesApi(query, groupId, page, limit);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to search notes",
@@ -103,9 +106,9 @@ export const saveNote = createAsyncThunk(
 
 export const getSavedNotes = createAsyncThunk(
   "notes/getSavedNotes",
-  async (_, thunkAPI) => {
+  async ({ page = 1, limit = 5 } = {}, thunkAPI) => {
     try {
-      return await getSavedNotesApi();
+      return await getSavedNotesApi(page, limit);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch saved notes",

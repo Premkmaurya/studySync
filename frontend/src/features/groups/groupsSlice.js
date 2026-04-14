@@ -13,9 +13,9 @@ import {
 
 export const fetchGroups = createAsyncThunk(
   "groups/fetchGroups",
-  async (_, thunkAPI) => {
+  async ({ page = 1, limit = 9, field } = {}, thunkAPI) => {
     try {
-      return await fetchGroupsApi();
+      return await fetchGroupsApi(page, limit, field);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch groups",
@@ -52,9 +52,9 @@ export const joinGroup = createAsyncThunk(
 
 export const joinedGroup = createAsyncThunk(
   "groups/joinedGroup",
-  async (_, thunkAPI) => {
+  async ({ page = 1, limit = 6 } = {}, thunkAPI) => {
     try {
-      return await joinedGroupApi();
+      return await joinedGroupApi(page, limit);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch joined groups",
@@ -65,9 +65,9 @@ export const joinedGroup = createAsyncThunk(
 
 export const searchGroups = createAsyncThunk(
   "groups/searchGroups",
-  async (query, thunkAPI) => {
+  async ({ query, page = 1, limit = 9, field } = {}, thunkAPI) => {
     try {
-      return await searchGroupsApi(query);
+      return await searchGroupsApi(query, page, limit, field);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to search groups",
@@ -78,9 +78,9 @@ export const searchGroups = createAsyncThunk(
 
 export const fetchGroupMembers = createAsyncThunk(
   "groups/fetchGroupMembers",
-  async (groupId, thunkAPI) => {
+  async ({ groupId, page = 1, limit = 10 }, thunkAPI) => {
     try {
-      return await fetchGroupMembersApi(groupId);
+      return await fetchGroupMembersApi(groupId, page, limit);
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(
@@ -118,9 +118,9 @@ export const deleteGroup = createAsyncThunk(
 
 export const fetchSuggestedGroups = createAsyncThunk(
   "groups/fetchSuggestedGroups",
-  async (_, thunkAPI) => {
+  async ({ page = 1, limit = 6 } = {}, thunkAPI) => {
     try {
-      return await fetchSuggestedGroupsApi();
+      return await fetchSuggestedGroupsApi(page, limit);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch suggested groups",

@@ -5,7 +5,10 @@ import { createPortal } from "react-dom";
 import { Plus, Search } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import NotesGrid from "./components/NotesGrid";
-import { selectNotesLoading } from "../../../../features/notes/notesSelectors";
+import {
+  selectNotes,
+  selectNotesLoading,
+} from "../../../../features/notes/notesSelectors";
 import {
   getNoteById,
   searchNotes,
@@ -15,34 +18,54 @@ import {
 
 const GroupNotes = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMoreNotes, setHasMoreNotes] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { groupId } = useParams();
 
   const loading = useSelector(selectNotesLoading);
+  const notes = useSelector(selectNotes);
+
+  useEffect(() => {
+    setPage(1);
+    setHasMoreNotes(true);
+  }, [searchTerm, groupId]);
 
   useEffect(() => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
+
+      let res;
       if (searchTerm.trim()) {
-        const res = await dispatch(
-          searchNotes({ query: searchTerm.trim(), groupId }),
+        res = await dispatch(
+          searchNotes({
+            query: searchTerm.trim(),
+            groupId,
+            page,
+            limit: 8,
+          }),
         );
-        if (res.payload?.notes) {
-          dispatch(setNotes(res.payload.notes));
-        } else {
-          dispatch(setNotes([]));
-        }
       } else {
-        const res = await dispatch(getNoteById(groupId));
-        dispatch(setNotes(res.payload?.note || []));
+        res = await dispatch(
+          getNoteById({ noteId: groupId, page, limit: 8 }),
+        );
       }
+
+      const fetchedNotes = res.payload?.notes || res.payload?.note || [];
+      if (page === 1) {
+        dispatch(setNotes(fetchedNotes));
+      } else {
+        dispatch(setNotes([...notes, ...fetchedNotes]));
+      }
+
+      setHasMoreNotes(fetchedNotes.length === 8);
       dispatch(setLoading(false));
     };
 
     const timer = setTimeout(loadNotes, 300);
     return () => clearTimeout(timer);
-  }, [dispatch, groupId, searchTerm]);
+  }, [dispatch, groupId, searchTerm, page, notes]);
 
   return (
     <div className="relative w-full min-h-screen text-slate-200 bg-[#030303] p-6 md:p-12">
@@ -83,7 +106,19 @@ const GroupNotes = () => {
           </span>
         </div>
       ) : (
-        <NotesGrid searchTerm={searchTerm} />
+        <>
+          <NotesGrid searchTerm={searchTerm} />
+          {hasMoreNotes && !loading && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => setPage((prev) => prev + 1)}
+                className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+              >
+                Load More
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {/* 3. QUANTUM FLOATING ACTION BUTTON */}

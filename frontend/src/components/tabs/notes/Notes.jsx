@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectNotes, selectNotesLoading } from "../../../features/notes/notesSelectors";
-import { fetchNotes, searchNotes, setNotes } from "../../../features/notes/notesSlice";
+import { fetchNotes, searchNotes } from "../../../features/notes/notesSlice";
 
 import NoteCard from "./components/NoteCard";
 
@@ -23,44 +23,57 @@ const SavedNotesContent = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredNotes, setFilteredNotes] = useState([]);
-  const [visibleNotes, setVisibleNotes] = useState(9);
+  const [page, setPage] = useState(1);
+  const [hasMoreNotes, setHasMoreNotes] = useState(true);
 
   const dispatch = useDispatch();
   const loading = useSelector(selectNotesLoading);
 
   useEffect(() => {
-    const fetchAllNotes = async () => {
-      const res = await dispatch(fetchNotes());
-      setNotes(res.payload?.notes || res.payload || []);
-    };
-    fetchAllNotes();
-  }, []);
+    setPage(1);
+    setHasMoreNotes(true);
+  }, [searchTerm, selectedCategory]);
 
   // Combined search and filter effect with debouncing
   useEffect(() => {
-    const fetchAndSet = async () => {
-      if (searchTerm.trim()) {
-        const query = searchTerm.trim().toLowerCase();
-        const res = await dispatch(searchNotes({ query, groupId: null }));
-        const searchResults = res.payload?.notes || res.payload || [];
-        let filtered =
-          selectedCategory !== "All"
-            ? searchResults.filter((g) => g.field === selectedCategory)
-            : searchResults;
-        setFilteredNotes(filtered);
-      } else {
-        const res = await dispatch(fetchNotes());
-        const allNotes = res.payload?.notes || res.payload || [];
-        let filtered =
-          selectedCategory !== "All"
-            ? allNotes.filter((g) => g.field === selectedCategory)
-            : allNotes;
-        setFilteredNotes(filtered);
-      }
-    };
-    const timer = setTimeout(fetchAndSet, searchTerm.trim() ? 300 : 0);
+    const timer = setTimeout(() => {
+      const fetchAndSet = async () => {
+        const query = searchTerm.trim();
+        const categoryField = selectedCategory !== "All" ? selectedCategory : null;
+        let res;
+
+        if (query) {
+          res = await dispatch(
+            searchNotes({
+              query: query.toLowerCase(),
+              groupId: null,
+              page,
+              limit: 9,
+            }),
+          );
+        } else {
+          res = await dispatch(fetchNotes({ page, limit: 9 }));
+        }
+
+        const notesResponse = res.payload?.notes || res.payload || [];
+        const filtered =
+          categoryField && categoryField !== "All"
+            ? notesResponse.filter((g) => g.field === categoryField)
+            : notesResponse;
+
+        if (page === 1) {
+          setFilteredNotes(filtered);
+        } else {
+          setFilteredNotes((prev) => [...prev, ...filtered]);
+        }
+
+        setHasMoreNotes(filtered.length === 9);
+      };
+
+      fetchAndSet();
+    }, searchTerm.trim() ? 300 : 0);
     return () => clearTimeout(timer);
-  }, [dispatch, searchTerm, selectedCategory]);
+  }, [dispatch, searchTerm, selectedCategory, page]);
 
   const CATEGORIES = [
     { id: "All", label: "All Hubs", icon: LayoutGrid, color: "text-white" },

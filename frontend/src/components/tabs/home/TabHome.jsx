@@ -29,15 +29,18 @@ const Home = () => {
   const loading = useSelector(selectGroupsLoading);
   const user = useSelector(selectUser);
 
-  const [visibleJoined, setVisibleJoined] = useState(6);
-  const [visibleSuggested, setVisibleSuggested] = useState(6);
+  const [joinedPage, setJoinedPage] = useState(1);
+  const [suggestedPage, setSuggestedPage] = useState(1);
+  const [hasMoreJoined, setHasMoreJoined] = useState(true);
+  const [hasMoreSuggested, setHasMoreSuggested] = useState(true);
 
   useEffect(() => {
-    // Fetch joined groups
     const fetchJoinedGroups = async () => {
-      const res = await dispatch(joinedGroup());
+      const res = await dispatch(joinedGroup({ page: 1, limit: 6 }));
       if (res.payload && res.payload.groups) {
         dispatch(setJoinedGroups(res.payload.groups));
+        setHasMoreJoined(res.payload.groups.length === 6);
+        setJoinedPage(1);
       }
     };
 
@@ -45,17 +48,39 @@ const Home = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Fetch suggested groups
     const fetchSuggestions = async () => {
-      const res = await dispatch(fetchSuggestedGroups());
+      const res = await dispatch(fetchSuggestedGroups({ page: 1, limit: 6 }));
       if (res.payload) {
         dispatch(setSuggestedGroups(res.payload.suggestedGroups));
         dispatch(setFieldPercentages(res.payload.fieldPercentages));
+        setHasMoreSuggested(res.payload.suggestedGroups?.length === 6);
+        setSuggestedPage(1);
       }
     };
 
     fetchSuggestions();
   }, [dispatch]);
+
+  const loadMoreJoinedGroups = async () => {
+    const nextPage = joinedPage + 1;
+    const res = await dispatch(joinedGroup({ page: nextPage, limit: 6 }));
+    if (res.payload && res.payload.groups) {
+      dispatch(setJoinedGroups([...joinedGroups, ...res.payload.groups]));
+      setHasMoreJoined(res.payload.groups.length === 6);
+      setJoinedPage(nextPage);
+    }
+  };
+
+  const loadMoreSuggestedGroups = async () => {
+    const nextPage = suggestedPage + 1;
+    const res = await dispatch(fetchSuggestedGroups({ page: nextPage, limit: 6 }));
+    if (res.payload) {
+      dispatch(setSuggestedGroups([...suggestedGroups, ...res.payload.suggestedGroups]));
+      dispatch(setFieldPercentages(res.payload.fieldPercentages || fieldPercentages));
+      setHasMoreSuggested(res.payload.suggestedGroups?.length === 6);
+      setSuggestedPage(nextPage);
+    }
+  };
 
   // Helper function to add UI properties to suggested groups
   const enrichedSuggestedGroups = suggestedGroups.map((group, index) => {
@@ -96,45 +121,47 @@ const Home = () => {
       {/* 3. Main Sections */}
       <main className="relative z-10 px-6 max-w-7xl mx-auto space-y-24 pb-32">
         {/* Joined Groups Section */}
-        <section>
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-4">
-              <h2 className="text-3xl font-black tracking-tighter text-white">
-                Your Collectives
-              </h2>
-              <div className="h-px w-24 bg-gradient-to-r from-indigo-500/50 to-transparent" />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading ? (
-              <div className="col-span-full flex flex-col items-center justify-center py-20 gap-4">
-                <div className="w-12 h-12 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                  Loading Your Collectives...
-                </span>
+        {joinedGroups && joinedGroups.length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-10">
+              <div className="flex items-center gap-4">
+                <h2 className="text-3xl font-black tracking-tighter text-white">
+                  Your Collectives
+                </h2>
+                <div className="h-px w-24 bg-gradient-to-r from-indigo-500/50 to-transparent" />
               </div>
-            ) : joinedGroups && joinedGroups.length > 0 ? (
-              joinedGroups.slice(0, visibleJoined).map((group) => (
-                <GroupCard key={group._id || group.id} group={group} />
-              ))
-            ) : (
-              <div className="col-span-full text-center py-8">
-                <p className="text-zinc-400">Join groups to see them here</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {loading ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-20 gap-4">
+                  <div className="w-12 h-12 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">
+                    Loading Your Collectives...
+                  </span>
+                </div>
+              ) : joinedGroups && joinedGroups.length > 0 ? (
+                joinedGroups.map((group) => (
+                  <GroupCard key={group._id || group.id} group={group} />
+                ))
+              ) : (
+                <div className="col-span-full text-center py-8">
+                  <p className="text-zinc-400">Join groups to see them here</p>
+                </div>
+              )}
+            </div>
+            {hasMoreJoined && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={loadMoreJoinedGroups}
+                  className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+                >
+                  Load More
+                </button>
               </div>
             )}
-          </div>
-          {joinedGroups && joinedGroups.length > visibleJoined && (
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={() => setVisibleJoined((prev) => prev + 6)}
-                className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
-              >
-                Load More
-              </button>
-            </div>
-          )}
-        </section>
+          </section>
+        )}
 
         {/* Suggested Discovery Section */}
         <section className="relative">
@@ -166,7 +193,7 @@ const Home = () => {
                 </div>
               ) : enrichedSuggestedGroups &&
                 enrichedSuggestedGroups.length > 0 ? (
-                enrichedSuggestedGroups.slice(0, visibleSuggested).map((group) => {
+                enrichedSuggestedGroups.map((group) => {
                   const matchPercentage = fieldPercentages[group.field] || 0;
                   return (
                     <GroupCard
@@ -220,10 +247,10 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            {enrichedSuggestedGroups && enrichedSuggestedGroups.length > visibleSuggested && (
+            {hasMoreSuggested && (
               <div className="flex justify-center mt-8">
                 <button
-                  onClick={() => setVisibleSuggested((prev) => prev + 6)}
+                  onClick={loadMoreSuggestedGroups}
                   className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
                 >
                   Load More

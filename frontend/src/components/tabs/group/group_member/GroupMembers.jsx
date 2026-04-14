@@ -26,7 +26,8 @@ const GroupMembers = () => {
   const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
-  const [visibleMembers, setVisibleMembers] = useState(10);
+  const [memberPage, setMemberPage] = useState(1);
+  const [hasMoreMembers, setHasMoreMembers] = useState(true);
 
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes)
@@ -43,19 +44,25 @@ const GroupMembers = () => {
 
   useEffect(() => {
     async function getMembers() {
-      const res = await dispatch(fetchGroupMembers(group._id));
-      
+      setLoading(true);
+      const res = await dispatch(
+        fetchGroupMembers({ groupId: group._id, page: 1, limit: 10 }),
+      );
+
       if (res.meta.requestStatus === "fulfilled" && res.payload?.members) {
         setMembers(res.payload.members);
+        setHasMoreMembers(res.payload.members.length === 10);
+        setMemberPage(1);
       } else {
         setMembers([]);
+        setHasMoreMembers(false);
       }
       setLoading(false);
     }
     getMembers();
-  }, [group._id]);
+  }, [group._id, dispatch]);
 
-  const filteredMembers = (members || []).filter(m => {
+  const filteredMembers = (members || []).filter((m) => {
     const fullName = `${m?.userId?.fullname?.firstname || ""} ${m?.userId?.fullname?.lastname || ""}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
   });
@@ -88,10 +95,24 @@ const GroupMembers = () => {
             )}
           </div>
         )}
-        {filteredMembers.length > visibleMembers && (
+        {hasMoreMembers && !loading && (
           <div className="flex justify-center mt-8">
             <button
-              onClick={() => setVisibleMembers((prev) => prev + 10)}
+              onClick={async () => {
+                const nextPage = memberPage + 1;
+                setLoading(true);
+                const res = await dispatch(
+                  fetchGroupMembers({ groupId: group._id, page: nextPage, limit: 10 }),
+                );
+                if (res.meta.requestStatus === "fulfilled" && res.payload?.members) {
+                  setMembers((prev) => [...prev, ...res.payload.members]);
+                  setMemberPage(nextPage);
+                  setHasMoreMembers(res.payload.members.length === 10);
+                } else {
+                  setHasMoreMembers(false);
+                }
+                setLoading(false);
+              }}
               className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
             >
               Load More

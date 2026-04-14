@@ -1,21 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Search,
-  LayoutGrid,
-  Filter,
-  Code,
-  Cpu,
-  Shield,
-  Palette,
-  Globe,
-  Sparkles,
-} from "lucide-react";
 import DiscoveryCard from "./components/DiscoveryCard";
 import {
-  selectGroups,
   selectGroupsLoading,
   selectJoinedGroups,
 } from "../../../../features/groups/groupsSelectors";
@@ -27,13 +14,12 @@ import {
 } from "../../../../features/groups/groupsSlice";
 import Header from "./components/Header";
 
-// --- CATEGORY CONFIGURATION ---
-
-
-
 const AllGroupsContent = () => {
   const [filteredGroups, setFilteredGroups] = useState([]);
-  const [visibleGroups, setVisibleGroups] = useState(9);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [groupPage, setGroupPage] = useState(1);
+  const [hasMoreGroups, setHasMoreGroups] = useState(true);
 
   const loading = useSelector(selectGroupsLoading);
   const joinedGroups = useSelector(selectJoinedGroups);
@@ -52,8 +38,64 @@ const AllGroupsContent = () => {
     }
   }, [dispatch, joinedGroups.length]);
 
-  // Debounced search effect - only on searchTerm changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const fetchGroupsPage = async () => {
+        const field = selectedCategory !== "All" ? selectedCategory : undefined;
+        let res;
 
+        if (searchTerm.trim()) {
+          res = await dispatch(
+            searchGroups({
+              query: searchTerm.trim(),
+              page: 1,
+              limit: 9,
+              field,
+            }),
+          );
+        } else {
+          res = await dispatch(fetchGroups({ page: 1, limit: 9, field }));
+        }
+
+        const groups = res.payload?.groups || res.payload || [];
+        setFilteredGroups(groups);
+        setGroupPage(1);
+        setHasMoreGroups(groups.length === 9);
+      };
+
+      fetchGroupsPage();
+    }, searchTerm.trim() ? 300 : 0);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, selectedCategory, dispatch]);
+
+  const handleLoadMore = async () => {
+    const nextPage = groupPage + 1;
+    const field = selectedCategory !== "All" ? selectedCategory : undefined;
+    let res;
+
+    if (searchTerm.trim()) {
+      res = await dispatch(
+        searchGroups({
+          query: searchTerm.trim(),
+          page: nextPage,
+          limit: 9,
+          field,
+        }),
+      );
+    } else {
+      res = await dispatch(fetchGroups({ page: nextPage, limit: 9, field }));
+    }
+
+    const groups = res.payload?.groups || res.payload || [];
+    if (groups.length > 0) {
+      setFilteredGroups((prev) => [...prev, ...groups]);
+      setGroupPage(nextPage);
+      setHasMoreGroups(groups.length === 9);
+    } else {
+      setHasMoreGroups(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen w-full bg-black text-[#E5E7EB] font-sans overflow-hidden">
@@ -63,7 +105,12 @@ const AllGroupsContent = () => {
       </div>
 
       <main className="relative z-10 pt-36 pb-32 px-6 max-w-7xl mx-auto">
-        <Header setFilteredGroups={setFilteredGroups} />
+        <Header
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -79,7 +126,7 @@ const AllGroupsContent = () => {
           >
             <AnimatePresence>
               {filteredGroups.length > 0 ? (
-                filteredGroups.slice(0, visibleGroups).map((group, i) => (
+                filteredGroups.map((group, i) => (
                   <DiscoveryCard key={group._id || i} group={group} index={i} />
                 ))
               ) : (
@@ -88,10 +135,10 @@ const AllGroupsContent = () => {
             </AnimatePresence>
           </div>
         )}
-        {filteredGroups.length > visibleGroups && (
+        {hasMoreGroups && !loading && (
           <div className="flex justify-center mt-8">
             <button
-              onClick={() => setVisibleGroups((prev) => prev + 9)}
+              onClick={handleLoadMore}
               className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
             >
               Load More

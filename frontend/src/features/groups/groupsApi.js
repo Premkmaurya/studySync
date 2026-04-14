@@ -1,13 +1,15 @@
 import api from "../../services/api";
 
-export const fetchGroupsApi = async () => {
-  const response = await api.get("/groups/all");
+export const fetchGroupsApi = async (page = 1, limit = 9, field) => {
+  const response = await api.get("/groups/all", {
+    params: { page, limit, field },
+  });
   return response.data;
 };
 
-export const searchGroupsApi = async (query) => {
+export const searchGroupsApi = async (query, page = 1, limit = 9, field) => {
   const response = await api.get("/groups/search", {
-    params: { q: query },
+    params: { q: query, page, limit, field },
   });
   return response.data;
 };
@@ -22,27 +24,33 @@ export const joinGroupApi = async (groupId) => {
   return response.data;
 };
 
-export const joinedGroupApi = async () => {
-  const response = await api.get("/groups/joined-groups");
+export const joinedGroupApi = async (page = 1, limit = 6) => {
+  const response = await api.get("/groups/joined-groups", {
+    params: { page, limit },
+  });
   return response.data;
 };
 
-export const fetchSuggestedGroupsApi = async () => {
-  const response = await api.get("/groups/suggested-groups");
+export const fetchSuggestedGroupsApi = async (page = 1, limit = 6) => {
+  const response = await api.get("/groups/suggested-groups", {
+    params: { page, limit },
+  });
   return response.data;
 };
 
-export const fetchGroupMembersApi = async (groupId) => {
-  const response = await api.get(`/groups/members`, { params: { groupId } });
+export const fetchGroupMembersApi = async (groupId, page = 1, limit = 10) => {
+  const response = await api.get(`/groups/members`, {
+    params: { groupId, page, limit },
+  });
   return response.data;
 };
 
 export const updateGroupApi = async (groupId, groupData) => {
   const response = await api.patch(`/groups/update/${groupId}`, groupData);
   return response.data;
-} 
+};
 
 export const deleteGroupApi = async (groupId) => {
   const response = await api.delete(`/groups/delete/${groupId}`);
   return response.data;
-}
+};
