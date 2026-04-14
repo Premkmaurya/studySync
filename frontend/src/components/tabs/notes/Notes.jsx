@@ -23,6 +23,7 @@ const SavedNotesContent = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredNotes, setFilteredNotes] = useState([]);
+  const [visibleNotes, setVisibleNotes] = useState(9);
 
   const dispatch = useDispatch();
   const loading = useSelector(selectNotesLoading);
@@ -175,7 +176,7 @@ const SavedNotesContent = () => {
             </div>
           ) : filteredNotes?.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredNotes?.map((note, i) => (
+              {filteredNotes.slice(0, visibleNotes)?.map((note, i) => (
                 <NoteCard key={note.id} note={note} index={i} />
               ))}
             </div>
@@ -183,6 +184,16 @@ const SavedNotesContent = () => {
             <p className="text-zinc-500 text-center">No notes found.</p>
           )}
         </div>
+        {filteredNotes.length > visibleNotes && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => setVisibleNotes((prev) => prev + 9)}
+              className="px-6 py-3 bg-emerald-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-emerald-600 transition-all"
+            >
+              Load More
+            </button>
+          </div>
+        )}
 
         {/* 5. AI Reference Widget (Floating) */}
         <div

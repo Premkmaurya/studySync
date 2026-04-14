@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { TrendingUp, ArrowUpRight, Compass } from "lucide-react";
@@ -27,7 +27,10 @@ const Home = () => {
   const suggestedGroups = useSelector(selectSuggestedGroups);
   const fieldPercentages = useSelector(selectFieldPercentages);
   const loading = useSelector(selectGroupsLoading);
-  const user = useSelector(selectUser)
+  const user = useSelector(selectUser);
+
+  const [visibleJoined, setVisibleJoined] = useState(6);
+  const [visibleSuggested, setVisibleSuggested] = useState(6);
 
   useEffect(() => {
     // Fetch joined groups
@@ -44,8 +47,7 @@ const Home = () => {
   useEffect(() => {
     // Fetch suggested groups
     const fetchSuggestions = async () => {
-      
-    const res = await dispatch(fetchSuggestedGroups());
+      const res = await dispatch(fetchSuggestedGroups());
       if (res.payload) {
         dispatch(setSuggestedGroups(res.payload.suggestedGroups));
         dispatch(setFieldPercentages(res.payload.fieldPercentages));
@@ -83,7 +85,10 @@ const Home = () => {
       <header className="relative z-10 pt-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div>
           <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
-            Hello, <span className="text-indigo-500 capitalize">{user.fullname.firstname}</span>
+            Hello,{" "}
+            <span className="text-indigo-500 capitalize">
+              {user.fullname.firstname}
+            </span>
           </h1>
         </div>
       </header>
@@ -99,9 +104,6 @@ const Home = () => {
               </h2>
               <div className="h-px w-24 bg-gradient-to-r from-indigo-500/50 to-transparent" />
             </div>
-            <button className="text-[10px] font-black text-zinc-500 hover:text-white uppercase tracking-widest transition-colors flex items-center gap-2">
-              View All <ArrowUpRight size={14} />
-            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,7 +115,7 @@ const Home = () => {
                 </span>
               </div>
             ) : joinedGroups && joinedGroups.length > 0 ? (
-              joinedGroups.map((group) => (
+              joinedGroups.slice(0, visibleJoined).map((group) => (
                 <GroupCard key={group._id || group.id} group={group} />
               ))
             ) : (
@@ -122,6 +124,16 @@ const Home = () => {
               </div>
             )}
           </div>
+          {joinedGroups && joinedGroups.length > visibleJoined && (
+            <div className="flex justify-center mt-8">
+              <button
+                onClick={() => setVisibleJoined((prev) => prev + 6)}
+                className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+              >
+                Load More
+              </button>
+            </div>
+          )}
         </section>
 
         {/* Suggested Discovery Section */}
@@ -152,8 +164,9 @@ const Home = () => {
                     Discovering Neural Suggestions...
                   </span>
                 </div>
-              ) : enrichedSuggestedGroups && enrichedSuggestedGroups.length > 0 ? (
-                enrichedSuggestedGroups.map((group) => {
+              ) : enrichedSuggestedGroups &&
+                enrichedSuggestedGroups.length > 0 ? (
+                enrichedSuggestedGroups.slice(0, visibleSuggested).map((group) => {
                   const matchPercentage = fieldPercentages[group.field] || 0;
                   return (
                     <GroupCard
@@ -207,6 +220,16 @@ const Home = () => {
                 </div>
               </div>
             </div>
+            {enrichedSuggestedGroups && enrichedSuggestedGroups.length > visibleSuggested && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => setVisibleSuggested((prev) => prev + 6)}
+                  className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
           </div>
         </section>
       </main>

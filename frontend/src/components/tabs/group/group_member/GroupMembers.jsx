@@ -26,6 +26,7 @@ const GroupMembers = () => {
   const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [visibleMembers, setVisibleMembers] = useState(10);
 
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes)
@@ -75,7 +76,7 @@ const GroupMembers = () => {
         ) : (
           <div className="flex flex-col">
             <AnimatePresence>
-              {filteredMembers.map((member, index) => (
+              {filteredMembers.slice(0, visibleMembers).map((member, index) => (
                 <MemberEntry key={member?.userId?._id || index} member={member} index={index} />
               ))}
             </AnimatePresence>
@@ -85,6 +86,16 @@ const GroupMembers = () => {
                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-800">0_Matches_Found</p>
               </div>
             )}
+          </div>
+        )}
+        {filteredMembers.length > visibleMembers && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => setVisibleMembers((prev) => prev + 10)}
+              className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+            >
+              Load More
+            </button>
           </div>
         )}
       </main>

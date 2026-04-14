@@ -25,6 +25,7 @@ const NotesGrid = () => {
   const notes = useSelector(selectNotes);
   const savedNotes = useSelector(selectSavedNotes);
   const [bookmarks, setBookmarks] = useState({});
+  const [visibleNotes, setVisibleNotes] = useState(8);
 
   const handleSaveNote = async (noteId) => {
     try {
@@ -71,7 +72,7 @@ const NotesGrid = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
       <AnimatePresence>
         {notes?.length > 0 ? (
-          notes.map((article, index) => (
+          notes.slice(0, visibleNotes).map((article, index) => (
             <motion.div
               key={String(article._id || index)}
               initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -157,6 +158,16 @@ const NotesGrid = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      {notes?.length > visibleNotes && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => setVisibleNotes((prev) => prev + 8)}
+            className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+          >
+            Load More
+          </button>
+        </div>
+      )}
     </div>
   );
 };

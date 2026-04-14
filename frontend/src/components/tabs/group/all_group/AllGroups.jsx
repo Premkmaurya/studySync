@@ -33,6 +33,7 @@ import Header from "./components/Header";
 
 const AllGroupsContent = () => {
   const [filteredGroups, setFilteredGroups] = useState([]);
+  const [visibleGroups, setVisibleGroups] = useState(9);
 
   const loading = useSelector(selectGroupsLoading);
   const joinedGroups = useSelector(selectJoinedGroups);
@@ -78,13 +79,23 @@ const AllGroupsContent = () => {
           >
             <AnimatePresence>
               {filteredGroups.length > 0 ? (
-                filteredGroups.map((group, i) => (
+                filteredGroups.slice(0, visibleGroups).map((group, i) => (
                   <DiscoveryCard key={group._id || i} group={group} index={i} />
                 ))
               ) : (
                 <p className="text-zinc-500 text-center">No groups found.</p>
               )}
             </AnimatePresence>
+          </div>
+        )}
+        {filteredGroups.length > visibleGroups && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={() => setVisibleGroups((prev) => prev + 9)}
+              className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
+            >
+              Load More
+            </button>
           </div>
         )}
       </main>
