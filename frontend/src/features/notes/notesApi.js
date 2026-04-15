@@ -1,14 +1,14 @@
-import api from '../../services/api';
+import api from "../../services/api";
 
 export const fetchNotesApi = async (page = 1, limit = 9) => {
-  const response = await api.get('/notes/get', {
+  const response = await api.get("/notes/get", {
     params: { page, limit },
   });
   return response.data;
 };
 
 export const createNoteApi = async (noteData) => {
-  const response = await api.post('/notes', noteData);
+  const response = await api.post("/notes", noteData);
   return response.data;
 };
 
@@ -18,7 +18,7 @@ export const summarizeNoteApi = async (noteId) => {
 };
 
 export const getMyNotesApi = async () => {
-  const response = await api.get('/notes/my-notes');
+  const response = await api.get("/notes/my-notes");
   return response.data;
 };
 
@@ -36,13 +36,17 @@ export const searchNotesApi = async (query, groupId, page = 1, limit = 9) => {
   return response.data;
 };
 
-export const saveNoteApi = async (noteId) => {
-  const response = await api.post(`/notes/save-note/${noteId}`);
+export const saveNoteApi = async (noteId, groupId) => {
+  console.log("Saving note with ID:", noteId, "to group:", groupId);
+  const response = await api.post(`/notes/save-note`, {
+    noteId,
+    groupId,
+  });
   return response.data;
 };
 
 export const getSavedNotesApi = async (page = 1, limit = 5) => {
-  const response = await api.get('/notes/saved-notes', {
+  const response = await api.get("/notes/saved-notes", {
     params: { page, limit },
   });
   return response.data;

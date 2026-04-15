@@ -27,14 +27,16 @@ const NotesGrid = () => {
   const notesArray = Array.isArray(notes)
     ? notes
     : Array.isArray(notes?.notes)
-    ? notes.notes
-    : [];
+      ? notes.notes
+      : [];
   const [bookmarks, setBookmarks] = useState({});
   const [visibleNotes, setVisibleNotes] = useState(8);
 
   const handleSaveNote = async (noteId) => {
     try {
-      const res = await dispatch(saveNote(noteId));
+      const res = await dispatch(
+        saveNote(noteId, groupId),
+      );
 
       if (res.meta?.requestStatus === "fulfilled") {
         const savedRes = await dispatch(getSavedNotes());

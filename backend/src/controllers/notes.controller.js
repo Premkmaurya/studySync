@@ -150,7 +150,9 @@ async function searchNotes(req, res) {
 
 async function saveNote(req, res) {
   const user = req.user;
-  const { noteId } = req.params;
+  const { noteId, groupId } = req.body;
+
+  console.log(noteId, groupId);
 
   const note = await noteModel.findById(noteId);
 
