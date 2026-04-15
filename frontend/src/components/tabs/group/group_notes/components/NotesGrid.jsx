@@ -20,7 +20,6 @@ dayjs.extend(relativeTime);
 
 const NotesGrid = () => {
   const navigate = useNavigate();
-  const { groupId } = useParams();
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes);
   const savedNotes = useSelector(selectSavedNotes);
@@ -32,10 +31,14 @@ const NotesGrid = () => {
   const [bookmarks, setBookmarks] = useState({});
   const [visibleNotes, setVisibleNotes] = useState(8);
 
-  const handleSaveNote = async (noteId) => {
+  const handleSaveNote = async (note) => {
     try {
+      const data = {
+        noteId: note._id,
+        groupId: note.groupId._id,
+      }
       const res = await dispatch(
-        saveNote(noteId, groupId),
+        saveNote(data),
       );
 
       if (res.meta?.requestStatus === "fulfilled") {
@@ -105,7 +108,7 @@ const NotesGrid = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSaveNote(article._id);
+                      handleSaveNote(article);
                     }}
                     className="p-3 bg-zinc-800 w-10 h-10 rounded-full text-zinc-400 cursor-pointer hover:text-indigo-400 hover:bg-zinc-700 transition-all duration-300"
                     title={bookmarks[article._id] ? "Unsave Note" : "Save Note"}

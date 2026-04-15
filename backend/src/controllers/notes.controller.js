@@ -152,8 +152,7 @@ async function saveNote(req, res) {
   const user = req.user;
   const { noteId, groupId } = req.body;
 
-  console.log(noteId, groupId);
-
+  
   const note = await noteModel.findById(noteId);
 
   if (!note) {
@@ -165,6 +164,7 @@ async function saveNote(req, res) {
   const isAlreadySaved = await savedNoteModel.findOne({
     userId: user.id,
     noteId,
+    groupId,
   });
 
   if (isAlreadySaved) {
@@ -179,6 +179,7 @@ async function saveNote(req, res) {
   await savedNoteModel.create({
     userId: user.id,
     noteId,
+    groupId,
   });
 
   await invalidateByPrefix(`notes:saved:${user.id}`);

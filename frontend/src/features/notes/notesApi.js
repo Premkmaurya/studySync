@@ -36,12 +36,8 @@ export const searchNotesApi = async (query, groupId, page = 1, limit = 9) => {
   return response.data;
 };
 
-export const saveNoteApi = async (noteId, groupId) => {
-  console.log("Saving note with ID:", noteId, "to group:", groupId);
-  const response = await api.post(`/notes/save-note`, {
-    noteId,
-    groupId,
-  });
+export const saveNoteApi = async (payload) => {
+  const response = await api.post(`/notes/save-note`, payload);
   return response.data;
 };
 

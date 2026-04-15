@@ -93,9 +93,9 @@ export const searchNotes = createAsyncThunk(
 
 export const saveNote = createAsyncThunk(
   "notes/saveNote",
-  async (noteId, groupId, thunkAPI) => {
+  async (payload, thunkAPI) => {
     try {
-      return await saveNoteApi({ noteId, groupId });
+      return await saveNoteApi(payload);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to save note",
