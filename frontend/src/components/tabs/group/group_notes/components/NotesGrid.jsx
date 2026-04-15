@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
-import { FileText, Clock, ArrowUpRight, Database } from "lucide-react";
+import { FileText, Clock, ArrowUpRight, Database, Loader2 } from "lucide-react";
 import { FaRegBookmark, FaBookmark } from "react-icons/fa";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -20,6 +20,7 @@ dayjs.extend(relativeTime);
 
 const NotesGrid = () => {
   const navigate = useNavigate();
+  const { groupId } = useParams();
   const dispatch = useDispatch();
   const notes = useSelector(selectNotes);
   const savedNotes = useSelector(selectSavedNotes);
@@ -30,8 +31,10 @@ const NotesGrid = () => {
       : [];
   const [bookmarks, setBookmarks] = useState({});
   const [visibleNotes, setVisibleNotes] = useState(8);
+  const [savingNoteIds, setSavingNoteIds] = useState({});
 
   const handleSaveNote = async (note) => {
+    setSavingNoteIds((prev) => ({ ...prev, [note._id]: true }));
     try {
       const data = {
         noteId: note._id,
@@ -49,6 +52,12 @@ const NotesGrid = () => {
       }
     } catch (error) {
       console.error("Failed to save note:", error);
+    } finally {
+      setSavingNoteIds((prev) => {
+        const next = { ...prev };
+        delete next[note._id];
+        return next;
+      });
     }
   };
 
@@ -110,10 +119,17 @@ const NotesGrid = () => {
                       e.stopPropagation();
                       handleSaveNote(article);
                     }}
-                    className="p-3 bg-zinc-800 w-10 h-10 rounded-full text-zinc-400 cursor-pointer hover:text-indigo-400 hover:bg-zinc-700 transition-all duration-300"
-                    title={bookmarks[article._id] ? "Unsave Note" : "Save Note"}
+                    disabled={savingNoteIds[article._id]}
+                    className="p-3 bg-zinc-800 w-10 h-10 rounded-full text-zinc-400 cursor-pointer hover:text-indigo-400 hover:bg-zinc-700 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                    title={savingNoteIds[article._id]
+                      ? "Saving..."
+                      : bookmarks[article._id]
+                        ? "Unsave Note"
+                        : "Save Note"}
                   >
-                    {bookmarks[article._id] ? (
+                    {savingNoteIds[article._id] ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : bookmarks[article._id] ? (
                       <FaBookmark size={16} />
                     ) : (
                       <FaRegBookmark size={16} />

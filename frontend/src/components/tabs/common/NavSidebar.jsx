@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   Home,
   Compass,
@@ -16,6 +17,7 @@ import {
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const theme = useSelector((state) => state.theme.mode);
 
   // Close menu on route change
   useEffect(() => {
@@ -38,15 +40,25 @@ const NavBar = () => {
     >
       <motion.div
         layout
-        className="px-6 py-4 md:px-8 bg-zinc-900/40 backdrop-blur-2xl border border-white/10 rounded-[32px] flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.3)] overflow-hidden"
+        className={`px-6 py-4 md:px-8 backdrop-blur-2xl border rounded-[32px] flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.3)] overflow-hidden transition-all ${
+          theme === "light"
+            ? "bg-white/40 border-black/10"
+            : "bg-zinc-900/40 border-white/10"
+        }`}
       >
         <div className="flex items-center justify-between w-full">
           {/* Left: Logo/Brand */}
           <NavLink to="/home" className="flex items-center gap-2 group relative z-[110]">
-            <div className="p-2.5 bg-indigo-500/10 rounded-2xl group-hover:bg-indigo-500/20 transition-all">
-              <Sparkles size={20} className="text-indigo-400" />
+            <div className={`p-2.5 rounded-2xl group-hover:bg-indigo-500/20 transition-all ${
+              theme === "light"
+                ? "bg-indigo-500/15"
+                : "bg-indigo-500/10"
+            }`}>
+              <Sparkles size={20} className="text-indigo-500" />
             </div>
-            <span className="text-sm font-black tracking-tighter text-white group-hover:text-indigo-400 transition-colors">
+            <span className={`text-sm font-black tracking-tighter group-hover:text-indigo-400 transition-colors ${
+              theme === "light" ? "text-black" : "text-white"
+            }`}>
               studySync
             </span>
           </NavLink>
@@ -60,8 +72,12 @@ const NavBar = () => {
                 className={({ isActive }) =>
                   `px-4 py-2 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border-2 ${
                     isActive
-                      ? "bg-white text-black border-white"
-                      : "bg-transparent text-zinc-500 border-zinc-700 hover:text-white hover:border-white/20"
+                      ? theme === "light"
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-black border-white"
+                      : theme === "light"
+                        ? "bg-transparent text-gray-500 border-gray-300 hover:text-black hover:border-black/20"
+                        : "bg-transparent text-zinc-500 border-zinc-700 hover:text-white hover:border-white/20"
                   }`
                 }
               >

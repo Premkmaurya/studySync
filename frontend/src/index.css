@@ -4,7 +4,8 @@
 }
 
 /* ===== THEME CSS VARIABLES ===== */
-:root {
+:root,
+html {
   /* Dark Mode (Default) */
   --bg-primary: #050505;
   --bg-secondary: #0f0f0f;
@@ -16,6 +17,7 @@
   --shadow-color: rgba(0, 0, 0, 0.3);
   --accent-color: #4f46e6;
   --accent-hover: #6366f1;
+  color-scheme: dark;
 }
 
 /* Light Mode */
@@ -30,9 +32,10 @@ html.light {
   --shadow-color: rgba(0, 0, 0, 0.1);
   --accent-color: #6366f1;
   --accent-hover: #4f46e6;
+  color-scheme: light;
 }
 
-html, body, #root {
+html {
   font-family: "Inter";
   width: 100%;
   height: 100%;
@@ -41,23 +44,37 @@ html, body, #root {
   overflow-x: hidden;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  /* Smooth theme transition */
   transition: background-color 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
-              color 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-              border-color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+              color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Smooth transitions for all elements on theme change */
-* {
+body, #root {
+  font-family: "Inter";
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   transition: background-color 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
-              color 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-              border-color 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-              box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+              color 0.5s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 @import "tailwindcss";
 
-@import "tailwindcss";
+/* Ensure theme colors override Tailwind base styles */
+@layer base {
+  html {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  body, #root {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+  }
+}
 
 /* 1. Define your theme colors (if not already there) */
 @theme {
