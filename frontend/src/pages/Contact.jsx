@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   motion,
   AnimatePresence,
@@ -24,8 +25,13 @@ import ContactForm from "../components/contact/ContactForm";
 import ContactDetails from "../components/contact/ContactDetails";
 
 const Contact = () => {
+  const theme = useSelector((state) => state.theme.mode);
   return (
-    <div className="relative min-h-screen w-full bg-[#050505] text-slate-200 selection:bg-indigo-500/30 font-sans overflow-x-hidden">
+    <div className={`relative min-h-screen w-full selection:bg-indigo-500/30 font-sans overflow-x-hidden transition-colors ${
+      theme === 'light'
+        ? 'bg-white text-slate-900'
+        : 'bg-[#050505] text-slate-200'
+    }`}>
       {/* 1. CINEMATIC ATMOSPHERE */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-0 left-0 w-[50%] h-[50%] bg-indigo-600/20 blur-3xl rounded-full transform-gpu opacity-50" />
@@ -56,10 +62,12 @@ const Contact = () => {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-9xl font-black tracking-tighter text-white leading-[0.85] uppercase mb-12"
+            className={`text-6xl md:text-9xl font-black tracking-tighter leading-[0.85] uppercase mb-12 ${
+              theme === 'light' ? 'text-black' : 'text-white'
+            }`}
           >
             Reach The <br />{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-white to-fuchsia-500">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-current to-fuchsia-500">
               Collective.
             </span>
           </motion.h1>
@@ -68,7 +76,9 @@ const Contact = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-xl text-zinc-500 max-w-2xl mx-auto font-medium leading-relaxed"
+            className={`text-xl max-w-2xl mx-auto font-medium leading-relaxed ${
+              theme === 'light' ? 'text-zinc-600' : 'text-zinc-500'
+            }`}
           >
             Whether you're looking for technical support, partnership protocols,
             or specialized hub creation, our neural team is ready.
@@ -94,17 +104,25 @@ const Contact = () => {
         </section>
 
         {/* 5. FAQ SECTION */}
-        <section className="relative py-18 bg-white/[0.01] border-y border-white/5">
+        <section className={`relative py-18 border-y transition-colors ${
+          theme === 'light'
+            ? 'bg-black/[0.01] border-black/5'
+            : 'bg-white/[0.01] border-white/5'
+        }`}>
           <div className="max-w-7xl mx-auto px-6">
             <div className="text-center">
               <div className="flex items-center justify-center gap-4 mb-8">
                 <div className="h-px w-12 bg-indigo-500/50" />
-                <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-500">
+                <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${
+                  theme === 'light' ? 'text-zinc-600' : 'text-zinc-500'
+                }`}>
                   Query_Database
                 </span>
                 <div className="h-px w-12 bg-indigo-500/50" />
               </div>
-              <h2 className="text-5xl md:text-8xl font-black tracking-tighter text-white uppercase leading-[0.8]">
+              <h2 className={`text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] ${
+                theme === 'light' ? 'text-black' : 'text-white'
+              }`}>
                 Frequent <br /> Protocols.
               </h2>
             </div>
@@ -112,7 +130,9 @@ const Contact = () => {
           </div>
         </section>
       </main>
-      <footer className="relative z-10 bg-[#050505]">
+      <footer className={`relative z-10 ${
+        theme === 'light' ? 'bg-white' : 'bg-[#050505]'
+      }`}>
         <Footer />
       </footer>
 
@@ -121,8 +141,8 @@ const Contact = () => {
           __html: `
         .shadow-3xl { box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8); }
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #050505; }
-        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: ${theme === 'light' ? '#f9f9f9' : '#050505'}; }
+        ::-webkit-scrollbar-thumb { background: ${theme === 'light' ? '#e5e5e5' : '#1a1a1a'}; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
         h1, h2 { letter-spacing: -0.05em !important; }
       `,
