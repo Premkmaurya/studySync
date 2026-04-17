@@ -214,8 +214,8 @@ const Home = () => {
               <div className="p-8 bg-gradient-to-br from-indigo-600 to-fuchsia-600 rounded-[32px] shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-full h-full bg-black/20" />
                 <div className="relative z-10 flex flex-col h-full">
-                  <TrendingUp size={32} className="text-white mb-6" />
-                  <h3 className='text-2xl font-black tracking-tighter text-white mb-2 leading-tight'>
+                  <TrendingUp size={32} color="white" className="text-white mb-6" />
+                  <h3 className='text-2xl  tracking-tighter text-white mb-2 leading-tight'>
                     Professional Velocity
                   </h3>
                   <div className={`text-xs text-white/70 font-medium mb-8`}>

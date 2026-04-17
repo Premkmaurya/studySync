@@ -61,7 +61,7 @@ const NavBar = () => {
               <Sparkles size={20} className="text-indigo-500" />
             </div>
             <span
-              className={`text-sm font-black tracking-tighter group-hover:text-indigo-400 transition-colors ${
+              className={`text-sm font-semibold tracking-tighter group-hover:text-indigo-400 transition-colors ${
                 theme === "light" ? "text-black" : "text-white"
               }`}
             >

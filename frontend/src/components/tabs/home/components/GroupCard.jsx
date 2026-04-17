@@ -12,9 +12,9 @@ const GroupCard = ({ group, isSuggested=false }) => {
     <motion.div
       whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
       style={{ willChange: "transform, background-color" }}
-      className={`relative group p-6 rounded-[32px] border transition-all duration-300 ${
+      className={`relative group p-6 rounded-[32px] border transition-all shadow-2xl border-2 border-black/10 duration-300 ${
         isSuggested
-          ? theme === "dark" ? "bg-indigo-500/5 border-indigo-500/20 hover:border-indigo-500/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]" : "bg-indigo-400/5 border-indigo-400/20 hover:border-indigo-400/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]"
+          ? theme === "dark" ? "bg-indigo-500/5 border-indigo-500/20 hover:border-indigo-500/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]" : "bg-indigo-400/5 border-indigo-400 hover:border-indigo-400/40 shadow-xl"
           : theme === "dark" ? "bg-zinc-900/30 border-white/5 hover:border-white/10" : "bg-white/30 border-black/5 hover:border-black/10"
       }`}
     >
@@ -49,18 +49,18 @@ const GroupCard = ({ group, isSuggested=false }) => {
       <div className="flex gap-2 mt-auto">
         <button
           onClick={() => navigate(`/group/${group._id}/chats`)}
-          className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+          className={`flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black ${theme === "light" ? "border-2 border-black/10 shadow-xl" : ""} uppercase tracking-widest transition-all`}
         >
           <MessageSquare size={14} /> Chat
         </button>
         <button
           onClick={() => navigate(`/group/${group._id}`)}
-          className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+          className={`flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black ${theme === "light" ? "border-2 border-black/10 shadow-xl" : ""} uppercase tracking-widest transition-all`}
         >
           <FileText size={14} /> Notes
         </button>
         {isSuggested && (
-          <button className="p-3 bg-white text-black rounded-xl hover:bg-indigo-500 hover:text-white transition-all">
+          <button className={`p-3 bg-white text-black rounded-xl hover:bg-indigo-500 hover:text-white transition-all  ${theme === "light" ? "border-2 border-black/10" : ""} shadow-xl`}>
             <Plus size={16} />
           </button>
         )}
