@@ -36,7 +36,7 @@ const NavBar = () => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      style={{ WebkitTransform: 'translate3d(0,0,0)' }}
+      style={{ WebkitTransform: "translate3d(0,0,0)" }}
       className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] max-w-5xl w-[95%]"
     >
       <motion.div
@@ -49,17 +49,22 @@ const NavBar = () => {
       >
         <div className="flex items-center justify-between w-full">
           {/* Left: Logo/Brand */}
-          <NavLink to="/home" className="flex items-center gap-2 group relative z-[110]">
-            <div className={`p-2.5 rounded-2xl group-hover:bg-indigo-500/20 transition-all ${
-              theme === "light"
-                ? "bg-indigo-500/15"
-                : "bg-indigo-500/10"
-            }`}>
+          <NavLink
+            to="/home"
+            className="flex items-center gap-2 group relative z-[110]"
+          >
+            <div
+              className={`p-2.5 rounded-2xl group-hover:bg-indigo-500/20 transition-all ${
+                theme === "light" ? "bg-indigo-500/15" : "bg-indigo-500/10"
+              }`}
+            >
               <Sparkles size={20} className="text-indigo-500" />
             </div>
-            <span className={`text-sm font-black tracking-tighter group-hover:text-indigo-400 transition-colors ${
-              theme === "light" ? "text-black" : "text-white"
-            }`}>
+            <span
+              className={`text-sm font-black tracking-tighter group-hover:text-indigo-400 transition-colors ${
+                theme === "light" ? "text-black" : "text-white"
+              }`}
+            >
               studySync
             </span>
           </NavLink>
@@ -92,18 +97,19 @@ const NavBar = () => {
           <div className="hidden md:flex items-center gap-3 relative z-[110]">
             <NavLink
               to="/create-group"
-              className="px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest bg-white text-black hover:bg-indigo-50 transition-all flex items-center gap-2 shadow-lg shadow-white/5"
+              className={`px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest ${theme === "light" ? "bg-black text-white hover:bg-gray-800" : "bg-white text-black hover:bg-gray-300"} transition-all flex items-center gap-2 shadow-lg shadow-white/5`}
             >
-              <Plus size={16} />
-              <span>New Hub</span>
+              <Plus color={`${theme === "light" ? "white" : "black"}`} size={18} />
+              <span
+                className={`${theme === "light" ? "text-white" : "text-black"}`}
+              >
+                New Hub
+              </span>
             </NavLink>
 
             <ThemeToggle />
 
-            <NavLink
-              to="/profile"
-              className="relative group block"
-            >
+            <NavLink to="/profile" className="relative group block">
               <User color={theme === "light" ? "black" : "white"} size={25} />
             </NavLink>
           </div>
@@ -111,7 +117,7 @@ const NavBar = () => {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden relative z-[110] p-2 text-white hover:bg-white/5 rounded-xl transition-colors"
+            className={`md:hidden relative z-[110] p-2 ${theme === "light" ? "text-black hover:bg-black/5" : "text-white hover:bg-white/5"} rounded-xl transition-colors`}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -141,8 +147,12 @@ const NavBar = () => {
                       className={({ isActive }) =>
                         `px-4 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-3 border-2 ${
                           isActive
-                            ? "bg-white text-black border-white"
-                            : "bg-transparent text-zinc-500 border-zinc-700 hover:text-white hover:border-white/20"
+                            ? theme === "light"
+                              ? "bg-black text-white border-black"
+                              : "bg-white text-black border-white"
+                            : theme === "light"
+                              ? "bg-transparent text-gray-500 border-gray-300 hover:text-black hover:border-black/20"
+                              : "bg-transparent text-zinc-500 border-zinc-700 hover:text-white hover:border-white/20"
                         }`
                       }
                     >
@@ -166,7 +176,7 @@ const NavBar = () => {
                 <NavLink
                   to="/create-group"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center w-full py-4 bg-white text-black text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-xl hover:bg-zinc-200 transition-all active:scale-95"
+                  className={`flex items-center justify-center w-full py-4 ${theme === "light" ? "bg-black text-white hover:bg-gray-800" : "bg-white text-black hover:bg-zinc-200"} text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95`}
                 >
                   <Plus size={16} className="mr-2" />
                   Create New Hub
@@ -174,7 +184,7 @@ const NavBar = () => {
                 <NavLink
                   to="/profile"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center w-full py-4 bg-transparent border-2 border-zinc-700 text-white text-[11px] font-black uppercase tracking-widest rounded-2xl hover:bg-white/5 transition-all active:scale-95"
+                  className={`flex items-center justify-center w-full py-4 bg-transparent border-2 ${theme === "light" ? "border-black text-black hover:bg-black/5" : "border-zinc-700 text-white hover:bg-white/5"} text-[11px] font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95`}
                 >
                   My Profile
                 </NavLink>
