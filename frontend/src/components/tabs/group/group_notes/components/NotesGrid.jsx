@@ -19,6 +19,7 @@ import {
 dayjs.extend(relativeTime);
 
 const NotesGrid = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const navigate = useNavigate();
   const { groupId } = useParams();
   const dispatch = useDispatch();

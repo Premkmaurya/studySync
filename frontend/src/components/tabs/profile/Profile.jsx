@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -14,6 +15,7 @@ import TabSwitch from "./components/TabSwitch";
 // --- MAIN PROFILE VIEW ---
 
 const Profile = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const [activeTab, setActiveTab] = useState("profile");
 
   const tabs = [
@@ -24,7 +26,7 @@ const Profile = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-x-hidden">
+    <div className={`relative min-h-screen w-full ${theme === "dark" ? "bg-[#000] text-[#E5E7EB]" : "bg-white text-black"} font-sans overflow-x-hidden`}>
       {/* 1. Spatial Background Mesh */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <AnimatePresence mode="wait">
@@ -46,7 +48,7 @@ const Profile = () => {
             }`}
           />
         </AnimatePresence>
-        <div className="absolute bottom-0 left-0 w-[40%] h-[40%] bg-zinc-800/20 blur-[80px] rounded-full" />
+        <div className={`absolute bottom-0 left-0 w-[40%] h-[40%] ${theme === "dark" ? "bg-zinc-800/20" : "bg-zinc-300/20"} blur-[80px] rounded-full`} />
       </div>
 
       <main

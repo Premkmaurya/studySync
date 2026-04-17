@@ -20,6 +20,7 @@ import {
 import { selectUser } from "../../../features/auth/authSelectors";
 
 const Home = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -99,7 +100,7 @@ const Home = () => {
   });
 
   return (
-    <div className="relative pt-26 min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-x-hidden">
+    <div className={`relative pt-26 min-h-screen w-full ${theme === "dark" ? "bg-[#000] text-[#E5E7EB]" : "bg-[#f9f9f9] text-[#1a1a1a]"} font-sans overflow-x-hidden`}>
       {/* 1. Background Visuals */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-5%] left-[10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[90px] rounded-full" />
@@ -109,7 +110,7 @@ const Home = () => {
       {/* 2. Page Header */}
       <header className="relative z-10 pt-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
         <div>
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white">
+          <h1 className={`text-5xl md:text-7xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"}`}>
             Hello,{" "}
             <span className="text-indigo-500 capitalize">
               {user.fullname.firstname}
@@ -125,7 +126,7 @@ const Home = () => {
           <section>
             <div className="flex items-center justify-between mb-10">
               <div className="flex items-center gap-4">
-                <h2 className="text-3xl font-black tracking-tighter text-white">
+                <h2 className={`text-3xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"}`}>
                   Your Collectives
                 </h2>
                 <div className="h-px w-24 bg-gradient-to-r from-indigo-500/50 to-transparent" />
@@ -174,7 +175,7 @@ const Home = () => {
                 <Compass size={20} />
               </div>
               <div>
-                <h2 className="text-3xl font-black tracking-tighter text-white">
+                <h2 className={`text-3xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"}`}>
                   Neural Discovery
                 </h2>
                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
@@ -213,11 +214,11 @@ const Home = () => {
               <div className="p-8 bg-gradient-to-br from-indigo-600 to-fuchsia-600 rounded-[32px] shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-full h-full bg-black/20" />
                 <div className="relative z-10 flex flex-col h-full">
-                  <TrendingUp size={32} className="text-white mb-6" />
-                  <h3 className="text-2xl font-black tracking-tighter text-white mb-2 leading-tight">
+                  <TrendingUp size={32} className={`${theme === "dark" ? "text-white" : "text-[#1a1a1a]"} mb-6`} />
+                  <h3 className={`text-2xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"} mb-2 leading-tight`}>
                     Professional Velocity
                   </h3>
-                  <div className="text-xs text-white/70 font-medium mb-8">
+                  <div className={`text-xs ${theme === "dark" ? "text-white/70" : "text-[#1a1a1a]/70"} font-medium mb-8`}>
                     {Object.keys(fieldPercentages).length > 0 ? (
                       <div>
                         <p className="mb-2">Your interests:</p>

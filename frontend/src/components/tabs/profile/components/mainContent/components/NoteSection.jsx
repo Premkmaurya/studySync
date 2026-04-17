@@ -9,6 +9,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 const NoteSection = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const myNotes = useSelector(selectMyNotes);
   const navigate = useNavigate();
   const handleClick = (note) => {

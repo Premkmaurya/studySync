@@ -9,6 +9,7 @@ import {
 } from "../../../../../../features/groups/groupsSlice";
 
 const GroupSection = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const joinedGroups = useSelector(selectJoinedGroups);

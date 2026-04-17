@@ -20,6 +20,7 @@ import Header from "./components/Header";
 
 
 const GroupMembers = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const context = useOutletContext();
   const group = context?.group || { _id: "preview-node", name: "Collective_Nexus" };
   

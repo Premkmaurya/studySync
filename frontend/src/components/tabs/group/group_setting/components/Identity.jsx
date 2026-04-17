@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -6,14 +7,14 @@ import { Info, ChevronRight, Check, AlertCircle } from "lucide-react";
 import { updateGroup } from "../../../../../features/groups/groupsSlice";
 import SectionHeader from "./SectionHeader";
 
-const Toggle = ({ enabled, setEnabled, label, subLabel }) => (
+const Toggle = ({ enabled, setEnabled, label, subLabel, theme }) => (
   <div className="flex items-center justify-between py-4 group/toggle">
     <div className="flex flex-col gap-1">
-      <span className="text-sm font-bold text-zinc-200 group-hover/toggle:text-white transition-colors">
+      <span className={`text-sm font-bold ${theme === "dark" ? "text-zinc-200 group-hover/toggle:text-white" : "text-zinc-700 group-hover/toggle:text-black"} transition-colors`}>
         {label}
       </span>
       {subLabel && (
-        <span className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest">
+        <span className={`text-[10px] ${theme === "dark" ? "text-zinc-500" : "text-zinc-600"} font-medium uppercase tracking-widest`}>
           {subLabel}
         </span>
       )}
@@ -36,6 +37,7 @@ const Toggle = ({ enabled, setEnabled, label, subLabel }) => (
 );
 
 const Identity = ({ itemVariants }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const context = useOutletContext();
   const { group, setGroup } = context || {};
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useParams } from "react-router-dom";
@@ -18,6 +19,7 @@ const SendIcon = () => (
 );
 
 export default function AIPopup({ isOpen, onClose, setContent }) {
+  const theme = useSelector((state) => state.theme.mode);
   const [socket, setSocket] = useState(null);
   const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState("");

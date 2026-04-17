@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
 import { Share2, Trash2, Clock, ArrowUpRight, FileText } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 
 const NoteCard = ({ note, index }) => {
+  const theme = useSelector((state) => state.theme.mode);
   // Provide a default icon if note.icon is not available
   const IconComponent = note.icon || FileText;
   const noteColor = note.color || "bg-emerald-500";

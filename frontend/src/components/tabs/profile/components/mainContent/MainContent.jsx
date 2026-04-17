@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import GroupSection from "./components/GroupSection";
 import ProfileSection from "./components/ProfileSection";
@@ -11,7 +12,7 @@ dayjs.extend(relativeTime);
 
 
 const MainContent = ({ activeTab }) => {
-
+  const theme = useSelector((state) => state.theme.mode);
 
   return (
     <AnimatePresence mode="wait">

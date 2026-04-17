@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Camera, X, Sparkles, Zap, Users, Rocket } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createGroup } from "../../../../../features/groups/groupsSlice";
 
-const CreateGroupForm = () => {
-
+const CreateGroupForm = () {
+  const theme = useSelector((state) => state.theme.mode);
 
   const {
     register,

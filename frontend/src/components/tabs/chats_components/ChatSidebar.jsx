@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
@@ -19,6 +20,7 @@ import { useGSAP} from "@gsap/react";
 import { SplitText } from "gsap/all";
 
 const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);

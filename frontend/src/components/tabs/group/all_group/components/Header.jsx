@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import {
   Search,
   Filter,
@@ -48,6 +49,7 @@ const Header = ({
   selectedCategory,
   setSelectedCategory,
 }) => {
+  const theme = useSelector((state) => state.theme.mode);
   return (
     <section className="mb-20">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-16">

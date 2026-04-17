@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { motion } from "framer-motion";
 import { Trash2, AlertCircle } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 import { deleteGroup } from "../../../../../features/groups/groupsSlice";
 
 const Danger = ({ itemVariants }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const [deleteError, setDeleteError] = useState(null);
 
   const handleDeleteGroup = async () => {
@@ -20,14 +22,15 @@ const Danger = ({ itemVariants }) => {
   };
   return (
     <motion.section variants={itemVariants} className="pt-10">
-      <div className="border-t border-white/5 pt-12">
+      <div className={`border-t ${theme === "dark" ? "border-white/5" : "border-black/5"} pt-12`}>
         <SectionHeader
           icon={Trash2}
           title="Danger Zone"
           color="rose"
           description="Destructive actions that result in permanent data loss from the global registry."
+          theme={theme}
         />
-        <div className="bg-rose-500/5 border border-rose-500/10 rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 w-full">
+        <div className={`${theme === "dark" ? "bg-rose-500/5 border-rose-500/10" : "bg-rose-400/5 border-rose-400/10"} border rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-10 w-full`}>
           <div className="space-y-2 px-2 md:px-5 text-center md:text-left">
             <h4 className="text-lg font-black text-rose-500 uppercase tracking-tight">
               Decommission Hub

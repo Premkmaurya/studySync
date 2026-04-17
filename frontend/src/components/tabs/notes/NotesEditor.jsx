@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 // Framer Motion
 import { AnimatePresence } from "framer-motion";
@@ -18,6 +19,7 @@ import axios from "axios";
 import Editor from "./components/Editor";
 
 export default function NotesEditor() {
+  const theme = useSelector((state) => state.theme.mode);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [aiText, setAiText] = useState("");
   const [content, setContent] = useState("");

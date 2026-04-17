@@ -13,6 +13,7 @@ import {
   ArrowRight,
   User,
 } from "lucide-react";
+import ThemeToggle from "../../common/ThemeToggle";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -97,11 +98,13 @@ const NavBar = () => {
               <span>New Hub</span>
             </NavLink>
 
+            <ThemeToggle />
+
             <NavLink
               to="/profile"
               className="relative group block"
             >
-              <User color="white" size={25} />
+              <User color={theme === "light" ? "black" : "white"} size={25} />
             </NavLink>
           </div>
 
@@ -157,6 +160,9 @@ const NavBar = () => {
                 transition={{ delay: 0.3 }}
                 className="mt-4 flex flex-col gap-3 pt-4 border-t border-white/10"
               >
+                <div className="flex items-center justify-center">
+                  <ThemeToggle />
+                </div>
                 <NavLink
                   to="/create-group"
                   onClick={() => setIsOpen(false)}

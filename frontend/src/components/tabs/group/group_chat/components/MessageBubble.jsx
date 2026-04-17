@@ -1,7 +1,9 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 
 const MessageBubble = ({ message }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const isYou = message.isYou;
 
   return (
@@ -20,7 +22,7 @@ const MessageBubble = ({ message }) => {
             className={`w-7 h-7 rounded-xl flex items-center justify-center text-[10px] font-black border transition-all ${
               isYou
                 ? "bg-indigo-500 text-white border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]"
-                : "bg-zinc-800 text-zinc-400 border-white/5 shadow-xl"
+                : theme === "dark" ? "bg-zinc-800 text-zinc-400 border-white/5 shadow-xl" : "bg-zinc-200 text-zinc-600 border-black/5 shadow-xl"
             }`}
           >
             {isYou

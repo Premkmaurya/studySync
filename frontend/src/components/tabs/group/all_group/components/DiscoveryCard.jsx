@@ -9,6 +9,7 @@ import { joinGroup, setJoinedGroups } from "../../../../../features/groups/group
 import { motion } from "framer-motion";
 
 const DiscoveryCard = ({ group, index }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const joinedGroups = useSelector(selectJoinedGroups);

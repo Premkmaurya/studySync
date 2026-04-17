@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import {
   Send,
   Paperclip,
@@ -14,6 +15,7 @@ import EmojiPicker from "emoji-picker-react";
 import MessageBubble from "./components/MessageBubble";
 
 const GroupChat = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState();
   const { group } = useOutletContext();

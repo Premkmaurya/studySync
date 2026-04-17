@@ -1,10 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { MessageSquare, FileText, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 
 const GroupCard = ({ group, isSuggested=false }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const navigate = useNavigate();
   return (
     <motion.div
@@ -12,8 +14,8 @@ const GroupCard = ({ group, isSuggested=false }) => {
       style={{ willChange: "transform, background-color" }}
       className={`relative group p-6 rounded-[32px] border transition-all duration-300 ${
         isSuggested
-          ? "bg-indigo-500/5 border-indigo-500/20 hover:border-indigo-500/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]"
-          : "bg-zinc-900/30 border-white/5 hover:border-white/10"
+          ? theme === "dark" ? "bg-indigo-500/5 border-indigo-500/20 hover:border-indigo-500/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]" : "bg-indigo-400/5 border-indigo-400/20 hover:border-indigo-400/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]"
+          : theme === "dark" ? "bg-zinc-900/30 border-white/5 hover:border-white/10" : "bg-white/30 border-black/5 hover:border-black/10"
       }`}
     >
       {/* Match Percentage for Suggested */}

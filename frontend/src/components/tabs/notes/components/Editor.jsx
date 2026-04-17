@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 
 // Icons
 import {
@@ -63,6 +64,7 @@ const Editor = ({
   setEditor,
   content
 }) => {
+  const theme = useSelector((state) => state.theme.mode);
 
   const editor = useEditor({
     shouldRerenderOnTransaction: true,

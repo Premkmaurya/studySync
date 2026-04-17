@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 
 import { CloudUpload } from "lucide-react";
@@ -12,15 +13,16 @@ const Header = ({
   handleSave,
   isSaving,
 }) => {
+  const theme = useSelector((state) => state.theme.mode);
   return (
     <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
-      <div className="bg-zinc-900/40 backdrop-blur-3xl border rounded-[24px] px-6 py-3 flex items-center justify-between shadow-[0_8px_32px_rgba(0,0,0,0.4)]">
+      <div className={`${theme === "dark" ? "bg-zinc-900/40 border-white/10" : "bg-zinc-100/40 border-black/10"} backdrop-blur-3xl border rounded-[24px] px-6 py-3 flex items-center justify-between shadow-[0_8px_32px_rgba(0,0,0,0.4)]`}>
         <div className="flex items-center gap-4">
-          <div className="flex flex-col border-l border-white/10 pl-5">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-indigo-400 font-black leading-none mb-1">
+          <div className={`flex flex-col border-l ${theme === "dark" ? "border-white/10" : "border-black/10"} pl-5`}>
+            <span className={`text-[10px] uppercase tracking-[0.3em] ${theme === "dark" ? "text-indigo-400" : "text-indigo-600"} font-black leading-none mb-1`}>
               {profession}
             </span>
-            <h2 className="text-sm font-bold tracking-tight text-white/90">
+            <h2 className={`text-sm font-bold tracking-tight ${theme === "dark" ? "text-white/90" : "text-black/90"}`}>
               {groupName}
             </h2>
           </div>

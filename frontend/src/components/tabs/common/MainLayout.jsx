@@ -1,8 +1,10 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavSidebar from './NavSidebar';
 
 export default function MainLayout() {
+  const theme = useSelector((state) => state.theme.mode);
   const location = useLocation();
   const isGroupRoute = location.pathname.startsWith('/group');
 

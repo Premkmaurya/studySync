@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   useParams,
   useLocation,
@@ -21,13 +22,13 @@ import {
 
 // --- SUB-COMPONENTS ---
 
-const SubNavItem = ({ to, icon: Icon, label, end = false }) => (
+const SubNavItem = ({ to, icon: Icon, label, end = false, theme }) => (
   <NavLink
     to={to}
     end={end}
     className={({ isActive }) => `
       relative flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-500 group
-      ${isActive ? "bg-white text-black shadow-xl scale-[1.02]" : "text-zinc-500 hover:text-white hover:bg-white/5"}
+      ${isActive ? "bg-white text-black shadow-xl scale-[1.02]" : theme === "dark" ? "text-zinc-500 hover:text-white hover:bg-white/5" : "text-zinc-700 hover:text-black hover:bg-black/5"}
     `}
   >
     {({ isActive }) => (
@@ -49,6 +50,7 @@ const SubNavItem = ({ to, icon: Icon, label, end = false }) => (
 
 
 const SingleGroupPage = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const { groupId = "nexus-01" } = useParams();
   const location = useLocation();
   const navigate = useNavigate();

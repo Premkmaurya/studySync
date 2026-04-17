@@ -15,6 +15,7 @@ import {
 import Header from "./components/Header";
 
 const AllGroupsContent = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -98,7 +99,7 @@ const AllGroupsContent = () => {
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-black text-[#E5E7EB] font-sans overflow-hidden">
+    <div className={`relative min-h-screen w-full ${theme === "dark" ? "bg-black text-[#E5E7EB]" : "bg-[#f9f9f9] text-[#1a1a1a]"} font-sans overflow-hidden`}>
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-5%] right-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[100px] rounded-full" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-fuchsia-600/5 blur-[100px] rounded-full" />

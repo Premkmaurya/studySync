@@ -17,6 +17,7 @@ import {
 } from "../../../../features/notes/notesSlice";
 
 const GroupNotes = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [hasMoreNotes, setHasMoreNotes] = useState(true);

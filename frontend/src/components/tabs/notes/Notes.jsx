@@ -19,6 +19,7 @@ import { fetchNotes, searchNotes } from "../../../features/notes/notesSlice";
 import NoteCard from "./components/NoteCard";
 
 const SavedNotesContent = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,7 +109,7 @@ const SavedNotesContent = () => {
   ];
 
   return (
-    <div className="relative min-h-screen w-full bg-[#000] text-[#E5E7EB] font-sans overflow-hidden">
+    <div className={`relative min-h-screen w-full ${theme === "dark" ? "bg-[#000] text-[#E5E7EB]" : "bg-[#f9f9f9] text-[#1a1a1a]"} font-sans overflow-hidden`}>
       {/* 1. Spatial Background Visuals */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-emerald-600/10 blur-[100px] rounded-full" />
@@ -126,7 +127,7 @@ const SavedNotesContent = () => {
         <section className="mb-16">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="max-w-xl">
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-white mb-4">
+              <h1 className={`text-5xl md:text-7xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"} mb-4`}>
                 <span className="text-emerald-500">Insights</span>
               </h1>
               <p className="text-lg text-zinc-500 font-medium leading-relaxed">

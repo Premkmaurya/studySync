@@ -19,6 +19,7 @@ import {
 } from "../../../../../../features/groups/groupsSlice";
 
 const ProfileSection = () => {
+  const theme = useSelector((state) => state.theme.mode);
   const dispatch = useDispatch();
   const [localJoinedGroups, setLocalJoinedGroups] = useState(
     useSelector(selectJoinedGroups) || [],

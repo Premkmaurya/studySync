@@ -1,8 +1,10 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { MoreHorizontal } from "lucide-react";
 
 const MemberEntry = ({ member, index }) => {
+  const theme = useSelector((state) => state.theme.mode);
   const isAdmin = member.role === "Admin";
   const firstName = String(member?.userId?.fullname?.firstname || "Node");
   const lastName = String(member?.userId?.fullname?.lastname || "");
@@ -26,8 +28,8 @@ const MemberEntry = ({ member, index }) => {
           <div
             className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-[10px] border transition-all ${
               isAdmin
-                ? "bg-indigo-500/5 border-indigo-500/30 text-indigo-400"
-                : "bg-zinc-950 border-white/10 text-zinc-600"
+                ? theme === "dark" ? "bg-indigo-500/5 border-indigo-500/30 text-indigo-400" : "bg-indigo-400/5 border-indigo-400/30 text-indigo-600"
+                : theme === "dark" ? "bg-zinc-950 border-white/10 text-zinc-600" : "bg-zinc-100 border-black/10 text-zinc-500"
             }`}
           >
             {firstName[0]}

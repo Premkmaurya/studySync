@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import axios from "axios";
 import { HiUserGroup, HiOutlineCheckCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 export default function GroupCard({ group, onGroupJoined }) {
+  const theme = useSelector((state) => state.theme.mode);
   const [joinText, setJoinText] = useState("join");
   const btnRef = useRef(null);
   const navigate = useNavigate();
