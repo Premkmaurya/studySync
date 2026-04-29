@@ -32,7 +32,7 @@ const GroupCard = ({ group, isSuggested=false }) => {
           />
           <img
             src={group.image}
-            className="relative w-16 h-16 rounded-2xl object-cover border border-white/10"
+            className={`relative w-16 h-16 rounded-2xl object-cover border ${theme === "dark" ? "border-white/10 text-white" : "border-black/10 text-black"}`}
             alt={group.name}
           />
         </div>
@@ -40,7 +40,7 @@ const GroupCard = ({ group, isSuggested=false }) => {
           <div className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase mb-1">
             {group.field}
           </div>
-          <h4 className="text-xl font-bold text-white tracking-tight group-hover:text-indigo-400 transition-colors">
+          <h4 className={`text-xl font-semibold tracking-tight group-hover:text-indigo-400 transition-colors ${theme === "light" ? "text-black" : "text-white"}`}>
             {group.name}
           </h4>
         </div>

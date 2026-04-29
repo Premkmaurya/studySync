@@ -35,6 +35,8 @@ const Home = () => {
   const [hasMoreJoined, setHasMoreJoined] = useState(true);
   const [hasMoreSuggested, setHasMoreSuggested] = useState(true);
 
+  console.log(theme)
+
   useEffect(() => {
     const fetchJoinedGroups = async () => {
       const res = await dispatch(joinedGroup({ page: 1, limit: 6 }));
@@ -215,10 +217,10 @@ const Home = () => {
                 <div className="absolute top-0 left-0 w-full h-full bg-black/20" />
                 <div className="relative z-10 flex flex-col h-full">
                   <TrendingUp size={32} color="white" className="text-white mb-6" />
-                  <h3 className='text-2xl  tracking-tighter text-white mb-2 leading-tight'>
+                  <h3 className={`text-2xl tracking-tighter mb-2 leading-tight text-white`}>
                     Professional Velocity
                   </h3>
-                  <div className={`text-xs text-white/70 font-medium mb-8`}>
+                  <div className={`text-xs font-medium mb-8 text-white/80`}>
                     {Object.keys(fieldPercentages).length > 0 ? (
                       <div>
                         <p className="mb-2">Your interests:</p>

@@ -137,7 +137,7 @@ const SavedNotesContent = () => {
             </div>
 
             <div className="relative w-full lg:w-[400px] group">
-              <div className="relative bg-transparent border-b border-white/10 py-2 pl-14 pr-8">
+              <div className={`relative bg-transparent border-b py-2 pl-14 pr-8 ${theme === "dark" ? "border-white/10" : "border-black/10"}`}>
                 <Search
                   size={24}
                   className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
@@ -147,7 +147,7 @@ const SavedNotesContent = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search by name..."
-                  className="w-full bg-transparent text-lg outline-none text-white placeholder:text-zinc-800"
+                  className={`w-full bg-transparent text-lg outline-none ${theme === "dark" ? "text-white" : "text-black"}`}
                 />
               </div>
             </div>
@@ -210,41 +210,6 @@ const SavedNotesContent = () => {
           </div>
         )}
 
-        {/* 5. AI Reference Widget (Floating) */}
-        <div
-          className="mt-24 bg-zinc-900/30 backdrop-blur-md border border-white/5 rounded-[48px] p-4 relative overflow-hidden group"
-          style={{ WebkitTransform: "translate3d(0,0,0)" }}
-        >
-          <div className="absolute top-0 right-0 w-[30%] h-full bg-indigo-500/10 blur-[70px] pointer-events-none" />
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
-            <div className="flex items-center gap-8">
-              <div className="relative">
-                <div className="absolute inset-0 bg-indigo-500 blur-2xl opacity-40 animate-pulse" />
-                <div className="relative p-4 bg-black rounded-[32px] border border-white/10">
-                  <Bot size={30} className="text-white" />
-                </div>
-              </div>
-              <div>
-                <h3 className="text-3xl font-black tracking-tighter text-white mb-2">
-                  Neural Synthesis
-                </h3>
-                <p className="text-sm text-zinc-500 max-w-md font-medium">
-                  AI analysis of your notes suggests you focus on{" "}
-                  <span className="text-indigo-400">
-                    Distributed Architectures
-                  </span>{" "}
-                  this week. Want a combined summary?
-                </p>
-              </div>
-            </div>
-            <button
-              className="flex items-center gap-4 px-5 py-3 bg-white text-black rounded-3xl text-[0.5rem] font-black uppercase tracking-widest shadow-xl shadow-white/5 hover:bg-gray-100 transition-all"
-              style={{ willChange: "background-color" }}
-            >
-              <Zap size={16} /> Generate Synthesis
-            </button>
-          </div>
-        </div>
       </main>
     </div>
   );

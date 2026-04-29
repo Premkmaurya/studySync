@@ -54,18 +54,18 @@ const Header = ({
     <section className="mb-20">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-16">
         <div className="max-w-2xl">
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6">
+          <h1 className={`text-6xl md:text-8xl font-black tracking-tighter mb-6 ${theme === "light" ? "text-black" : "text-white"}`}>
             Find your <br />
-            <span className="text-indigo-500">Collective.</span>
+            <span className="text-indigo-500">Collective.</span>  
           </h1>
-          <p className="text-xl text-zinc-500 font-medium leading-relaxed max-w-lg">
+          <p className={`text-xl  font-normal leading-relaxed max-w-lg ${theme === "light" ? "text-black/80" : "text-white/80"}`}>
             Connect with high-performance professional groups across
             engineering, design, and research domains.
           </p>
         </div>
 
         <div className="relative w-full lg:w-[400px] group">
-          <div className="relative bg-transparent border-b border-white/10 py-2 pl-14 pr-8">
+          <div className={`relative bg-transparent border-b py-2 pl-14 pr-8 ${theme === "light" ? "border-black/20" : "border-white/20"}`}>
             <Search
               size={24}
               className="absolute left-2 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
@@ -75,7 +75,7 @@ const Header = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by name..."
-              className="w-full bg-transparent text-lg outline-none text-white placeholder:text-zinc-800"
+              className={`w-full bg-transparent text-lg outline-none ${theme === "light" ? "text-black" : "text-white"} placeholder:${theme === "light" ? "text-black" : "text-white"}`}
             />
           </div>
         </div>

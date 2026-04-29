@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 async function registerUser(req, res) {
-  console.log(req.body)
   const { firstname, lastname, email, password } = req.body;
 
   const isUserExists = await userModel.findOne({ email });

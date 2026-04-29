@@ -32,20 +32,30 @@ const DiscoveryCard = ({ group, index }) => {
         duration: 0.4,
         ease: [0.22, 1, 0.36, 1],
       }}
-      whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-      style={{ willChange: "transform, background-color" }}
-      className="group relative bg-zinc-900/30 border border-white/5 rounded-[40px] p-5 shadow-2xl transition-all duration-300 overflow-hidden"
+      whileHover={{ scale: 1.01 }}
+      style={{ willChange: "transform" }}
+      className={`group relative border rounded-[40px] p-5 shadow-2xl transition-all duration-300 overflow-hidden ${
+        theme === "dark" 
+          ? "bg-[#0e0e0f] border-white/10 hover:bg-[#202024]/80 backdrop-blur-sm" 
+          : "bg-white/60 border-black/10 hover:bg-white/80 backdrop-blur-sm"
+      }`}
     >
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full group-hover:bg-indigo-500/10 transition-all" />
+      <div className={`absolute -top-24 -right-24 w-48 h-48 blur-[80px] rounded-full transition-all ${
+        theme === "dark" ? "bg-indigo-500/10 group-hover:bg-indigo-500/20" : "bg-indigo-500/10 group-hover:bg-indigo-500/20"
+      }`} />
 
       <div className="flex items-start justify-between mb-8">
         <div className="relative">
-          <div className="absolute inset-0 bg-indigo-500 blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+          <div className={`absolute inset-0 blur-xl opacity-20 transition-opacity ${
+            theme === "dark" ? "bg-indigo-500 group-hover:opacity-40" : "bg-indigo-500 group-hover:opacity-50"
+          }`} />
           <img
             src={
               group.image || `https://i.pravatar.cc/150?u=${group._id || index}`
             }
-            className="relative w-16 h-16 rounded-2xl object-cover border border-white/10"
+            className={`relative w-16 h-16 rounded-2xl object-cover border ${
+              theme === "dark" ? "border-white/10" : "border-black/10"
+            }`}
             alt={group.name}
           />
         </div>
@@ -61,10 +71,14 @@ const DiscoveryCard = ({ group, index }) => {
       </div>
 
       <div className="space-y-3 mb-10">
-        <h4 className="text-2xl tracking-tight text-white group-hover:text-indigo-400 transition-colors leading-none">
+        <h4 className={`text-2xl tracking-tight group-hover:text-indigo-400 transition-colors leading-none ${
+          theme === "dark" ? "text-white" : "text-black"
+        }`}>
           {group.name}
         </h4>
-        <p className="text-xs text-zinc-500 font-medium line-clamp-2 leading-relaxed">
+        <p className={`text-xs font-medium line-clamp-2 leading-relaxed ${
+          theme === "dark" ? "text-zinc-400" : "text-zinc-600"
+        }`}>
           {group.description ||
             "No mission statement provided for this collective hub."}
         </p>
@@ -79,14 +93,18 @@ const DiscoveryCard = ({ group, index }) => {
               handleJoinGroup();
             }
           }}
-          className="flex-1 py-3 bg-white text-black rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-indigo-50 active:scale-95 shadow-xl shadow-white/5"
+          className={`flex-1 py-3 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all active:scale-95 shadow-xl ${
+            theme === "dark" ? "bg-white text-black hover:bg-indigo-50 shadow-white/5" : "bg-black text-white hover:bg-zinc-800 shadow-black/10"
+          }`}
           style={{ willChange: "transform" }}
         >
           {joinedGroups.some((g) => g._id === group._id)
             ? "Enter Hub"
             : "Join Hub"}
         </button>
-        <button className="p-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl text-zinc-500 hover:text-white transition-all">
+        <button className={`p-4 border rounded-2xl transition-all ${
+          theme === "dark" ? "bg-white/5 hover:bg-white/10 border-white/5 text-zinc-500 hover:text-white" : "bg-black/5 hover:bg-black/10 border-black/5 text-zinc-600 hover:text-black"
+        }`}>
           <ArrowUpRight size={18} />
         </button>
       </div>
