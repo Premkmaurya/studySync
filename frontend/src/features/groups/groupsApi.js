@@ -54,3 +54,10 @@ export const deleteGroupApi = async (groupId) => {
   const response = await api.delete(`/groups/delete/${groupId}`);
   return response.data;
 };
+
+export const removeMemberApi = async (groupId, userId) => {
+  const response = await api.delete(`/groups/remove-member`, {
+    data: { groupId, userId },
+  });
+  return response.data;
+};

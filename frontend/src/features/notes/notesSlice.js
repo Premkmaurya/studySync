@@ -12,9 +12,9 @@ import {
 
 export const fetchNotes = createAsyncThunk(
   "notes/fetchNotes",
-  async ({ page = 1, limit = 9 } = {}, thunkAPI) => {
+  async ({ page = 1, limit = 9, field } = {}, thunkAPI) => {
     try {
-      return await fetchNotesApi(page, limit);
+      return await fetchNotesApi(page, limit, field);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch notes",
@@ -80,9 +80,9 @@ export const getNoteById = createAsyncThunk(
 
 export const searchNotes = createAsyncThunk(
   "notes/searchNotes",
-  async ({ query, groupId, page = 1, limit = 9 }, thunkAPI) => {
+  async ({ query, groupId, page = 1, limit = 9, field }, thunkAPI) => {
     try {
-      return await searchNotesApi(query, groupId, page, limit);
+      return await searchNotesApi(query, groupId, page, limit, field);
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to search notes",

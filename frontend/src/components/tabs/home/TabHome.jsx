@@ -35,8 +35,6 @@ const Home = () => {
   const [hasMoreJoined, setHasMoreJoined] = useState(true);
   const [hasMoreSuggested, setHasMoreSuggested] = useState(true);
 
-  console.log(theme)
-
   useEffect(() => {
     const fetchJoinedGroups = async () => {
       const res = await dispatch(joinedGroup({ page: 1, limit: 6 }));

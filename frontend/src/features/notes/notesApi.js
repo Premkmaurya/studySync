@@ -1,8 +1,8 @@
 import api from "../../services/api";
 
-export const fetchNotesApi = async (page = 1, limit = 9) => {
+export const fetchNotesApi = async (page = 1, limit = 9, field) => {
   const response = await api.get("/notes/get", {
-    params: { page, limit },
+    params: { page, limit, field },
   });
   return response.data;
 };
@@ -29,9 +29,9 @@ export const getNoteByIdApi = async (noteId, page = 1, limit = 8) => {
   return response.data;
 };
 
-export const searchNotesApi = async (query, groupId, page = 1, limit = 9) => {
+export const searchNotesApi = async (query, groupId, page = 1, limit = 9, field) => {
   const response = await api.get(`/notes/search`, {
-    params: { q: query, groupId, page, limit },
+    params: { q: query, groupId, page, limit, field },
   });
   return response.data;
 };

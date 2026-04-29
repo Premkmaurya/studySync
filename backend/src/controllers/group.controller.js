@@ -13,24 +13,34 @@ const {
 } = require("../services/cache.service");
 
 async function getAllGroups(req, res) {
-  const cacheKey = buildCacheKey("groups:all:limit10");
+  const { page = 1, limit = 9, field } = req.query;
+  const skip = (page - 1) * limit;
+  
+  const cacheKey = buildCacheKey("groups:all", `${field || "none"}:p${page}:l${limit}`);
   const cached = await getCachedData(cacheKey);
 
   if (cached) {
     return res.status(200).json(cached);
   }
 
-  const groups = await groupModel.find().skip(0).limit(10);
+  let filter = {};
+  if (field) {
+    filter.field = field;
+  }
+
+  const groups = await groupModel.find(filter).skip(Number(skip)).limit(Number(limit));
   const payload = { groups };
 
-  await setCachedData(cacheKey, payload, 90);
+  await setCachedData(cacheKey, payload, 60);
 
   return res.status(200).json(payload);
 }
 
 async function searchGroup(req, res) {
-  const { q = "" } = req.query;
-  const cacheKey = buildCacheKey("groups:search", q.trim().toLowerCase());
+  const { q = "", field, page = 1, limit = 9 } = req.query;
+  const skip = (page - 1) * limit;
+
+  const cacheKey = buildCacheKey("groups:search", `${q.trim().toLowerCase()}:${field || "none"}:p${page}`);
   const cached = await getCachedData(cacheKey);
 
   if (cached) {
@@ -41,14 +51,21 @@ async function searchGroup(req, res) {
   if (q) {
     filter.$text = { $search: q };
   }
+  if (field) {
+    filter.field = field;
+  }
+
   try {
-    const groups = await groupModel.find(filter).skip(0);
+    const groups = await groupModel
+      .find(filter)
+      .skip(Number(skip))
+      .limit(Number(limit));
     const payload = { groups };
-    await setCachedData(cacheKey, payload, 60);
+    await setCachedData(cacheKey, payload, 45);
 
     return res.status(200).json(payload);
   } catch (error) {
-    return res.status(500).json({ message: "Error fetching products", error });
+    return res.status(500).json({ message: "Error searching groups", error });
   }
 }
 
@@ -408,6 +425,45 @@ async function getSuggestedGroups(req, res) {
   }
 }
 
+async function removeMember(req, res) {
+  const { groupId, userId } = req.body;
+  const user = req.user;
+
+  try {
+    const group = await groupModel.findById(groupId);
+    if (!group) {
+      return res.status(404).json({ message: "Group not found" });
+    }
+
+    // Check if the requester is the owner of the group
+    if (group.owner.toString() !== user.id) {
+      return res.status(403).json({ message: "Only group owners can remove members" });
+    }
+
+    // Don't allow removing the owner
+    if (userId === group.owner.toString()) {
+      return res.status(400).json({ message: "Cannot remove the group owner" });
+    }
+
+    const result = await userGroupModel.findOneAndDelete({ groupId, userId });
+    if (!result) {
+      return res.status(404).json({ message: "Member not found in this group" });
+    }
+
+    await groupModel.findByIdAndUpdate(groupId, { $inc: { members: -1 } });
+
+    await Promise.all([
+      invalidateByPrefix(`groups:members:${groupId}`),
+      invalidateByPrefix(`groups:joined:${userId}`),
+      invalidateByPrefix(`groups:suggested:${userId}`),
+    ]);
+
+    return res.status(200).json({ message: "Member removed successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Error removing member", error: error.message });
+  }
+}
+
 module.exports = {
   createGroup,
   getGroups,
@@ -420,4 +476,5 @@ module.exports = {
   getGroupMembers,
   searchGroupById,
   getSuggestedGroups,
+  removeMember,
 };

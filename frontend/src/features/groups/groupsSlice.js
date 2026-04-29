@@ -9,6 +9,7 @@ import {
   deleteGroupApi,
   updateGroupApi,
   fetchSuggestedGroupsApi,
+  removeMemberApi,
 } from "./groupsApi";
 
 export const fetchGroups = createAsyncThunk(
@@ -124,6 +125,19 @@ export const fetchSuggestedGroups = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch suggested groups",
+      );
+    }
+  },
+);
+
+export const removeMember = createAsyncThunk(
+  "groups/removeMember",
+  async ({ groupId, userId }, thunkAPI) => {
+    try {
+      return await removeMemberApi(groupId, userId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to remove member",
       );
     }
   },

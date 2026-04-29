@@ -32,16 +32,28 @@ async function createNote(req, res) {
 }
 
 async function getNotes(req, res) {
-  const cacheKey = buildCacheKey("notes:latest");
+  const { field, page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+
+  const cacheKey = buildCacheKey("notes:latest", `${field || "none"}:p${page}`);
   const cached = await getCachedData(cacheKey);
 
   if (cached) {
     return res.status(200).json(cached);
   }
 
+  let filter = {};
+  if (field) {
+    const groupModel = require("../models/group.model");
+    const groups = await groupModel.find({ field }).select("_id");
+    const groupIds = groups.map((g) => g._id);
+    filter.groupId = { $in: groupIds };
+  }
+
   const notes = await noteModel
-    .find({})
-    .limit(10)
+    .find(filter)
+    .skip(Number(skip))
+    .limit(Number(limit))
     .populate("userId", "fullname")
     .populate("groupId")
     .sort({ createdAt: -1 });
@@ -72,9 +84,10 @@ async function getNoteById(req, res) {
     .populate("groupId")
     .lean();
 
-  if (!note || note.length === 0) {
-    return res.status(404).json({
-      message: "Note not found.",
+  if (!note) {
+    return res.status(200).json({
+      message: "Note fetched successfully.",
+      note: [],
     });
   }
 
@@ -132,9 +145,17 @@ async function searchNotes(req, res) {
   }
 
   try {
+    if (field) {
+      const groupModel = require("../models/group.model");
+      const groups = await groupModel.find({ field }).select("_id");
+      const groupIds = groups.map((g) => g._id);
+      filter.groupId = { $in: groupIds };
+    }
+
     const notes = await noteModel
       .find(filter)
-      .skip(0)
+      .skip(Number(skip))
+      .limit(Number(limit))
       .populate("userId", "fullname")
       .populate("groupId")
       .sort({ createdAt: -1 });

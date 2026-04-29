@@ -30,4 +30,6 @@ router.delete("/delete/:groupId", authMiddleware, groupController.deleteGroup)
 
 router.patch("/update/:groupId", authMiddleware, groupController.updateGroup)
 
+router.delete("/remove-member", authMiddleware, groupController.removeMember)
+
 module.exports = router;

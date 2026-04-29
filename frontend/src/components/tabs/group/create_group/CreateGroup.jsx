@@ -4,7 +4,7 @@ import CreateGroupForm from "./components/CreateGroupForm";
 const CreateGroup = () => {
   const theme = useSelector((state) => state.theme.mode);
   return (
-    <div className={`relative pt-20 min-h-screen w-full overflow-hidden ${theme === "dark" ? "bg-black text-[#E5E7EB]" : "bg-white text-[#1a1a1a]"} font-sans text-sm`}>
+    <div className={`relative pt-20 min-h-screen w-full overflow-hidden ${theme === "dark" ? "bg-black text-[#fafbfc]" : "bg-white text-[#1a1a1a]"} font-sans text-sm`}>
       {/* Immersive Background Mesh */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className={`absolute top-[-10%] right-[-5%] w-[60%] h-[60%] ${theme === "dark" ? "bg-indigo-600/10" : "bg-indigo-400/5"} blur-[140px] rounded-full`} />

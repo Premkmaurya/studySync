@@ -3,11 +3,21 @@ import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { MessageSquare, FileText, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { joinGroup } from "../../../../features/groups/groupsSlice";
 
 
-const GroupCard = ({ group, isSuggested=false }) => {
+const GroupCard = ({ group, isSuggested = false }) => {
   const theme = useSelector((state) => state.theme.mode);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleJoin = async () => {
+    const res = await dispatch(joinGroup(group._id));
+    if (res.meta.requestStatus === "fulfilled") {
+      navigate(`/group/${group._id}`);
+    }
+  };
   return (
     <motion.div
       whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
@@ -60,7 +70,10 @@ const GroupCard = ({ group, isSuggested=false }) => {
           <FileText size={14} /> Notes
         </button>
         {isSuggested && (
-          <button className={`p-3 bg-white text-black rounded-xl hover:bg-indigo-500 hover:text-white transition-all  ${theme === "light" ? "border-2 border-black/10" : ""} shadow-xl`}>
+          <button 
+            onClick={handleJoin}
+            className={`p-3 bg-white text-black rounded-xl hover:bg-indigo-500 hover:text-white transition-all  ${theme === "light" ? "border-2 border-black/10" : ""} shadow-xl`}
+          >
             <Plus size={16} />
           </button>
         )}

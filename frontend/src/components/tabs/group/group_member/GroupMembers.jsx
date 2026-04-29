@@ -38,7 +38,11 @@ const GroupMembers = () => {
     if(notes.length === 0) {
       const fetchNotesForGroup = async () => {
         const res = await dispatch(getNoteById(group._id));
-        await dispatch(setNotes([...res.payload.note]))
+        if (res.meta.requestStatus === "fulfilled" && res.payload?.note) {
+          await dispatch(setNotes([...res.payload.note]));
+        } else {
+          await dispatch(setNotes([]));
+        }
       }
       fetchNotesForGroup();
     }
@@ -64,6 +68,10 @@ const GroupMembers = () => {
     getMembers();
   }, [group._id, dispatch]);
 
+  const onRemoveMember = (userId) => {
+    setMembers((prev) => prev.filter((m) => String(m?.userId?._id) !== String(userId)));
+  };
+
   const filteredMembers = (members || []).filter((m) => {
     const fullName = `${m?.userId?.fullname?.firstname || ""} ${m?.userId?.fullname?.lastname || ""}`.toLowerCase();
     return fullName.includes(searchTerm.toLowerCase());
@@ -88,7 +96,12 @@ const GroupMembers = () => {
           <div className="flex flex-col">
             <AnimatePresence>
               {filteredMembers.slice(0, visibleMembers).map((member, index) => (
-                <MemberEntry key={member?.userId?._id || index} member={member} index={index} />
+                <MemberEntry 
+                  key={member?.userId?._id || index} 
+                  member={member} 
+                  index={index} 
+                  onRemove={onRemoveMember}
+                />
               ))}
             </AnimatePresence>
             

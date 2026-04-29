@@ -22,9 +22,9 @@ const TeamCall = () => {
       </p>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
         <button
-          className={`px-12 py-6 rounded-3xl text-xs text-white font-black uppercase tracking-widest shadow-2xl transition-all${
+          className={`px-12 py-6 border rounded-3xl text-xs font-black uppercase tracking-widest shadow-2xl transition-all${
             theme === "light"
-              ? "bg-black/5 border-black text-black hover:bg-black/10"
+              ? "bg-black/5 border-black/10 text-black hover:bg-black/10"
               : "bg-white/5 border-white/10 text-white hover:bg-white/10"
           }`}
         >

@@ -15,7 +15,7 @@ import {
 const CATEGORIES = [
   { id: "All", label: "All Hubs", icon: LayoutGrid, color: "text-white" },
   {
-    id: "web-dev",
+    id: "Engineering",
     label: "Web Engineering",
     icon: Code,
     color: "text-cyan-400",

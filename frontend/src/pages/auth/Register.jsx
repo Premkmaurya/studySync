@@ -13,12 +13,13 @@ import {
   Github,
   Chrome,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../features/auth/authSlice";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme?.mode || "dark");
   const {
     register,
     handleSubmit,
@@ -40,7 +41,7 @@ const Register = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col lg:flex-row bg-[#050505] overflow-hidden">
+    <div className={`h-screen w-full flex flex-col lg:flex-row overflow-hidden ${theme === "dark" ? "bg-[#050505]" : "bg-[#f9f9f9]"}`}>
       {/* 1. LEFT SIDE: VISUAL ANCHOR (Hidden on small mobile if needed, but here made responsive) */}
       <motion.section
         initial={{ opacity: 0, x: -20 }}
@@ -91,14 +92,14 @@ const Register = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-6 lg:p-8 backdrop-blur-3xl shadow-3xl relative z-30 overflow-hidden"
+          className="w-full max-w-md p-6 lg:p-8 backdrop-blur-3xl relative z-30 overflow-hidden"
         >
           {/* Form Header */}
           <div className="text-center mb-4">
-            <div className="inline-flex p-2 bg-white/5 rounded-2xl mb-3 text-indigo-400">
+            <div className="inline-flex p-2 rounded-2xl mb-3 text-indigo-400 bg-indigo-500/10">
               <Bot size={24} />
             </div>
-            <h3 className="text-xl font-black tracking-tight text-white uppercase">
+            <h3 className={`text-xl font-black tracking-tight uppercase ${theme === "dark" ? "text-white" : "text-black"}`}>
               Neural Uplink
             </h3>
             <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
@@ -126,7 +127,7 @@ const Register = () => {
                       required: "First Name is required",
                     })}
                     placeholder="Jane"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-4 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all placeholder:text-zinc-800"
+                    className={`w-full rounded-xl py-2.5 pl-4 pr-4 text-xs font-bold outline-none transition-all ${theme === "dark" ? "bg-white/5 border border-white/10 text-white focus:border-indigo-500/50 focus:bg-white/[0.08] placeholder:text-zinc-800" : "bg-black/5 border border-black/10 text-black focus:border-indigo-500/50 focus:bg-black/[0.08] placeholder:text-zinc-400"}`}
                   />
                 </div>
                 {errors.firstname && (
@@ -146,7 +147,7 @@ const Register = () => {
                       required: "Last Name is required",
                     })}
                     placeholder="Doe"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-4 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all placeholder:text-zinc-800"
+                    className={`w-full rounded-xl py-2.5 pl-4 pr-4 text-xs font-bold outline-none transition-all ${theme === "dark" ? "bg-white/5 border border-white/10 text-white focus:border-indigo-500/50 focus:bg-white/[0.08] placeholder:text-zinc-800" : "bg-black/5 border border-black/10 text-black focus:border-indigo-500/50 focus:bg-black/[0.08] placeholder:text-zinc-400"}`}
                   />
                 </div>
                 {errors.lastname && (
@@ -170,7 +171,7 @@ const Register = () => {
                   type="email"
                   {...register("email", { required: "Uplink ID is required" })}
                   placeholder="name@studysync.ai"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all placeholder:text-zinc-800"
+                  className={`w-full rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold outline-none transition-all ${theme === "dark" ? "bg-white/5 border border-white/10 text-white focus:border-indigo-500/50 focus:bg-white/[0.08] placeholder:text-zinc-800" : "bg-black/5 border border-black/10 text-black focus:border-indigo-500/50 focus:bg-black/[0.08] placeholder:text-zinc-400"}`}
                 />
               </div>
               {errors.email && (
@@ -196,7 +197,7 @@ const Register = () => {
                     required: "Pass Key is required",
                   })}
                   placeholder="••••••••"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold text-white outline-none focus:border-indigo-500/50 focus:bg-white/[0.08] transition-all placeholder:text-zinc-800"
+                  className={`w-full rounded-xl py-2.5 pl-11 pr-4 text-xs font-bold outline-none transition-all ${theme === "dark" ? "bg-white/5 border border-white/10 text-white focus:border-indigo-500/50 focus:bg-white/[0.08] placeholder:text-zinc-800" : "bg-black/5 border border-black/10 text-black focus:border-indigo-500/50 focus:bg-black/[0.08] placeholder:text-zinc-400"}`}
                 />
               </div>
               {errors.password && (
@@ -213,7 +214,7 @@ const Register = () => {
                 whileTap={{ scale: 0.98 }}
                 type="submit"
                 disabled={isSubmitting}
-                className="group flex items-center justify-center gap-3 py-3 bg-white text-black rounded-xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-white/5 hover:bg-indigo-50 transition-all"
+                className={`group flex items-center justify-center gap-3 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${theme === "dark" ? "bg-white text-black hover:bg-indigo-50" : "bg-black text-white hover:bg-indigo-950"}`}
               >
                 {isSubmitting ? (
                   <Zap size={16} className="animate-spin text-indigo-600" />
@@ -229,23 +230,23 @@ const Register = () => {
               </motion.button>
 
               <div className="flex items-center gap-4 py-1">
-                <div className="h-px flex-1 bg-white/5" />
+                <div className={`h-px flex-1 ${theme === "dark" ? "bg-white/5" : "bg-black/10"}`} />
                 <span className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">
                   Or Auth Via
                 </span>
-                <div className="h-px flex-1 bg-white/5" />
+                <div className={`h-px flex-1 ${theme === "dark" ? "bg-white/5" : "bg-black/10"}`} />
               </div>
 
               <div className="flex gap-3">
                 <button
                   type="button"
-                  className="flex-1 py-2 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all"
+                  className={`flex-1 py-2 border rounded-xl flex items-center justify-center transition-all ${theme === "dark" ? "bg-white/5 border-white/10 hover:bg-white/10 text-white" : "bg-black/5 border-black/10 hover:bg-black/10 text-black"}`}
                 >
                   <Chrome size={16} />
                 </button>
                 <button
                   type="button"
-                  className="flex-1 py-2 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all"
+                  className={`flex-1 py-2 border rounded-xl flex items-center justify-center transition-all ${theme === "dark" ? "bg-white/5 border-white/10 hover:bg-white/10 text-white" : "bg-black/5 border-black/10 hover:bg-black/10 text-black"}`}
                 >
                   <Github size={16} />
                 </button>
@@ -258,7 +259,7 @@ const Register = () => {
                 Already on the network?{" "}
                 <Link
                   to="/login"
-                  className="text-white font-black hover:text-indigo-400 transition-colors uppercase tracking-widest text-[10px]"
+                  className={`font-black hover:text-indigo-400 transition-colors uppercase tracking-widest text-[10px] ${theme === "dark" ? "text-white" : "text-black"}`}
                 >
                   Authenticate
                 </Link>
@@ -271,7 +272,6 @@ const Register = () => {
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        .shadow-3xl { box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
         input::placeholder { color: #27272a !important; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }

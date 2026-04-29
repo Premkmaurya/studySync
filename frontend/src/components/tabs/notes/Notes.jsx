@@ -51,17 +51,15 @@ const SavedNotesContent = () => {
               groupId: null,
               page,
               limit: 9,
+              field: categoryField,
             }),
           );
         } else {
-          res = await dispatch(fetchNotes({ page, limit: 9 }));
+          res = await dispatch(fetchNotes({ page, limit: 9, field: categoryField }));
         }
 
         const notesResponse = res.payload?.notes || res.payload || [];
-        const filtered =
-          categoryField && categoryField !== "All"
-            ? notesResponse.filter((g) => g.field === categoryField)
-            : notesResponse;
+        const filtered = notesResponse;
 
         if (page === 1) {
           setFilteredNotes(filtered);
@@ -80,7 +78,7 @@ const SavedNotesContent = () => {
   const CATEGORIES = [
     { id: "All", label: "All Hubs", icon: LayoutGrid, color: "text-white" },
     {
-      id: "web-dev",
+      id: "Engineering",
       label: "Web Engineering",
       icon: Code,
       color: "text-cyan-400",
