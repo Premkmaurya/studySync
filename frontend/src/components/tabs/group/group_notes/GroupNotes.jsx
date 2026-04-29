@@ -81,29 +81,35 @@ const GroupNotes = () => {
   }, [groupId, searchTerm, page, dispatch]);
 
   return (
-    <div className="relative w-full min-h-screen text-slate-200 bg-[#030303] p-6 md:p-12">
+    <div className={`relative w-full min-h-screen p-6 md:p-12 ${theme === "dark" ? "bg-[#0e0e0f] text-slate-200" : "bg-[#f9f9f9] text-[#1a1a1a]"}`}>
       {/* 1. SEARCH HUB */}
       <section className="mb-16">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
           <div className="space-y-2">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white uppercase">
+            <h1 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase ${theme === "dark" ? "text-white" : "text-black"}`}>
               Knowledge_Base
             </h1>
           </div>
 
           <div className="relative w-full md:w-80 group">
             <div className="absolute -inset-1 rounded-2xl blur opacity-10 group-focus-within:opacity-30 transition-opacity" />
-            <div className="relative bg-zinc-900 border border-white/5 rounded-full py-3 pl-12 pr-4 flex items-center">
+            <div className={`relative border rounded-full py-3 pl-12 pr-4 flex items-center ${
+              theme === "dark" ? "bg-zinc-900 border-white/5" : "bg-white border-black/10 shadow-sm"
+            }`}>
               <Search
                 size={18}
-                className="absolute left-4 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
+                className={`absolute left-4 transition-colors ${
+                  theme === "dark" ? "text-zinc-600 group-focus-within:text-indigo-400" : "text-zinc-400 group-focus-within:text-indigo-500"
+                }`}
               />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search archive..."
-                className="w-full bg-transparent text-sm font-bold outline-none placeholder:text-white/50 text-white"
+                className={`w-full bg-transparent text-sm font-bold outline-none ${
+                  theme === "dark" ? "placeholder:text-white/50 text-white" : "placeholder:text-black/50 text-black"
+                }`}
               />
             </div>
           </div>
@@ -113,8 +119,8 @@ const GroupNotes = () => {
       {/* 2. THE NOTES GRID */}
       {loading ? (
         <div className="py-40 flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">
+          <div className={`w-10 h-10 border-2 border-t-indigo-500 rounded-full animate-spin ${theme === "dark" ? "border-white/5" : "border-black/5"}`} />
+          <span className={`text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "text-zinc-600" : "text-zinc-400"}`}>
             Accessing Vault...
           </span>
         </div>
@@ -138,10 +144,12 @@ const GroupNotes = () => {
       {createPortal(
         <motion.button
           onClick={() => navigate(`/group/${groupId}/note`)}
-          className="fixed bottom-10 right-10 z-[100] p-4 bg-white text-black rounded-full hover:bg-indigo-500 hover:text-white group"
+          className={`fixed bottom-10 right-10 z-[100] p-4 rounded-full group shadow-2xl transition-all ${
+            theme === "dark" ? "bg-white text-black hover:bg-indigo-500 hover:text-white" : "bg-black text-white hover:bg-indigo-500"
+          }`}
         >
           <Plus size={20} className="transition-transform" />
-          <div className="absolute inset-0 rounded-full border-2 border-white/20 opacity-20 pointer-events-none" />
+          <div className={`absolute inset-0 rounded-full border-2 opacity-20 pointer-events-none ${theme === "dark" ? "border-white/20" : "border-black/20"}`} />
         </motion.button>,
         document.body,
       )}

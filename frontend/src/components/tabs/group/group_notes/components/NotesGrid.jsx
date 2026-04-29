@@ -103,16 +103,20 @@ const NotesGrid = () => {
                 stiffness: 300,
                 damping: 24,
               }}
-              className="group relative p-5 bg-zinc-900/30 border border-white/5 rounded-[40px] shadow-2xl transition-all duration-500 overflow-hidden"
+              className={`group relative p-5 border rounded-[40px] shadow-2xl transition-all duration-500 overflow-hidden ${
+                theme === "dark" ? "bg-[#0e0e0f] border-white/10 hover:bg-[#202024]/80 backdrop-blur-sm" : "bg-white/60 border-black/10 hover:bg-white/80 backdrop-blur-sm"
+              }`}
             >
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/5 blur-[80px] rounded-full group-hover:bg-indigo-500/10 transition-all pointer-events-none" />
 
               <div className="flex items-start justify-between mb-8">
-                <div className="p-4 bg-zinc-800 rounded-2xl text-indigo-400 group-hover:bg-white group-hover:text-black transition-all duration-300">
+                <div className={`p-4 rounded-2xl transition-all duration-300 ${
+                  theme === "dark" ? "bg-zinc-800 text-indigo-400 group-hover:bg-white group-hover:text-black" : "bg-black/5 text-indigo-500 group-hover:bg-black group-hover:text-white"
+                }`}>
                   <FileText size={24} />
                 </div>
                 <div className="flex flex-row  items-center gap-2">
-                  <span className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest flex items-center gap-1.5">
+                  <span className={`text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 ${theme === "dark" ? "text-zinc-600" : "text-zinc-500"}`}>
                     <Clock size={10} /> {dayjs(article.createdAt).fromNow()}
                   </span>
                   <button
@@ -121,7 +125,9 @@ const NotesGrid = () => {
                       handleSaveNote(article);
                     }}
                     disabled={savingNoteIds[article._id]}
-                    className="p-3 bg-zinc-800 w-10 h-10 rounded-full text-zinc-400 cursor-pointer hover:text-indigo-400 hover:bg-zinc-700 transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70"
+                    className={`p-3 w-10 h-10 rounded-full cursor-pointer transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-70 ${
+                      theme === "dark" ? "bg-zinc-800 text-zinc-400 hover:text-indigo-400 hover:bg-zinc-700" : "bg-black/5 text-zinc-500 hover:text-indigo-500 hover:bg-black/10"
+                    }`}
                     title={savingNoteIds[article._id]
                       ? "Saving..."
                       : bookmarks[article._id]
@@ -140,7 +146,9 @@ const NotesGrid = () => {
               </div>
 
               <div className="space-y-4 mb-10">
-                <h3 className="text-2xl font-black tracking-tight text-white group-hover:text-indigo-400 transition-colors leading-tight">
+                <h3 className={`text-2xl font-black tracking-tight group-hover:text-indigo-400 transition-colors leading-tight ${
+                  theme === "dark" ? "text-white" : "text-black"
+                }`}>
                   {String(article.title || "Untitled Note")}
                 </h3>
               </div>
@@ -157,7 +165,9 @@ const NotesGrid = () => {
                     },
                   })
                 }
-                className="w-full flex items-center justify-between px-6 py-4 bg-white/5 border border-white/5 group-hover:border-white/10 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all hover:bg-white hover:text-black"
+                className={`w-full flex items-center justify-between px-6 py-4 border rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+                  theme === "dark" ? "bg-white/5 border-white/5 group-hover:border-white/10 hover:bg-white hover:text-black text-white" : "bg-black/5 border-black/5 group-hover:border-black/10 hover:bg-black hover:text-white text-black"
+                }`}
               >
                 <span>Inspect Brief</span>
                 <ArrowUpRight
@@ -173,12 +183,12 @@ const NotesGrid = () => {
             animate={{ opacity: 1 }}
             className="col-span-full py-40 text-center"
           >
-            <div className="p-10 bg-white/5 border border-white/5 rounded-[48px] inline-block">
-              <Database size={48} className="text-zinc-800 mx-auto mb-6" />
-              <h3 className="text-xl font-bold text-zinc-600 uppercase tracking-widest">
+            <div className={`p-10 border rounded-[48px] inline-block ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"}`}>
+              <Database size={48} className={`mx-auto mb-6 ${theme === "dark" ? "text-zinc-800" : "text-zinc-400"}`} />
+              <h3 className={`text-xl font-bold uppercase tracking-widest ${theme === "dark" ? "text-zinc-600" : "text-zinc-500"}`}>
                 No entries found
               </h3>
-              <p className="text-xs text-zinc-700 mt-2">
+              <p className={`text-xs mt-2 ${theme === "dark" ? "text-zinc-700" : "text-zinc-500"}`}>
                 The neural archive is currently empty for this query.
               </p>
             </div>

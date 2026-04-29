@@ -70,7 +70,9 @@ const GroupMembers = () => {
   });
 
   return (
-    <div className="relative w-full min-h-screen bg-[#030303] text-zinc-400 font-sans p-6 md:p-12 max-w-5xl mx-auto">
+    <div className={`relative w-full min-h-screen font-sans p-6 md:p-12 max-w-5xl mx-auto ${
+      theme === "dark" ? "bg-[#0e0e0f] text-zinc-400" : "bg-[#f9f9f9] text-zinc-600"
+    }`}>
       
       {/* 1. Ultra-Minimal Top Header */}
       <Header members={members} notes={notes} />
@@ -79,8 +81,8 @@ const GroupMembers = () => {
       <main className="relative z-10">
         {loading ? (
           <div className="py-20 flex flex-col items-center gap-4">
-             <div className="w-5 h-5 border border-white/10 border-t-indigo-500 rounded-full animate-spin" />
-             <span className="text-[8px] font-black uppercase tracking-[0.3em] text-zinc-700">Deciphering_Directory</span>
+             <div className={`w-5 h-5 border border-t-indigo-500 rounded-full animate-spin ${theme === "dark" ? "border-white/10" : "border-black/10"}`} />
+             <span className={`text-[8px] font-black uppercase tracking-[0.3em] ${theme === "dark" ? "text-zinc-700" : "text-zinc-400"}`}>Deciphering_Directory</span>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -92,7 +94,7 @@ const GroupMembers = () => {
             
             {filteredMembers.length === 0 && (
               <div className="py-32 text-center">
-                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-800">0_Matches_Found</p>
+                 <p className={`text-[10px] font-black uppercase tracking-[0.4em] ${theme === "dark" ? "text-zinc-800" : "text-zinc-400"}`}>0_Matches_Found</p>
               </div>
             )}
           </div>

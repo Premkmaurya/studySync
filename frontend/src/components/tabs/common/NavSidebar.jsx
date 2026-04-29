@@ -43,8 +43,8 @@ const NavBar = () => {
         layout
         className={`px-6 py-4 md:px-8 backdrop-blur-2xl border rounded-[32px] flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.3)] overflow-hidden transition-all ${
           theme === "light"
-            ? "bg-white/40 border-black/10"
-            : "bg-zinc-900/40 border-white/10"
+            ? "bg-white/60 border-black/10"
+            : "bg-[#0e0e0f]/80 border-white/10"
         }`}
       >
         <div className="flex items-center justify-between w-full">
@@ -97,7 +97,11 @@ const NavBar = () => {
           <div className="hidden md:flex items-center gap-3 relative z-[110]">
             <NavLink
               to="/create-group"
-              className={`px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest ${theme === "light" ? "bg-black text-white hover:bg-gray-800" : "bg-white text-black hover:bg-gray-300"} transition-all flex items-center gap-2 shadow-lg shadow-white/5`}
+              className={`px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest ${
+                theme === "light" 
+                  ? "bg-black text-white hover:bg-gray-800 shadow-black/10" 
+                  : "bg-white text-black hover:bg-gray-300 shadow-white/5"
+              } transition-all flex items-center gap-2 shadow-lg`}
             >
               <Plus color={`${theme === "light" ? "white" : "black"}`} size={18} />
               <span
@@ -168,7 +172,7 @@ const NavBar = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="mt-4 flex flex-col gap-3 pt-4 border-t border-white/10"
+                className={`mt-4 flex flex-col gap-3 pt-4 border-t ${theme === "light" ? "border-black/10" : "border-white/10"}`}
               >
                 <div className="flex items-center justify-center">
                   <ThemeToggle />

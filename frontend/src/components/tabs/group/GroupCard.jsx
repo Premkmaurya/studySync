@@ -58,23 +58,29 @@ export default function GroupCard({ group, onGroupJoined }) {
           },
         });
       }}
-      className="bg-[#202024] max-h-[45vh] rounded-lg overflow-hidden shadow-lg transition-all duration-300 border border-[#202024] hover:border-white/30"
+      className={`group relative rounded-[40px] overflow-hidden shadow-2xl transition-all duration-500 border cursor-pointer ${
+        theme === "dark" 
+          ? "bg-[#0e0e0f] border-white/10 hover:bg-[#202024]/80 backdrop-blur-sm hover:border-indigo-500/30" 
+          : "bg-white/60 border-black/10 hover:bg-white/80 backdrop-blur-sm hover:border-indigo-500/30"
+      }`}
     >
       {/* Card Banner Image */}
-      <div className="card-image-container h-[20vh]">
+      <div className="card-image-container h-[20vh] overflow-hidden">
         <img
           src={imageUrl}
           alt={`${group.name} banner`}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
       </div>
 
       {/* Card Content */}
-      <div className="p-4">
-        <h3 className="text-xl font-bold text-white mb-2 truncate">
+      <div className="p-6">
+        <h3 className={`text-2xl font-black tracking-tight leading-tight mb-2 truncate group-hover:text-indigo-400 transition-colors ${
+          theme === "dark" ? "text-white" : "text-black"
+        }`}>
           {group.name}
         </h3>
-        <p className="text-gray-400 text-sm mb-4 h-10 overflow-hidden">
+        <p className={`text-sm mb-6 h-10 overflow-hidden ${theme === "dark" ? "text-zinc-400" : "text-zinc-500"}`}>
           {/* Truncate description for clean UI */}
           {group.description.length > 60
             ? group.description.substring(0, 60) + "..."
@@ -83,19 +89,23 @@ export default function GroupCard({ group, onGroupJoined }) {
 
         <div className="flex justify-between items-center">
           {/* Member Count */}
-          <div className="flex items-center space-x-2 text-gray-400">
-            <HiUserGroup className="h-5 w-5" />
-            <span className="text-sm font-medium">{group.members} Members</span>
+          <div className={`flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest ${theme === "dark" ? "text-zinc-500" : "text-zinc-500"}`}>
+            <HiUserGroup className="h-4 w-4" />
+            <span>{group.members} Synced</span>
           </div>
 
           {/* Join Button */}
           <button
             ref={btnRef}
-            onClick={handleJoin}
-            className={`px-4 py-2 text-white text-sm font-medium rounded-md transition-colors
-            ${joinText === "joined" ? "bg-blue-400" : "bg-blue-600"}
-            ${joinText !== "joined" ? "hover:bg-blue-700" : ""}
-            `}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleJoin();
+            }}
+            className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-xl active:scale-95 ${
+              joinText === "joined"
+                ? theme === "dark" ? "bg-zinc-800 text-white" : "bg-black/5 text-black"
+                : theme === "dark" ? "bg-white text-black hover:bg-indigo-500 hover:text-white" : "bg-black text-white hover:bg-indigo-500"
+            }`}
           >
             {joinText}
           </button>

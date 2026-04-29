@@ -22,31 +22,41 @@ import {
 
 // --- SUB-COMPONENTS ---
 
-const SubNavItem = ({ to, icon: Icon, label, end = false, theme }) => (
-  <NavLink
-    to={to}
-    end={end}
-    className={({ isActive }) => `
-      relative flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-500 group
-      ${isActive ? "bg-white text-black shadow-xl scale-[1.02]" : theme === "dark" ? "text-zinc-500 hover:text-white hover:bg-white/5" : "text-zinc-700 hover:text-black hover:bg-black/5"}
-    `}
-  >
-    {({ isActive }) => (
-      <>
-        <Icon size={18} strokeWidth={isActive ? 2.5 : 1.8} />
-        <span className="text-[11px] font-black uppercase tracking-widest">
-          {label}
-        </span>
-        {isActive && (
-          <motion.div
-            layoutId="sub-active-pill"
-            className="absolute -right-1 w-1 h-6 bg-indigo-500 rounded-full"
-          />
-        )}
-      </>
-    )}
-  </NavLink>
-);
+const SubNavItem = ({ to, icon: Icon, label, end = false }) => {
+  const theme = useSelector((state) => state.theme.mode);
+  return (
+    <NavLink
+      to={to}
+      end={end}
+      className={({ isActive }) => `
+        relative flex items-center gap-3 px-6 py-4 rounded-2xl transition-all duration-500 group
+        ${isActive 
+          ? theme === "dark"
+            ? "bg-white text-black shadow-xl shadow-white/5 scale-[1.02]"
+            : "bg-black text-white shadow-xl shadow-black/10 scale-[1.02]"
+          : theme === "dark" 
+            ? "text-zinc-500 hover:text-white hover:bg-white/5" 
+            : "text-zinc-500 hover:text-black hover:bg-black/5"
+        }
+      `}
+    >
+      {({ isActive }) => (
+        <>
+          <Icon size={18} strokeWidth={isActive ? 2.5 : 1.8} />
+          <span className="text-[11px] font-black uppercase tracking-widest">
+            {label}
+          </span>
+          {isActive && (
+            <motion.div
+              layoutId="sub-active-pill"
+              className="absolute -right-1 w-1 h-6 bg-indigo-500 rounded-full"
+            />
+          )}
+        </>
+      )}
+    </NavLink>
+  );
+};
 
 
 const SingleGroupPage = () => {
@@ -93,7 +103,7 @@ const SingleGroupPage = () => {
 
   if (loading)
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className={`min-h-screen flex items-center justify-center ${theme === "dark" ? "bg-[#0e0e0f]" : "bg-[#f9f9f9]"}`}>
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1 }}
@@ -104,7 +114,9 @@ const SingleGroupPage = () => {
     );
 
   return (
-    <div className="relative min-h-screen w-full bg-[#030303] text-slate-200 selection:bg-indigo-500/30 font-sans overflow-hidden flex flex-row">
+    <div className={`relative min-h-screen w-full selection:bg-indigo-500/30 font-sans overflow-hidden flex flex-row ${
+      theme === "dark" ? "bg-[#0e0e0f] text-slate-200" : "bg-[#f9f9f9] text-[#1a1a1a]"
+    }`}>
       {/* 1. SPATIAL BACKGROUND */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" style={{ transform: 'translateZ(0)', willChange: 'transform' }}>
         <div className="absolute top-[-10%] left-[20%] w-[60%] h-[60%] bg-indigo-600/5 blur-[100px] rounded-full" style={{ transform: 'translateZ(0)' }} />
@@ -112,10 +124,14 @@ const SingleGroupPage = () => {
       </div>
 
       {/* MOBILE THIN SIDEBAR (Always visible) */}
-      <div className="w-14 min-w-[56px] md:hidden border-r border-white/5 bg-zinc-950 flex flex-col items-center flex-shrink-0 pt-8 h-screen z-20">
+      <div className={`w-14 min-w-[56px] md:hidden border-r flex flex-col items-center flex-shrink-0 pt-8 h-screen z-20 ${
+        theme === "dark" ? "border-white/5 bg-[#0e0e0f]" : "border-black/5 bg-[#f9f9f9]"
+      }`}>
         <button 
           onClick={() => setIsSidebarOpen(true)}
-          className="p-3 text-zinc-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-xl"
+          className={`p-3 rounded-xl transition-colors ${
+            theme === "dark" ? "text-zinc-400 hover:text-white bg-white/5 hover:bg-white/10" : "text-zinc-500 hover:text-black bg-black/5 hover:bg-black/10"
+          }`}
         >
           <Menu size={20} />
         </button>
@@ -124,21 +140,23 @@ const SingleGroupPage = () => {
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden transition-opacity"
+          className={`fixed inset-0 backdrop-blur-sm z-30 md:hidden transition-opacity ${theme === "dark" ? "bg-black/60" : "bg-white/60"}`}
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       {/* 2. CONTEXTUAL SUB-SIDEBAR (The Blade) */}
       <aside 
-        className={`fixed md:relative top-0 left-0 z-40 h-screen flex flex-col border-r border-white/5 bg-zinc-950 pt-10 px-6 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] w-72 lg:w-80 flex-shrink-0 ${
+        className={`fixed md:relative top-0 left-0 z-40 h-screen flex flex-col border-r pt-10 px-6 transition-transform duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] w-72 lg:w-80 flex-shrink-0 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        } ${theme === "dark" ? "border-white/5 bg-[#0e0e0f]" : "border-black/5 bg-[#f9f9f9]"}`}
       >
         {/* Hub Identity */}
         <div className="mb-10 group flex justify-between items-start">
           <div className="relative">
-            <h2 className="text-3xl font-black tracking-tighter text-white uppercase leading-none group-hover:text-indigo-400 transition-colors">
+            <h2 className={`text-3xl font-black tracking-tighter uppercase leading-none group-hover:text-indigo-400 transition-colors ${
+              theme === "dark" ? "text-white" : "text-black"
+            }`}>
               {group?.name || "Group Hub"}
             </h2>
             <div className="flex items-center gap-4 mt-6 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
@@ -146,7 +164,9 @@ const SingleGroupPage = () => {
                 <Users size={12} /> {group?.members || 0} Synced
               </span>
               <span>•</span>
-              <span className="flex items-center gap-1.5 text-zinc-400 font-black">
+              <span className={`flex items-center gap-1.5 font-black ${
+                theme === "dark" ? "text-zinc-400" : "text-zinc-500"
+              }`}>
                 <ShieldCheck size={12} /> Secure
               </span>
             </div>
@@ -154,7 +174,9 @@ const SingleGroupPage = () => {
           {/* Mobile Close Button */}
           <button 
             onClick={() => setIsSidebarOpen(false)} 
-            className="md:hidden p-2 text-zinc-500 hover:text-white bg-white/5 rounded-full"
+            className={`md:hidden p-2 rounded-full ${
+              theme === "dark" ? "text-zinc-500 hover:text-white bg-white/5" : "text-zinc-500 hover:text-black bg-black/5"
+            }`}
           >
             <X size={16} />
           </button>

@@ -20,7 +20,9 @@ const MemberEntry = ({ member, index }) => {
         stiffness: 300,
         damping: 24,
       }}
-      className="group flex items-center justify-between py-4 border-b border-white/5 hover:bg-white/[0.01] px-4 transition-all duration-300"
+      className={`group flex items-center justify-between py-4 border-b px-4 transition-all duration-300 ${
+        theme === "dark" ? "border-white/5 hover:bg-white/[0.01]" : "border-black/5 hover:bg-black/[0.02]"
+      }`}
     >
       <div className="flex items-center gap-6">
         {/* Simple Avatar Slot */}
@@ -47,7 +49,9 @@ const MemberEntry = ({ member, index }) => {
         {/* Name & ID */}
         <div className="flex flex-col">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-bold text-zinc-200 uppercase tracking-tight group-hover:text-white transition-colors">
+            <span className={`text-sm font-bold uppercase tracking-tight transition-colors ${
+              theme === "dark" ? "text-zinc-200 group-hover:text-white" : "text-zinc-800 group-hover:text-black"
+            }`}>
               {firstName} {lastName}
             </span>
             {isAdmin && (
@@ -56,7 +60,7 @@ const MemberEntry = ({ member, index }) => {
               </span>
             )}
           </div>
-          <span className="text-[9px] font-mono text-zinc-600 mt-0.5 uppercase tracking-widest">
+          <span className={`text-[9px] font-mono mt-0.5 uppercase tracking-widest ${theme === "dark" ? "text-zinc-600" : "text-zinc-400"}`}>
             NODE_ID: {userId.substring(0, 8)}
           </span>
         </div>
@@ -64,7 +68,7 @@ const MemberEntry = ({ member, index }) => {
 
       <div className="flex items-center gap-8">
         {isAdmin && (
-          <button className="p-2 text-zinc-700 hover:text-white transition-colors">
+          <button className={`p-2 transition-colors ${theme === "dark" ? "text-zinc-700 hover:text-white" : "text-zinc-400 hover:text-black"}`}>
             <MoreHorizontal size={18} />
           </button>
         )}

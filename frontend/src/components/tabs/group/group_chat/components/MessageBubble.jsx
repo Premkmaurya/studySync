@@ -34,15 +34,17 @@ const MessageBubble = ({ message }) => {
         {/* Bubble Content */}
         <div className={`flex flex-col ${isYou ? "items-end" : "items-start"}`}>
           {!isYou && (
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">
+            <span className={`text-[10px] font-black uppercase tracking-widest mb-2 ml-1 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}>
               {message.sender.firstname} {message.sender.lastname}
             </span>
           )}
           <div
             className={`relative px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${
               isYou
-                ? "bg-indigo-500/10 border border-indigo-500/20 text-indigo-100 rounded-tr-none"
-                : "bg-white/5 backdrop-blur-md border border-white/5 text-zinc-200 rounded-tl-none"
+                ? `bg-indigo-500/10 border border-indigo-500/20 rounded-tr-none ${theme === "dark" ? "text-indigo-100" : "text-indigo-900"}`
+                : theme === "dark"
+                  ? "bg-white/5 backdrop-blur-md border border-white/5 text-zinc-200 rounded-tl-none"
+                  : "bg-black/5 backdrop-blur-md border border-black/5 text-zinc-800 rounded-tl-none"
             }`}
           >
             {message.text}
@@ -52,7 +54,7 @@ const MessageBubble = ({ message }) => {
               <div className="absolute inset-0 bg-indigo-500/5 blur-xl pointer-events-none -z-10" />
             )}
           </div>
-          <span className="text-[8px] font-bold text-zinc-700 uppercase tracking-widest mt-2 px-1">
+          <span className={`text-[8px] font-bold uppercase tracking-widest mt-2 px-1 ${theme === "dark" ? "text-zinc-700" : "text-zinc-400"}`}>
             {new Date().toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

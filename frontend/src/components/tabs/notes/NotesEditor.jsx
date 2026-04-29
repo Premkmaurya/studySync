@@ -68,9 +68,9 @@ export default function NotesEditor() {
         />
       </div>
       <div
-        className={`relative min-h-screen w-full overflow-x-hidden bg-[#030303] selection:bg-indigo-500/40 font-sans text-editor-container ${
-          isModalOpen ? "blur-xs" : ""
-        } relative`}
+        className={`relative min-h-screen w-full overflow-x-hidden selection:bg-indigo-500/40 font-sans text-editor-container ${
+          isModalOpen ? "blur-sm" : ""
+        } relative ${theme === "dark" ? "bg-[#0e0e0f]" : "bg-[#ffffff]"}`}
       >
         <div className="absolute top-0 -left-20 w-[700px] h-[700px] bg-indigo-600/5 blur-[160px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 -right-20 w-[600px] h-[600px] bg-fuchsia-600/5 blur-[160px] rounded-full pointer-events-none" />
