@@ -19,3 +19,9 @@ export const logoutApi = async () => {
   const response = await api.post('/auth/logout');
   return response.data;
 };
+
+export const updateProfilePictureApi = async ({ id, profilePicture }) => {
+  const response = await api.patch(`/auth/user/${id}/update-profile-pic`, profilePicture);
+  return response.data;
+};
+

@@ -31,6 +31,7 @@ const Register = () => {
     try {
       setAuthError("");
       const response = await dispatch(registerUser(data));
+      console.log(response)
       if(response.payload.user) {
         navigate("/find-groups");
       }

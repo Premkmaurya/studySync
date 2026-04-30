@@ -1,6 +1,7 @@
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const uploadImage = require("../services/image.service");
 
 async function registerUser(req, res) {
   const { firstname, lastname, email, password } = req.body;
@@ -56,7 +57,7 @@ async function loginUser(req, res) {
       message: "user doesn't exist.",
     });
   }
-  const isPasswordValid = bcrypt.compare(password, user.password);
+  const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
     return res.status(400).json({
       message: "Invalid email or password",
@@ -74,12 +75,12 @@ async function loginUser(req, res) {
       expiresIn: "365d",
     },
   );
-  
+
   const ONE_YEAR = 31536000;
   res.cookie("token", token, {
     httpOnly: true,
     secure: true,
-    maxAge:ONE_YEAR,
+    maxAge: ONE_YEAR,
   });
 
   return res.status(200).json({
@@ -93,7 +94,7 @@ async function getMe(req, res) {
   const userFind = await userModel.findById(user.id).select("-password");
   return res.status(200).json({
     message: "data fetched successfully.",
-    user,
+    user: userFind,
   });
 }
 
@@ -105,9 +106,41 @@ async function getUserById(req, res) {
   });
 }
 
+async function updateProfilePicture(req, res) {
+  const { id } = req.params;
+  const file = req.file;
+
+  if (!file) {
+    return res.status(400).json({
+      message: "Please upload an image",
+    });
+  }
+
+  try {
+    const uploadResponse = await uploadImage(file.buffer);
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      id,
+      { profilePicture: uploadResponse.url },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      message: "profile picture updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return res.status(500).json({
+      message: "Failed to upload image",
+    });
+  }
+}
+
 module.exports = {
   registerUser,
   loginUser,
   getMe,
   getUserById,
+  updateProfilePicture,
 };

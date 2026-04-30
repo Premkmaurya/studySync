@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi, fetchCurrentApi, logoutApi } from './authApi';
+import { loginApi, registerApi, fetchCurrentApi, logoutApi, updateProfilePictureApi } from './authApi';
 
 // Thunks
 export const registerUser = createAsyncThunk(
@@ -46,6 +46,18 @@ export const logoutUser = createAsyncThunk(
       return null;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to logout');
+    }
+  }
+);
+
+export const updateProfilePicture = createAsyncThunk(
+  'auth/updateProfilePicture',
+  async ({ id, profilePicture }, thunkAPI) => {
+    try {
+      const data = await updateProfilePictureApi({ id, profilePicture });
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to update profile picture');
     }
   }
 );
@@ -125,6 +137,20 @@ const authSlice = createSlice({
         // Even if the backend fails, we usually want to clear the local state
         state.loading = false;
         state.user = null;
+        state.error = action.payload;
+      })
+      
+      // Update Profile Picture
+      .addCase(updateProfilePicture.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProfilePicture.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user || action.payload;
+      })
+      .addCase(updateProfilePicture.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
       });
   },
