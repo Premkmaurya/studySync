@@ -61,3 +61,6 @@ export const removeMemberApi = async (groupId, userId) => {
   });
   return response.data;
 };
+
+export const fetchMyEncryptedGroupKeyApi = async (groupId) => (await api.get(`/groups/${groupId}/my-encrypted-key`)).data;
+export const rotateGroupKeyApi = async (groupId, encryptedGroupKeys) => (await api.patch(`/groups/${groupId}/rotate-key`, { encryptedGroupKeys })).data;

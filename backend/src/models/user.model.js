@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
   },
+  publicKey: {
+    type: String,
+    default: "",
+  },
 });
 
 const userModel = mongoose.model("user", userSchema);
