@@ -235,7 +235,7 @@ async function updateGroup(req, res) {
 
 async function joinGroup(req, res) {
   const { groupId } = req.params;
-  const { encryptedGroupKey } = req.body;
+  const { encryptedGroupKey } = req.body || {};
   const user = req.user;
 
   const isUserExist = await userGroupModel.findOne({
