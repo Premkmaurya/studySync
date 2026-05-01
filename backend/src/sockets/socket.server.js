@@ -55,7 +55,8 @@ function setSocketServer(httpServer) {
       if (!roomId) return;
 
       const createMsg = await messageModel.create({
-        text: message.text,
+        encryptedContent: message.encryptedContent,
+        keyVersion: message.keyVersion || 1,
         user: socket.user.id,
         group: roomId,
       });

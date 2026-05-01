@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../../features/auth/authSlice";
+import { generateKeyPair, encryptPrivateKey } from "../../utils/crypto";
+import { setSecret } from "../../utils/secureKeyStore";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -30,7 +32,10 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       setAuthError("");
-      const response = await dispatch(registerUser(data));
+      const { publicKey, privateKey } = await generateKeyPair();
+      const encryptedPrivateKey = await encryptPrivateKey(privateKey, data.password);
+      await setSecret(`private-key:${data.email}`, encryptedPrivateKey);
+      const response = await dispatch(registerUser({ ...data, publicKey }));
       console.log(response)
       if(response.payload.user) {
         navigate("/find-groups");

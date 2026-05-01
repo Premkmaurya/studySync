@@ -31,7 +31,7 @@ const getMessages = async (req, res) => {
 
   await setCachedData(cacheKey, payload, 30);
 
-  res.status(201).json({
+  res.status(200).json({
     ...payload,
     userId: user.id,
   });
