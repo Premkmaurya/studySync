@@ -43,20 +43,7 @@ const GroupChat = () => {
         setMessages(fetchedMessages);
       } catch (error) {
         // Fallback mock data for UI demo
-        setMessages([
-          {
-            id: 1,
-            text: "Welcome to the Neural Stream.",
-            sender: { firstname: "Syncie", lastname: "AI" },
-            isYou: false,
-          },
-          {
-            id: 2,
-            text: "This hub is encrypted and ready for sync.",
-            sender: { firstname: "Syncie", lastname: "AI" },
-            isYou: false,
-          },
-        ]);
+        setMessages([]);
       }
     };
     fetchMessages();

@@ -17,7 +17,7 @@ const MemberEntry = ({ member, index, onRemove }) => {
   const menuRef = useRef(null);
 
   const groupOwnerId = group?.owner?._id || group?.owner;
-  const isCurrentUserOwner = String(groupOwnerId) === String(currentUser?.id);
+  const isCurrentUserOwner = String(groupOwnerId) === String(currentUser?._id);
   const isMemberAdmin = String(member?.userId?._id) === String(groupOwnerId);
   
   const firstName = String(member?.userId?.fullname?.firstname || "Node");
@@ -133,15 +133,6 @@ const MemberEntry = ({ member, index, onRemove }) => {
                     >
                       <UserMinus size={14} className="group-hover/btn:scale-110 transition-transform" />
                       Remove Member
-                    </button>
-                    
-                    <button
-                      className={`flex items-center gap-3 w-full px-3 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors group/btn ${
-                        theme === "dark" ? "text-zinc-400 hover:bg-white/5 hover:text-white" : "text-zinc-600 hover:bg-black/5 hover:text-black"
-                      }`}
-                    >
-                      <Shield size={14} className="group-hover/btn:scale-110 transition-transform" />
-                      View Profile
                     </button>
                   </div>
                 </motion.div>
