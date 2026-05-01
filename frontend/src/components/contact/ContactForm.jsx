@@ -1,16 +1,25 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 const ContactForm = () => {
+  const theme = useSelector((state) => state.theme.mode);
+
   return (
-    <div className="w-full bg-transparent">
+    <div className={`w-full bg-transparent ${theme === 'light' ? 'text-black bg-white' : 'text-white bg-transparent'}`}>
       {/* 1. Fluid Header Section */}
       <div className="w-full min-h-[40vh] px-6 flex flex-col justify-center py-10">
         <div className="w-full flex justify-center items-center">
-          <div className="w-[90%] sm:w-[70%] md:w-[50%] text-center text-white">
-            <h1 className="text-4xl sm:text-5xl md:text-[4.2vw] font-semibold leading-tight mb-5">
+          <div className={`w-[90%] sm:w-[70%] md:w-[50%] text-center ${
+            theme === 'light' ? 'text-black' : 'text-white'
+          }`}>
+            <h1 className={`text-4xl sm:text-5xl md:text-[4.2vw] font-semibold leading-tight mb-5 ${
+              theme === 'light' ? 'text-black' : 'text-white'
+            }`}>
               Our Trusted Base on Earth
             </h1>
-            <p className="text-base md:text-lg w-full sm:w-[85%] md:w-[80%] mx-auto text-white/60 leading-relaxed">
+            <p className={`text-base md:text-lg w-full sm:w-[85%] md:w-[80%] mx-auto leading-relaxed ${
+              theme === 'light' ? 'text-gray-600' : 'text-white/60'
+            }`}>
               Let’s connect! Whether it’s feedback, inquiries, or collaboration
               ideas, we’d love to hear from you.
             </p>

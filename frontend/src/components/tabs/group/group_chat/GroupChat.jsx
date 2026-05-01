@@ -6,7 +6,11 @@ import { useOutletContext } from "react-router-dom";
 import { io } from "socket.io-client";
 import EmojiPicker from "emoji-picker-react";
 import MessageBubble from "./components/MessageBubble";
-import { decryptGroupKey, decryptMessage, encryptMessage } from "../../../../utils/crypto";
+import {
+  decryptGroupKey,
+  decryptMessage,
+  encryptMessage,
+} from "../../../../utils/crypto";
 import { getSecret } from "../../../../utils/secureKeyStore";
 
 const GroupChat = () => {
@@ -30,16 +34,28 @@ const GroupChat = () => {
         const { decryptPrivateKey } = await import("../../../../utils/crypto");
         const privateKey = await decryptPrivateKey(privateKeyBlob, passphrase);
 
-        const keyResponse = await axios.get(`http://localhost:3000/api/groups/${groupId}/my-encrypted-key`, { withCredentials: true });
-        const decryptedGroupKey = await decryptGroupKey(keyResponse.data.encryptedGroupKey, privateKey);
+        const keyResponse = await axios.get(
+          `http://localhost:3000/api/groups/${groupId}/my-encrypted-key`,
+          { withCredentials: true },
+        );
+        const decryptedGroupKey = await decryptGroupKey(
+          keyResponse.data.encryptedGroupKey,
+          privateKey,
+        );
         setGroupKey(decryptedGroupKey);
 
-        const msgResponse = await axios.get(`http://localhost:3000/api/messages/${groupId}`, { withCredentials: true });
+        const msgResponse = await axios.get(
+          `http://localhost:3000/api/messages/${groupId}`,
+          { withCredentials: true },
+        );
         const decoded = await Promise.all(
           msgResponse.data.chat.map(async (msg) => ({
             id: msg._id,
             text: await decryptMessage(msg.encryptedContent, decryptedGroupKey),
-            sender: { firstname: msg.user.fullname.firstname, lastname: msg.user.fullname.lastname },
+            sender: {
+              firstname: msg.user.fullname.firstname,
+              lastname: msg.user.fullname.lastname,
+            },
             isYou: msg.user._id === msgResponse.data.userId,
           })),
         );
@@ -50,12 +66,25 @@ const GroupChat = () => {
     };
 
     bootstrap();
-    const socketInstance = io("http://localhost:3000", { withCredentials: true });
+    const socketInstance = io("http://localhost:3000", {
+      withCredentials: true,
+    });
     socketInstance.emit("joinRoom", groupId);
     socketInstance.on("newMessage", async (message) => {
       if (!groupKey) return;
       const text = await decryptMessage(message.encryptedContent, groupKey);
-      setMessages((prev) => [...prev, { id: message._id, text, sender: { firstname: message.user.fullname.firstname, lastname: message.user.fullname.lastname }, isYou: false }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: message._id,
+          text,
+          sender: {
+            firstname: message.user.fullname.firstname,
+            lastname: message.user.fullname.lastname,
+          },
+          isYou: false,
+        },
+      ]);
     });
 
     setSocket(socketInstance);
@@ -63,7 +92,11 @@ const GroupChat = () => {
   }, [groupId, user?.email, groupKey]);
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    if (scrollRef.current)
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
   }, [messages]);
 
   const handleSendMessage = async () => {
