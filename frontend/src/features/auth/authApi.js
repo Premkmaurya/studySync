@@ -25,3 +25,8 @@ export const updateProfilePictureApi = async ({ id, profilePicture }) => {
   return response.data;
 };
 
+
+export const updatePublicKeyApi = async (publicKey) => {
+  const response = await api.patch("/auth/user/public-key", { publicKey });
+  return response.data;
+};
