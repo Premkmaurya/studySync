@@ -96,7 +96,7 @@ async function searchGroupById(req, res) {
 }
 
 async function createGroup(req, res) {
-  const { name, description, field } = req.body;
+  const { name, description, field, encryptedGroupKey } = req.body;
   const image = req.file;
   const user = req.user;
   let response = {};
@@ -110,6 +110,7 @@ async function createGroup(req, res) {
     field,
     owner: user.id,
     members: 1,
+    encryptedGroupKeys: encryptedGroupKey ? { [user.id]: encryptedGroupKey } : {},
   });
   await userGroupModel.create({
     userId: user.id,
@@ -190,7 +191,7 @@ async function deleteGroup(req, res) {
 
 async function updateGroup(req, res) {
   const { groupId } = req.params;
-  const { name, description, field } = req.body;
+  const { name, description, field, encryptedGroupKey } = req.body;
   const user = req.user;
 
   if (!groupId || groupId.length < 24) {
@@ -234,6 +235,7 @@ async function updateGroup(req, res) {
 
 async function joinGroup(req, res) {
   const { groupId } = req.params;
+  const { encryptedGroupKey } = req.body || {};
   const user = req.user;
 
   const isUserExist = await userGroupModel.findOne({
@@ -255,6 +257,7 @@ async function joinGroup(req, res) {
     groupId,
     {
       $inc: { members: 1 },
+      ...(encryptedGroupKey ? { $set: { [`encryptedGroupKeys.${user.id}`]: encryptedGroupKey } } : {}),
     },
     { new: true }
   );
@@ -450,7 +453,7 @@ async function removeMember(req, res) {
       return res.status(404).json({ message: "Member not found in this group" });
     }
 
-    await groupModel.findByIdAndUpdate(groupId, { $inc: { members: -1 } });
+    await groupModel.findByIdAndUpdate(groupId, { $inc: { members: -1, keyVersion: 1 }, $unset: { [`encryptedGroupKeys.${userId}`]: "" } });
 
     await Promise.all([
       invalidateByPrefix(`groups:members:${groupId}`),
@@ -462,6 +465,29 @@ async function removeMember(req, res) {
   } catch (error) {
     return res.status(500).json({ message: "Error removing member", error: error.message });
   }
+}
+
+async function getMyEncryptedGroupKey(req, res) {
+  const { groupId } = req.params;
+  const user = req.user;
+  const group = await groupModel.findById(groupId).select("encryptedGroupKeys keyVersion");
+  if (!group) return res.status(404).json({ message: "Group not found" });
+  const encryptedGroupKey = group.encryptedGroupKeys?.get(user.id) || group.encryptedGroupKeys?.[user.id];
+  if (!encryptedGroupKey) return res.status(404).json({ message: "Encrypted group key not found for member" });
+  return res.status(200).json({ encryptedGroupKey, keyVersion: group.keyVersion });
+}
+
+async function rotateGroupKey(req, res) {
+  const { groupId } = req.params;
+  const { encryptedGroupKeys } = req.body;
+  const user = req.user;
+  const group = await groupModel.findById(groupId);
+  if (!group) return res.status(404).json({ message: "Group not found" });
+  if (group.owner.toString() !== user.id) return res.status(403).json({ message: "Only owner can rotate keys" });
+  group.encryptedGroupKeys = encryptedGroupKeys || {};
+  group.keyVersion += 1;
+  await group.save();
+  return res.status(200).json({ message: "Group key rotated", keyVersion: group.keyVersion });
 }
 
 module.exports = {
@@ -477,4 +503,6 @@ module.exports = {
   searchGroupById,
   getSuggestedGroups,
   removeMember,
+  getMyEncryptedGroupKey,
+  rotateGroupKey,
 };

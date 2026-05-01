@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const uploadImage = require("../services/image.service");
 
 async function registerUser(req, res) {
-  const { firstname, lastname, email, password } = req.body;
+  const { firstname, lastname, email, password, publicKey } = req.body;
 
   const isUserExists = await userModel.findOne({ email });
   if (isUserExists) {
@@ -22,6 +22,7 @@ async function registerUser(req, res) {
     },
     email,
     password: hash,
+    publicKey: publicKey || "",
   });
   const token = jwt.sign(
     {
@@ -98,6 +99,19 @@ async function getMe(req, res) {
   });
 }
 
+
+async function updatePublicKey(req, res) {
+  const user = req.user;
+  const { publicKey } = req.body;
+
+  if (!publicKey) {
+    return res.status(400).json({ message: "publicKey is required" });
+  }
+
+  const updated = await userModel.findByIdAndUpdate(user.id, { publicKey }, { new: true }).select("fullname email publicKey");
+  return res.status(200).json({ message: "public key updated", user: updated });
+}
+
 async function getUserById(req, res) {
   const { id } = req.params;
   const user = await userModel.findById(id).select("-password");
@@ -143,4 +157,5 @@ module.exports = {
   getMe,
   getUserById,
   updateProfilePicture,
+  updatePublicKey,
 };

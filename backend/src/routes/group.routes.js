@@ -31,5 +31,7 @@ router.delete("/delete/:groupId", authMiddleware, groupController.deleteGroup)
 router.patch("/update/:groupId", authMiddleware, groupController.updateGroup)
 
 router.delete("/remove-member", authMiddleware, groupController.removeMember)
+router.get("/:groupId/my-encrypted-key", authMiddleware, groupController.getMyEncryptedGroupKey)
+router.patch("/:groupId/rotate-key", authMiddleware, groupController.rotateGroupKey)
 
 module.exports = router;
