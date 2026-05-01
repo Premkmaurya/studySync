@@ -36,7 +36,6 @@ const Register = () => {
       const encryptedPrivateKey = await encryptPrivateKey(privateKey, data.password);
       await setSecret(`private-key:${data.email}`, encryptedPrivateKey);
       const response = await dispatch(registerUser({ ...data, publicKey }));
-      console.log(response)
       if(response.payload.user) {
         navigate("/find-groups");
       }
