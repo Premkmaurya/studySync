@@ -35,17 +35,7 @@ const groupSchema = new mongoose.Schema(
     lastUpdated: {
       type: Date,
       default: Date.now,
-    },
-    encryptedGroupKeys: {
-      type: Map,
-      of: String,
-      default: {},
-    },
-    keyVersion: {
-      type: Number,
-      default: 1,
-      min: 1,
-    },
+    }
   },
   { timestamps: true }
 );

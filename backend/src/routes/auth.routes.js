@@ -15,7 +15,4 @@ router.get("/me",authMiddleware,authController.getMe)
 
 router.get("/user/:id",authMiddleware,authController.getUserById)
 
-router.patch("/user/:id/update-profile-pic", authMiddleware, upload.single('profilePicture'), authController.updateProfilePicture)
-router.patch("/user/public-key", authMiddleware, authController.updatePublicKey)
-
 module.exports = router;
