@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
-import { useGSAP} from "@gsap/react";
+import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/all";
 
 const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
@@ -81,38 +81,38 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
   gsap.registerPlugin(SplitText);
 
   let split = SplitText.create(".split", {
-  type: "words, lines",
-});
+    type: "words, lines",
+  });
 
-  useGSAP(()=>{
-    if(isAiPanelOpen){
+  useGSAP(() => {
+    if (isAiPanelOpen) {
       gsap.to(split.words, {
         opacity: 1,
         y: 0,
         stagger: 0.05,
         ease: "power2.out",
-        autoAlpha: 1, 
+        autoAlpha: 1,
       });
     }
-  },[messages])
+  }, [messages]);
 
   return (
     <motion.aside
-      layout // This makes the size change animate smoothly
+      layout
       initial={{ x: 400, opacity: 0 }}
       animate={{
         x: 0,
         opacity: 1,
-        // We can dynamically adjust these based on state
         width: isMaximize ? "100%" : "340px",
-        inset: isMaximize ? "0px" : "128px 32px 40px auto", // top-32(128px) right-8(32px) bottom-10(40px)
+        inset: isMaximize ? "0px" : "128px 32px 40px auto",
       }}
       exit={{ x: 400, opacity: 0 }}
-      className={`fixed bg-zinc-950/80 backdrop-blur-3xl border border-white/10 p-6 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
-        isMaximize ? "rounded-0" : "rounded-[40px]"
-      }`}
+      className={`fixed p-6 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
+        theme === "light"
+          ? "bg-white text-black border-black/10"
+          : "bg-zinc-950/80 text-white border-white/10"
+      } ${isMaximize ? "rounded-0" : "rounded-[40px]"}`}
       style={{
-        // Ensure it covers everything when maximized
         top: isMaximize ? 0 : undefined,
         right: isMaximize ? 0 : undefined,
         bottom: isMaximize ? 0 : undefined,
@@ -211,7 +211,7 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
             placeholder="Prompt AI..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="w-full bg-black/5 border text-white border-white/10 rounded-2xl py-4 px-6 text-xs outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium"
+            className={`w-full border text-white border-white/10 rounded-2xl py-4 px-6 text-xs ${theme === "dark" ? "bg-black/5 placeholder:text-white/20" : "bg-white/5 placeholder:text-black"} outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium`}
           />
           <button
             type="submit"

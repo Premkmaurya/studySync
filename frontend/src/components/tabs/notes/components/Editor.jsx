@@ -80,7 +80,7 @@ const Editor = ({
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content: contentFromState || content || noteContent || "",
+    content: contentFromState || content || "",
     editable: !isViewOnly,
   });
 
