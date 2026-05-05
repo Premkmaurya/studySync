@@ -1,7 +1,14 @@
-import React from "react";
+import React, { memo, lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
-import { FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
 import Social from "./Social";
+
+// Ensure proper dynamic imports and fallback handling
+const FaInstagram = lazy(() => import("react-icons/fa").then((mod) => ({ default: mod.FaInstagram })));
+const FaGithub = lazy(() => import("react-icons/fa").then((mod) => ({ default: mod.FaGithub })));
+const FaLinkedin = lazy(() => import("react-icons/fa").then((mod) => ({ default: mod.FaLinkedin })));
+
+// Add error boundary for better handling of dynamic imports
+const IconFallback = () => <div>Loading icon...</div>;
 
 const Footer = () => {
   const theme = useSelector((state) => state.theme.mode);
@@ -13,8 +20,15 @@ const Footer = () => {
           StudySync
         </h1>
       </div>
+      <Suspense fallback={<IconFallback />}>
+        <div className="flex justify-center space-x-4">
+          <FaInstagram />
+          <FaGithub />
+          <FaLinkedin />
+        </div>
+      </Suspense>
     </div>
   );
 };
 
-export default Footer;
+export default memo(Footer);

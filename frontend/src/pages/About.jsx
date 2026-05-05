@@ -31,31 +31,37 @@ const About = () => {
       icon: Target,
       title: "The Mission",
       desc: "To provide the world's most intuitive infrastructure for domain-specific group collaboration. Every professional deserves a space that thinks with them.",
-      color: "bg-indigo-600",
+      color: "bg-indigo-500",
       delay: 0.1
     },
     {
       icon: Bot,
       title: "AI First",
       desc: "Our neural sync technology doesn't just store notes; it analyzes, summarizes, and connects technical dots across your professional collectives.",
-      color: "bg-fuchsia-600",
+      color: "bg-purple-500",
       delay: 0.2
-    },
-    {
-      icon: ShieldCheck,
-      title: "Total Privacy",
-      desc: "Military-grade encryption isn't an option; it's our baseline. Your collective intelligence is yours alone, protected by high-end protocol logic.",
-      color: "bg-emerald-600",
-      delay: 0.3
     },
     {
       icon: Globe,
       title: "Global Reach",
       desc: "Syncing technical documentation from New York to Tokyo in under 9ms. A truly distributed experience for a global workforce.",
-      color: "bg-cyan-600",
+      color: "bg-blue-500",
       delay: 0.4
     }
   ];
+
+  const ValueCard = ({ icon: Icon, title, desc, delay, color }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      className={`p-6 rounded-lg shadow-lg ${theme === 'light' ? 'bg-white/80 text-black/90' : 'bg-[#050505]/20 text-black/90'} backdrop-blur-sm`}
+    >
+      <Icon size={32} className="mb-4 text-white" />
+      <h3 className="text-lg font-bold text-white">{title}</h3>
+      <p className="text-sm text-white/80">{desc}</p>
+    </motion.div>
+  );
 
   return (
     <div className={`relative min-h-screen w-full selection:bg-indigo-500/30 font-sans overflow-x-hidden transition-colors ${

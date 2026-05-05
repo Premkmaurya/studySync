@@ -63,7 +63,6 @@ const TechnicalPerformance = () => {
           {[
             { label: "LATENCY", val: "9ms" },
             { label: "UPTIME", val: "99.9%" },
-            { label: "ENCRYPTION", val: "AES256" },
             { label: "NODES", val: "1.2K+" },
           ].map((stat, i) => (
             <div
