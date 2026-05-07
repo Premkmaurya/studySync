@@ -4,6 +4,7 @@ import notesReducer from '../features/notes/notesSlice';
 import groupsReducer from '../features/groups/groupsSlice';
 import chatReducer from '../features/chat/chatSlice';
 import themeReducer from '../features/theme/themeSlice';
+import messagesReducer from '../features/messages/messagesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     groups: groupsReducer,
     chat: chatReducer,
     theme: themeReducer,
+    messages: messagesReducer,
   },
   // Adding middleware example if you needed it for specific things
   middleware: (getDefaultMiddleware) =>

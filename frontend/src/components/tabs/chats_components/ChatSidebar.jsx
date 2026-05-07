@@ -19,21 +19,35 @@ import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/all";
 import { toggleTheme } from "../../../features/theme/themeSlice";
+import { useParams } from "react-router-dom";
+import { addMessage, clearMessages, fetchMessages } from "../../../features/messages/messagesSlice";
 
 const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
   const theme = useSelector((state) => state.theme.mode);
+  const messages = useSelector((state) => state.messages.messages);
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const [socket, setSocket] = useState();
   const [isMaximize, setIsMaximize] = useState(false);
   const dispatch = useDispatch();
 
+  const {groupId} = useParams();
+
   useEffect(() => {
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
-    socketInstance.emit("ai-conversation", { text: aiText });
+    const getMessages = async () => {
+      try {
+        console.log(groupId)
+        const response = await dispatch(fetchMessages({ groupId })
+        );
+        console.log("Fetch response:", response);
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+    getMessages();
     socketInstance.on("ai-conversation-response", (data) => {
       if (!data || !data.text || data.text.trim() === "") return;
 
@@ -42,7 +56,7 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
         text: data.text.trim(),
         isYou: false,
       };
-      setMessages((prevMessages) => [...prevMessages, newMsg]);
+      dispatch(addMessage(newMsg));
     });
 
     setSocket(socketInstance);
@@ -65,9 +79,9 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
     if (socket) {
       socket.emit("ai-conversation", { text });
     }
-    scrollToBottom();
-    setMessages([...messages, newMessageObj]);
+    dispatch(addMessage(newMessageObj));
     setNewMessage("");
+    scrollToBottom();
   };
   const scrollToBottom = () => {
     const container = messagesEndRef.current;
@@ -180,8 +194,10 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`split max-w-[80%] px-4 py-2 text-md ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
-                    msg.isYou ? "bg-white/10 self-end" : "bg-white/20 self-start"
+                  className={`split px-4 py-2 text-md ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
+                    msg.isYou
+                      ? `bg-white/10 self-end`
+                      : `bg-white/20 self-start ${isMaximize ? "w-[60%]" : "w-[80%]"}`
                   }`}
                 >
                   <Markdown rehypePlugins={[rehypeHighlight]}>

@@ -1,4 +1,5 @@
 const messageModel = require("../models/groupChats.model");
+const aiMessageModel = require("../models/aiMessage.model");
 const {
   buildCacheKey,
   getCachedData,
@@ -37,4 +38,38 @@ const getMessages = async (req, res) => {
   });
 };
 
-module.exports = getMessages;
+const getAiChats = async (req, res) => {
+  const { groupId } = req.params;
+  const user = req.user;
+  const cacheKey = buildCacheKey("aiChats:group", groupId);
+
+  const cached = await getCachedData(cacheKey);
+  if (cached) {
+    return res.status(200).json({
+      ...cached,
+      userId: user.id,
+    });
+  }
+
+  const chat = await aiMessageModel
+    .find({groupId:groupId})
+
+  console.log(chat)
+
+  const payload = {
+    message: "AI chats find successfully.",
+    chat,
+  };
+
+  await setCachedData(cacheKey, payload, 30);
+
+  res.status(200).json({
+    ...payload,
+    userId: user.id,
+  });
+};
+
+module.exports = {
+  getMessages,
+  getAiChats,
+};

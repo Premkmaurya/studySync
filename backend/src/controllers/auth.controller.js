@@ -43,7 +43,8 @@ async function registerUser(req, res) {
 
   return res.status(201).json({
     message: "user registered successfully",
-    user,
+    email: user.email,
+    fullname: user.fullname,
   });
 }
 
@@ -85,7 +86,8 @@ async function loginUser(req, res) {
 
   return res.status(200).json({
     message: "user logged in successfully",
-    user,
+    email: user.email,
+    fullname: user.fullname,
   });
 }
 

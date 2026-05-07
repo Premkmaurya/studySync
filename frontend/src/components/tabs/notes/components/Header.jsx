@@ -47,7 +47,7 @@ const Header = ({
           ) : (
             <button
               onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
-              className="p-2.5 bg-white/95 border border-white/10 rounded-xl transition-all text-black"
+              className="p-2.5 bg-white/95 border cursor-pointer border-white/10 rounded-xl transition-all text-black"
             >
               AI Summary
             </button>
