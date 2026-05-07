@@ -31,26 +31,23 @@ const About = () => {
       icon: Target,
       title: "The Mission",
       desc: "To provide the world's most intuitive infrastructure for domain-specific group collaboration. Every professional deserves a space that thinks with them.",
-      color: "bg-indigo-500",
       delay: 0.1
     },
     {
       icon: Bot,
       title: "AI First",
       desc: "Our neural sync technology doesn't just store notes; it analyzes, summarizes, and connects technical dots across your professional collectives.",
-      color: "bg-purple-500",
       delay: 0.2
     },
     {
       icon: Globe,
       title: "Global Reach",
       desc: "Syncing technical documentation from New York to Tokyo in under 9ms. A truly distributed experience for a global workforce.",
-      color: "bg-blue-500",
       delay: 0.4
     }
   ];
 
-  const ValueCard = ({ icon: Icon, title, desc, delay, color }) => (
+  const ValueCard = ({ icon: Icon, title, desc, delay }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}

@@ -30,7 +30,7 @@ const Register = () => {
   const onSubmit = async (data) => {
     try {
       setAuthError("");
-      const response = await dispatch(registerUser(data));
+      const response = await dispatch(registerUser({ ...data }));
       if(response.payload.user) {
         navigate("/find-groups");
       }
