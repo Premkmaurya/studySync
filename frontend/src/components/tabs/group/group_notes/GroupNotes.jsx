@@ -18,7 +18,6 @@ import {
 
 const GroupNotes = () => {
   const theme = useSelector((state) => state.theme.mode);
-  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [hasMoreNotes, setHasMoreNotes] = useState(true);
   const navigate = useNavigate();
@@ -33,10 +32,6 @@ const GroupNotes = () => {
     notesRef.current = notes;
   }, [notes]);
 
-  useEffect(() => {
-    setPage(1);
-    setHasMoreNotes(true);
-  }, [searchTerm, groupId]);
 
   useEffect(() => {
     if (!groupId) return;
@@ -46,19 +41,8 @@ const GroupNotes = () => {
     const loadNotes = async () => {
       dispatch(setLoading(true));
 
-      let res;
-      if (searchTerm.trim()) {
-        res = await dispatch(
-          searchNotes({
-            query: searchTerm.trim(),
-            groupId,
-            page,
-            limit: 8,
-          }),
-        );
-      } else {
-        res = await dispatch(getNoteById({ noteId: groupId, page, limit: 8 }));
-      }
+      let res = await dispatch(getNoteById({ noteId: groupId, page, limit: 8 }));
+
 
       if (isCancelled) return;
 
@@ -78,7 +62,7 @@ const GroupNotes = () => {
       isCancelled = true;
       clearTimeout(timer);
     };
-  }, [groupId, searchTerm, page, dispatch]);
+  }, [groupId, page, dispatch]);
 
   return (
     <div className={`relative w-full min-h-screen p-6 md:p-12 ${theme === "dark" ? "bg-[#0e0e0f] text-slate-200" : "bg-[#f9f9f9] text-[#1a1a1a]"}`}>
@@ -93,25 +77,6 @@ const GroupNotes = () => {
 
           <div className="relative w-full md:w-80 group">
             <div className="absolute -inset-1 rounded-2xl blur opacity-10 group-focus-within:opacity-30 transition-opacity" />
-            <div className={`relative border rounded-full py-3 pl-12 pr-4 flex items-center ${
-              theme === "dark" ? "bg-zinc-900 border-white/5" : "bg-white border-black/10 shadow-sm"
-            }`}>
-              <Search
-                size={18}
-                className={`absolute left-4 transition-colors ${
-                  theme === "dark" ? "text-zinc-600 group-focus-within:text-indigo-400" : "text-zinc-400 group-focus-within:text-indigo-500"
-                }`}
-              />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search archive..."
-                className={`w-full bg-transparent text-sm font-bold outline-none ${
-                  theme === "dark" ? "placeholder:text-white/50 text-white" : "placeholder:text-black/50 text-black"
-                }`}
-              />
-            </div>
           </div>
         </div>
       </section>
@@ -126,7 +91,7 @@ const GroupNotes = () => {
         </div>
       ) : (
         <>
-          <NotesGrid searchTerm={searchTerm} />
+          <NotesGrid />
           {hasMoreNotes && !loading && (
             <div className="flex justify-center mt-8">
               <button
