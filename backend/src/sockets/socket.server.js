@@ -3,6 +3,7 @@ const cookie = require("cookie");
 const { Server } = require("socket.io");
 const messageModel = require("../models/groupChats.model");
 const aiMessageModel = require("../models/aiMessage.model");
+const noteModel = require("../models/note.model");
 const { generateResponse } = require("../services/ai.service");
 const { invalidateByPrefix } = require("../services/cache.service");
 
@@ -128,6 +129,9 @@ function setSocketServer(httpServer) {
         text: messagePayload.text,
       });
 
+      const note = await noteModel.findById(messagePayload.id);
+      if(!note) throw new Error("Note not found");
+
       const chatHistory = await aiMessageModel
         .find({ chatId: messagePayload.chatId })
         .sort({ createdAt: -1 })
@@ -142,7 +146,7 @@ function setSocketServer(httpServer) {
         };
       });
 
-      const response = await generateResponse([...stm], "conversation");
+      const response = await generateResponse([...stm], "conversation", note.content);
 
       socket.emit("ai-conversation-response", {
         text: response,

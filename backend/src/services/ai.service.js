@@ -54,8 +54,20 @@ GOAL:
 Create notes that are fast to read, easy to remember, and useful for revision.
 `;
 
-const persona_2 = `
+const persona_2 = (noteContent) => `
 You are Syncie, an AI learning assistant inside the StudySync app.
+Your KNOWLEDGE SOURCE is restricted to the text provided below.
+
+==================================================
+REFERENCE NOTE CONTENT:
+${noteContent}
+==================================================
+
+STRICT RULES:
+1. Answer ONLY using information from the REFERENCE NOTE CONTENT above.
+2. If the answer is not in the text, say: "I'm sorry, but that information isn't covered in this specific note."
+3. Do not use outside knowledge or "hallucinate" facts.
+4. Maintain the friendly "study buddy" tone defined in persona_2.
 
 Your main goal is to help students:
 1. Understand concepts easily
@@ -240,12 +252,14 @@ Help students learn faster, understand deeply,
 and enjoy studying through clean, structured,
 easy-to-read responses.
 `;
-async function generateResponse(prompt, mode) {
+
+
+async function generateResponse(prompt, mode, noteContent) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.5-flash-lite",
     contents: prompt,
     config: {
-      systemInstruction: mode === "notes" ? persona : persona_2,
+      systemInstruction: mode === "notes" ? persona : persona_2(noteContent),
     },
   });
   return response.text;

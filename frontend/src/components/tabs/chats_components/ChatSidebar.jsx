@@ -26,6 +26,29 @@ import {
   fetchMessages,
 } from "../../../features/messages/messagesSlice";
 
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.warn("Error in message rendering:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <p className="text-white">Error rendering message</p>;
+    }
+    return this.props.children;
+  }
+}
+
 const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
   const theme = useSelector((state) => state.theme.mode);
   const messages = useSelector((state) => state.messages.messages);
@@ -37,25 +60,11 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
 
   const { groupId } = useParams();
 
+  // Initialize socket connection once
   useEffect(() => {
-    // Clear messages when groupId changes
-    dispatch(clearMessages());
-
-    // Establish Socket.io connection
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
-
-    // Fetch existing messages for the group when the component mounts
-    const getMessages = async () => {
-      try {
-        const response = await dispatch(fetchMessages({ groupId, id }));
-        await dispatch(addMessage([...response.payload.chat]));
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    };
-    messages.length === 0 && getMessages();
 
     socketInstance.on("ai-conversation-response", (data) => {
       if (!data || !data.text || data.text.trim() === "") return;
@@ -72,9 +81,32 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
     setSocket(socketInstance);
 
     return () => {
+      socketInstance.off("ai-conversation-response");
       socketInstance.disconnect();
     };
-  }, []);
+  }, [dispatch]);
+
+  // Fetch messages when groupId or id changes
+  useEffect(() => {
+    if (!groupId || !id) return;
+
+    // Clear messages when opening/changing
+    dispatch(clearMessages());
+
+    // Fetch existing messages for the group
+    const getMessages = async () => {
+      try {
+        const response = await dispatch(fetchMessages({ groupId, id }));
+        if (response.payload && response.payload.chat) {
+          dispatch(addMessage([...response.payload.chat]));
+        }
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    };
+
+    getMessages();
+  }, [groupId, id, dispatch]);
 
   // Handle sending a new message
   const handleSendMessage = (e) => {
@@ -111,15 +143,20 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
   }, [messages]);
 
   // GSAP Animations
-  gsap.registerPlugin(useGSAP);
-  gsap.registerPlugin(SplitText);
+  useEffect(() => {
+    gsap.registerPlugin(useGSAP);
+    gsap.registerPlugin(SplitText);
+  }, []);
 
   useGSAP(() => {
     if (isAiPanelOpen) {
-      const splitElements = document.querySelectorAll(".split");
-      if (splitElements.length === 0) return;
-
       try {
+        const splitElements = document.querySelectorAll(".split");
+        if (splitElements.length === 0) return;
+
+        // Revert any previous SplitText instances to prevent conflicts
+        SplitText.revert(".split");
+
         const split = SplitText.create(".split", {
           type: "words, lines",
         });
@@ -137,6 +174,14 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
         console.warn("GSAP animation error:", error);
       }
     }
+
+    return () => {
+      try {
+        SplitText.revert(".split");
+      } catch (e) {
+        // Silently fail if revert fails
+      }
+    };
   }, [isAiPanelOpen, messages]);
 
   return (
@@ -191,11 +236,18 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
       {messages.filter((msg) => msg.text && msg.text.trim() !== "").length ===
       0 ? (
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
-          <MessageSquare size={48} className={theme === "dark" ? "text-zinc-700" : "text-zinc-400"} />
-          <h3 className={`text-sm font-bold uppercase tracking-widest ${theme === "dark" ? "text-zinc-500" : "text-zinc-500"}`}>
+          <MessageSquare
+            size={48}
+            className={theme === "dark" ? "text-zinc-700" : "text-zinc-400"}
+          />
+          <h3
+            className={`text-sm font-bold uppercase tracking-widest ${theme === "dark" ? "text-zinc-500" : "text-zinc-500"}`}
+          >
             No messages yet
           </h3>
-          <p className={`text-xs ${theme === "dark" ? "text-zinc-600" : "text-zinc-500"}`}>
+          <p
+            className={`text-xs ${theme === "dark" ? "text-zinc-600" : "text-zinc-500"}`}
+          >
             Start the conversation by sending a message to the AI.
           </p>
         </div>
@@ -206,9 +258,9 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
         >
           {messages
             .filter((msg) => msg.text && msg.text.trim() !== "")
-            .map((msg) => (
+            .map((msg, index) => (
               <div
-                key={msg._id}
+                key={msg._id || msg.id || index}
                 className={`flex items-start gap-3 ${
                   msg.role === "user" || msg.isYou
                     ? "justify-end"
@@ -220,47 +272,60 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                   layout
-                  className={`split px-8 py-7 text-base leading-9 w-full max-w-4xl rounded-3xl backdrop-blur-xl border border-white/10 shadow-2xl ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
+                  className={`split px-8 py-7 text-base leading-9 w-full max-w-4xl rounded-3xl backdrop-blur-xl border border-white/10 ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
                     msg.role === "user" || msg.isYou
                       ? `bg-white/10 self-end text-right`
                       : `bg-white/20 self-start text-left`
                   }`}
                 >
-                  <Markdown
-                    rehypePlugins={[rehypeHighlight]}
-                    components={{
+                  <ErrorBoundary>
+                    <Markdown
+                      rehypePlugins={[rehypeHighlight]}
+                      components={{
                       h1: ({ children }) => (
-                        <h1 className={`text-3xl font-black mt-8 mb-5 ${theme === "dark" ? "text-indigo-400" : "text-indigo-600"}`}>
+                        <h1
+                          className={`text-3xl font-black mt-8 mb-5 ${theme === "dark" ? "text-indigo-400" : "text-indigo-600"}`}
+                        >
                           {children}
                         </h1>
                       ),
 
                       h2: ({ children }) => (
-                        <h2 className={`text-2xl font-bold mt-7 mb-4 ${theme === "dark" ? "text-white" : "text-black"}`}>
+                        <h2
+                          className={`text-2xl font-bold mt-7 mb-4 ${theme === "dark" ? "text-white" : "text-black"}`}
+                        >
                           {children}
                         </h2>
                       ),
 
                       h3: ({ children }) => (
-                        <h3 className={`text-xl font-semibold mt-6 mb-3 ${theme === "dark" ? "text-zinc-200" : "text-zinc-800"}`}>
+                        <h3
+                          className={`text-xl font-semibold mt-6 mb-3 ${theme === "dark" ? "text-zinc-200" : "text-zinc-800"}`}
+                        >
                           {children}
                         </h3>
                       ),
 
                       p: ({ children }) => (
-                        <p className={`leading-9 text-[17px] mb-5 ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}>
+                        <p
+                          className={`leading-9 text-[17px] mb-5 ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}
+                        >
                           {children}
                         </p>
                       ),
 
                       ul: ({ children }) => (
-                        <ul className={`space-y-3 ml-5 mb-5 list-disc ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}>
+                        <ul
+                          className={`space-y-3 ml-5 mb-5 list-disc ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}
+                        >
                           {children}
                         </ul>
                       ),
 
                       ol: ({ children }) => (
-                        <ol className={`space-y-3 ml-5 mb-5 list-decimal ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}>
+                        <ol
+                          className={`space-y-3 ml-5 mb-5 list-decimal ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}
+                        >
                           {children}
                         </ol>
                       ),
@@ -270,14 +335,18 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
                       ),
 
                       strong: ({ children }) => (
-                        <strong className={`font-bold ${theme === "dark" ? "text-white" : "text-black"}`}>
+                        <strong
+                          className={`font-bold ${theme === "dark" ? "text-white" : "text-black"}`}
+                        >
                           {children}
                         </strong>
                       ),
 
                       code({ inline, className, children }) {
                         return inline ? (
-                          <code className={`px-2 py-1 rounded ${theme === "dark" ? "bg-zinc-800 text-indigo-300" : "bg-zinc-200 text-indigo-700"}`}>
+                          <code
+                            className={`px-2 py-1 rounded ${theme === "dark" ? "bg-zinc-800 text-indigo-300" : "bg-zinc-200 text-indigo-700"}`}
+                          >
                             {children}
                           </code>
                         ) : (
@@ -288,17 +357,8 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
                   >
                     {msg.text}
                   </Markdown>
+                  </ErrorBoundary>
                 </motion.div>
-                {(msg.role === "user" || msg.isYou) && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: 0.1 }}
-                    className="p-2.5 bg-indigo-600 rounded-2xl shadow-[0_0_25px_rgba(79,70,229,0.5)]"
-                  >
-                    <Wand2 size={16} className="text-white" />
-                  </motion.div>
-                )}
               </div>
             ))}
 
