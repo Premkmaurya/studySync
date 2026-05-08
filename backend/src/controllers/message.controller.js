@@ -40,6 +40,7 @@ const getMessages = async (req, res) => {
 
 const getAiChats = async (req, res) => {
   const { groupId, id } = req.params;
+
   const user = req.user;
   const cacheKey = buildCacheKey("aiChats:group", groupId);
 
@@ -50,13 +51,11 @@ const getAiChats = async (req, res) => {
       userId: user.id,
     });
   }
-
   const chat = await aiMessageModel.find({
     noteId: id,
     groupId: groupId,
     userId: user.id,
   });
-
   const payload = {
     message: "AI chats find successfully.",
     chat,
