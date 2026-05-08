@@ -122,6 +122,8 @@ function setSocketServer(httpServer) {
       }
       await aiMessageModel.create({
         userId: socket.user.id,
+        groupId: messagePayload.groupId,
+        noteId: messagePayload.noteId,
         role: "user",
         text: messagePayload.text,
       });
@@ -147,6 +149,8 @@ function setSocketServer(httpServer) {
       });
       await aiMessageModel.create({
         userId: socket.user.id,
+        groupId: messagePayload.groupId,
+        noteId: messagePayload.noteId,
         role: "model",
         text: response,
       });

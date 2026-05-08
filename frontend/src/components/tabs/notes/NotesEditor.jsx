@@ -42,6 +42,7 @@ export default function NotesEditor() {
   const { groupId } = useParams();
   const groupName = location.state?.groupName || "Unknown Group";
   const profession = location.state?.profession || "Unknown Profession";
+  const id = location.state?.id || null;
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -72,6 +73,7 @@ export default function NotesEditor() {
           isModalOpen ? "blur-sm" : ""
         } relative ${theme === "dark" ? "bg-[#0e0e0f]" : "bg-[#ffffff]"}`}
       >
+        {/* Background Elements */}
         <div className="absolute top-0 -left-20 w-[700px] h-[700px] bg-indigo-600/5 blur-[160px] rounded-full pointer-events-none" />
         <div className="absolute bottom-0 -right-20 w-[600px] h-[600px] bg-fuchsia-600/5 blur-[160px] rounded-full pointer-events-none" />
 
@@ -107,6 +109,7 @@ export default function NotesEditor() {
         <AnimatePresence>
           {isAiPanelOpen && (
             <ChatSidebar
+              id={id}
               isAiPanelOpen={isAiPanelOpen}
               setIsAiPanelOpen={setIsAiPanelOpen}
               aiText={aiText}

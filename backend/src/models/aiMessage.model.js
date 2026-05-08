@@ -15,6 +15,11 @@ const aiMessageSchema = new Schema(
             ref: 'group',
             index: true
         },
+        noteId: {
+            type: Schema.Types.ObjectId,
+            ref: 'note',
+            index: true
+        },
         role:{
             type:String,
             enum:["user","model"],

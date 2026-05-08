@@ -1,20 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchMessagesApi } from "./messageApi";
 
-
 export const fetchMessages = createAsyncThunk(
   "messages/fetchMessages",
-  async ({ groupId} = {}, thunkAPI) => {
+  async ({ groupId, id } = {}, thunkAPI) => {
     try {
-      return await fetchMessagesApi(groupId);
+      return await fetchMessagesApi(groupId, id);
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to fetch messages"
+        error.response?.data?.message || "Failed to fetch messages",
       );
     }
-  }
+  },
 );
-
 
 const initialState = {
   messages: [],
@@ -25,11 +23,17 @@ const messagesSlice = createSlice({
   initialState,
   reducers: {
     addMessage: (state, action) => {
-      state.messages.push(action.payload);
+      if (Array.isArray(action.payload)) {
+        // If it's a batch of messages
+        state.messages.push(...action.payload);
+      } else {
+        // If it's just one message
+        state.messages.push(action.payload);
+      }
     },
     removeMessage: (state, action) => {
       state.messages = state.messages.filter(
-        (message) => message.id !== action.payload
+        (message) => message.id !== action.payload,
       );
     },
     clearMessages: (state) => {
@@ -38,6 +42,7 @@ const messagesSlice = createSlice({
   },
 });
 
-export const { addMessage, removeMessage, clearMessages } = messagesSlice.actions;
+export const { addMessage, removeMessage, clearMessages } =
+  messagesSlice.actions;
 
 export default messagesSlice.reducer;

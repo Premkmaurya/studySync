@@ -158,6 +158,7 @@ const NotesGrid = () => {
                   navigate(`/group/${groupId}/note`, {
                     state: {
                       isViewOnly: true,
+                      id: article._id,
                       content: article.content,
                       title: article.title,
                       groupName: article.groupId.name,

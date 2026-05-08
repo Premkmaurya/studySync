@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/:groupId",authMiddleware,messageController.getMessages)
 
-router.get("/ai/:groupId",authMiddleware,messageController.getAiChats)
+router.get("/ai/:groupId/:id",authMiddleware,messageController.getAiChats)
 
 
 module.exports = router;

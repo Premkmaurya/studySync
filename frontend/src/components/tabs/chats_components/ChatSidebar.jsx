@@ -20,34 +20,42 @@ import { useGSAP } from "@gsap/react";
 import { SplitText } from "gsap/all";
 import { toggleTheme } from "../../../features/theme/themeSlice";
 import { useParams } from "react-router-dom";
-import { addMessage, clearMessages, fetchMessages } from "../../../features/messages/messagesSlice";
+import {
+  addMessage,
+  clearMessages,
+  fetchMessages,
+} from "../../../features/messages/messagesSlice";
 
-const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
+const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
   const theme = useSelector((state) => state.theme.mode);
   const messages = useSelector((state) => state.messages.messages);
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
   const [socket, setSocket] = useState();
-  const [isMaximize, setIsMaximize] = useState(false);
   const dispatch = useDispatch();
 
-  const {groupId} = useParams();
+  const { groupId } = useParams();
 
   useEffect(() => {
+    // Clear messages when groupId changes
+    dispatch(clearMessages());
+
+    // Establish Socket.io connection
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
+
+    // Fetch existing messages for the group when the component mounts
     const getMessages = async () => {
       try {
-        console.log(groupId)
-        const response = await dispatch(fetchMessages({ groupId })
-        );
-        console.log("Fetch response:", response);
+        const response = await dispatch(fetchMessages({ groupId, id }));
+        await dispatch(addMessage([...response.payload.chat]));
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
-    getMessages();
+    messages.length === 0 && getMessages();
+
     socketInstance.on("ai-conversation-response", (data) => {
       if (!data || !data.text || data.text.trim() === "") return;
 
@@ -66,6 +74,7 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
     };
   }, []);
 
+  // Handle sending a new message
   const handleSendMessage = (e) => {
     e.preventDefault();
     const text = newMessage.trim();
@@ -75,24 +84,30 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
       id: messages.length + 1,
       text,
       isYou: true,
+      role: "user",
     };
     if (socket) {
-      socket.emit("ai-conversation", { text });
+      socket.emit("ai-conversation", { text, groupId, id });
     }
     dispatch(addMessage(newMessageObj));
     setNewMessage("");
     scrollToBottom();
   };
+
+  // Scroll to bottom whenever messages change
   const scrollToBottom = () => {
     const container = messagesEndRef.current;
     if (container) {
       container.scrollTop = container.scrollHeight + 10; // Scroll to bottom with some extra space
     }
   };
+
+  // Scroll to bottom whenever messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  // GSAP Animations
   gsap.registerPlugin(useGSAP);
   gsap.registerPlugin(SplitText);
 
@@ -115,24 +130,24 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
   return (
     <motion.aside
       layout
-      initial={{ x: 400, opacity: 0 }}
+      initial={{ opacity: 0 }}
       animate={{
-        x: 0,
         opacity: 1,
-        width: isMaximize ? "100%" : "340px",
-        inset: isMaximize ? "0px" : "128px 32px 40px auto",
+        width: "100%",
+        inset: "0px",
       }}
-      exit={{ x: 400, opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       className={`fixed p-6 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
         theme === "light"
           ? "bg-white text-black border-black/10"
           : "bg-zinc-950/80 text-white border-white/10"
-      } ${isMaximize ? "rounded-0" : "rounded-[40px]"}`}
+      }"rounded-0"`}
       style={{
-        top: isMaximize ? 0 : undefined,
-        right: isMaximize ? 0 : undefined,
-        bottom: isMaximize ? 0 : undefined,
-        left: isMaximize ? 0 : undefined,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
       }}
     >
       <div className="flex items-center justify-between mb-3">
@@ -153,14 +168,8 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
         </div>
         <span className="flex items-center gap-2">
           <button
-            onClick={() => setIsMaximize(!isMaximize)}
-            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
-          >
-            <Maximize2 size={18} className="text-zinc-500" />
-          </button>
-          <button
             onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
-            className="p-2 hover:bg-white/5 rounded-lg transition-colors"
+            className="p-2 hover:bg-white/5 cursor-pointer rounded-lg transition-colors"
           >
             <X size={18} className="text-zinc-500" />
           </button>
@@ -188,23 +197,28 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen }) => {
             .map((msg) => (
               <div
                 key={msg.id}
-                className={`flex items-start gap-3 ${msg.isYou ? "justify-end" : "justify-start"}`}
+                className={`flex items-start gap-3 ${
+                  msg.role === "user" || msg.isYou
+                    ? "justify-end"
+                    : "justify-start"
+                }`}
               >
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className={`split px-4 py-2 text-md ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
-                    msg.isYou
-                      ? `bg-white/10 self-end`
-                      : `bg-white/20 self-start ${isMaximize ? "w-[60%]" : "w-[80%]"}`
+                  layout
+                  className={`split px-4 py-2 text-md w-[80%] transition-all ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
+                    msg.role === "user" || msg.isYou
+                      ? `bg-white/10 self-end text-right`
+                      : `bg-white/20 self-start text-left`
                   }`}
                 >
                   <Markdown rehypePlugins={[rehypeHighlight]}>
                     {msg.text}
                   </Markdown>
                 </motion.div>
-                {msg.isYou && (
+                {(msg.role === "user" || msg.isYou) && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
