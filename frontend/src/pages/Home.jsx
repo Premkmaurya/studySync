@@ -20,14 +20,14 @@ import Footer from "../components/home/footer/Footer";
 
 const Skill = ({ theme }) => (
   <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-10">
-    {(
-      [
+    {
+      ([
         { label: "Engineering", icon: Terminal, val: "98%" },
         { label: "Neural Net", icon: Bot, val: "92%" },
         { label: "Security", icon: ShieldCheck, val: "99%" },
         { label: "Architecture", icon: Cpu, val: "95%" },
       ],
-      i => (
+      (i) => (
         <div
           key={i}
           className={`p-6 rounded-3xl border text-center group hover:border-indigo-500/30 transition-all ${theme === "dark" ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"}`}
@@ -36,13 +36,17 @@ const Skill = ({ theme }) => (
             className="mx-auto mb-4 text-indigo-400 group-hover:scale-110 transition-transform"
             size={32}
           />
-          <div className={`text-xl font-black ${theme === "dark" ? "text-white" : "text-black"}`}>{s.val}</div>
+          <div
+            className={`text-xl font-black ${theme === "dark" ? "text-white" : "text-black"}`}
+          >
+            {s.val}
+          </div>
           <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
             {s.label}
           </div>
         </div>
-      )
-    )}
+      ))
+    }
   </div>
 );
 
@@ -52,7 +56,7 @@ const BentoCard = ({
   icon: Icon,
   span = "col-span-1",
   color = "bg-indigo-500",
-  theme
+  theme,
 }) => (
   <div
     className={`relative p-8 rounded-[32px] border overflow-hidden group ${span} ${theme === "dark" ? "bg-zinc-900/40 border-white/5" : "bg-zinc-100/40 border-black/5"}`}
@@ -60,8 +64,15 @@ const BentoCard = ({
     <div
       className={`absolute -top-10 -right-10 w-32 h-32 blur-3xl opacity-10 group-hover:opacity-20 transition-opacity ${color}`}
     />
-    <Icon className={`mb-6 ${theme === "dark" ? "text-white" : "text-black"}`} size={28} />
-    <h4 className={`text-xl font-black mb-2 ${theme === "dark" ? "text-white" : "text-black"}`}>{title}</h4>
+    <Icon
+      className={`mb-6 ${theme === "dark" ? "text-white" : "text-black"}`}
+      size={28}
+    />
+    <h4
+      className={`text-xl font-black mb-2 ${theme === "dark" ? "text-white" : "text-black"}`}
+    >
+      {title}
+    </h4>
     <p className="text-sm text-zinc-500 leading-relaxed">{desc}</p>
   </div>
 );
@@ -100,7 +111,9 @@ const Home = () => {
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
   return (
-    <div className={`relative selection:bg-indigo-500/30 font-sans overflow-x-hidden ${theme === "dark" ? "bg-[#050505] text-slate-200" : "bg-[#f9f9f9] text-[#1a1a1a]"}`}>
+    <div
+      className={`relative selection:bg-indigo-500/30 font-sans overflow-x-hidden ${theme === "dark" ? "bg-[#050505] text-slate-200" : "bg-[#f9f9f9] text-[#1a1a1a]"}`}
+    >
       {/* 1. THE GLOBAL STAGE (Background Effects) */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-indigo-600/10 blur-[150px] rounded-full" />
@@ -166,13 +179,17 @@ const Home = () => {
       </motion.div>
 
       {/* 3. SKILL SECTION STAGE */}
-      <section className={`relative z-10 py-18 border-y ${theme === "dark" ? "bg-white/[0.01] border-white/5" : "bg-black/[0.02] border-black/5"}`}>
+      <section
+        className={`relative z-10 py-18 border-y ${theme === "dark" ? "bg-white/[0.01] border-white/5" : "bg-black/[0.02] border-black/5"}`}
+      >
         <div className="max-w-7xl mx-auto px-10">
           <div className="mb-20 text-center">
             <span className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-4 block">
               Domain_Focus
             </span>
-            <h2 className={`text-4xl md:text-6xl font-black tracking-tighter uppercase ${theme === "dark" ? "text-white" : "text-black"}`}>
+            <h2
+              className={`text-4xl md:text-6xl font-black tracking-tighter uppercase ${theme === "dark" ? "text-white" : "text-black"}`}
+            >
               Multidisciplinary Mastery
             </h2>
           </div>
@@ -193,7 +210,9 @@ const Home = () => {
           </div>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-10">
-            <h2 className={`capitalize font-black text-6xl md:text-9xl tracking-tighter leading-[0.8] ${theme === "dark" ? "text-white" : "text-black"}`}>
+            <h2
+              className={`capitalize font-black text-6xl md:text-9xl tracking-tighter leading-[0.8] ${theme === "dark" ? "text-white" : "text-black"}`}
+            >
               Predictive <br />{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-indigo-500">
                 Syncing.
@@ -215,7 +234,9 @@ const Home = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between px-10 mb-24">
             <div className="flex items-center gap-6">
-              <h2 className={`text-5xl font-black tracking-tighter uppercase ${theme === "dark" ? "text-white" : "text-black"}`}>
+              <h2
+                className={`text-5xl font-black tracking-tighter uppercase ${theme === "dark" ? "text-white" : "text-black"}`}
+              >
                 Collectives
               </h2>
               <div className="h-[2px] w-48 bg-gradient-to-r from-indigo-500 to-transparent" />
@@ -228,7 +249,9 @@ const Home = () => {
       </section>
 
       {/* 6. FAQ SECTION */}
-      <section className={`relative z-10 pt-28 ${theme === "dark" ? "bg-[#080808]" : "bg-[#f1f1f1]"}`}>
+      <section
+        className={`relative z-10 pt-28 ${theme === "dark" ? "bg-[#080808]" : "bg-[#f1f1f1]"}`}
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center">
             <div className="flex items-center justify-center gap-4 mb-8">
@@ -238,7 +261,9 @@ const Home = () => {
               </span>
               <div className="h-px w-12 bg-indigo-500/50" />
             </div>
-            <h2 className={`text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] ${theme === "dark" ? "text-white" : "text-black"}`}>
+            <h2
+              className={`text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] ${theme === "dark" ? "text-white" : "text-black"}`}
+            >
               Frequent <br /> Protocols.
             </h2>
           </div>
@@ -247,7 +272,9 @@ const Home = () => {
       </section>
 
       {/* 7. THE LEGACY FOOTER (Consolidated) */}
-      <footer className={`relative z-10 w-screen overflow-x-hidden ${theme === "dark" ? "bg-black" : "bg-[#e5e5e5]"}`}>
+      <footer
+        className={`relative z-10 w-screen overflow-x-hidden ${theme === "dark" ? "bg-black" : "bg-[#e5e5e5]"}`}
+      >
         <Footer />
       </footer>
 

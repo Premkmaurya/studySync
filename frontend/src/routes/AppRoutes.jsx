@@ -18,6 +18,9 @@ const Home = lazy(() => import("../pages/Home"));
 const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/Contact"));
 const Features = lazy(() => import("../pages/Features"));
+const TermsAndConditions = lazy(() => import("../pages/TermsAndConditions"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
+const Changelog = lazy(() => import("../pages/Changelog"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 const GroupMembers = lazy(() => import("../components/tabs/group/group_member/GroupMembers"));
 
@@ -33,6 +36,9 @@ const AppRoutes = () => {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/features" element={<Features />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/changelog" element={<Changelog />} />
         <Route element={<MainLayout />}>
           <Route path="/home" element={<TabHome />} />
           <Route path="/find-groups" element={<AllGroups />} />

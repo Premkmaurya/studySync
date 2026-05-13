@@ -12,8 +12,10 @@ const IconFallback = () => <div>Loading icon...</div>;
 
 const Footer = () => {
   const theme = useSelector((state) => state.theme.mode);
+
+
   return (
-    <div className={`min-w-screen min-h-screen overflow-hidden ${theme === "dark" ? "bg-[#080808]" : "bg-[#f1f1f1]"}`}>
+    <div className={`min-w-screen overflow-hidden ${theme === "dark" ? "bg-[#080808]" : "bg-[#f1f1f1]"}`}>
       <Social theme={theme} />
       <div className="w-full px-5 flex items-center justify-center">
         <h1 className="uppercase text-[14vw] leading-none font-bold bg-linear-to-b from-[#b1c9f5] via-[#AAC4F5] to-[#111] bg-clip-text text-transparent">
@@ -27,6 +29,15 @@ const Footer = () => {
           <FaLinkedin />
         </div>
       </Suspense>
+      
+      {/* Copyright */}
+      <div className={`text-center py-6 border-t ${
+        theme === "light" ? "border-black/10 text-gray-500" : "border-white/10 text-zinc-500"
+      }`}>
+        <p className="text-xs font-medium">
+          © {new Date().getFullYear()} StudySync. All rights reserved.
+        </p>
+      </div>
     </div>
   );
 };
