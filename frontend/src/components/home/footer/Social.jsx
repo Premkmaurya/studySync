@@ -9,7 +9,7 @@ const footerLinks = [
   },
   {
     title: "Documentation",
-    links: ["Changelog", "Privacy Policy", "T & C"],
+    links: ["Changelog", "Privacy Policy", "Terms-And-Conditions"],
   },
   {
     title: "Other Pages",
