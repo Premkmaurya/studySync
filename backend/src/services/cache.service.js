@@ -1,3 +1,4 @@
+const config = require("../config/config");
 const DEFAULT_TTL_SECONDS = 60;
 
 const memoryCache = new Map();
@@ -13,7 +14,7 @@ function buildCacheKey(...parts) {
 }
 
 async function initCache() {
-  const redisUrl = process.env.REDIS_URL;
+  const redisUrl = config.REDIS_URL;
 
   if (!redisUrl) {
     console.log("⚠️ REDIS_URL not set. Using in-memory cache fallback.");
