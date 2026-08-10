@@ -2,6 +2,7 @@ const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const uploadImage = require("../services/image.service");
+const config = require("../config/config")
 
 async function registerUser(req, res) {
   const { firstname, lastname, email, password } = req.body;
@@ -29,7 +30,7 @@ async function registerUser(req, res) {
       email: user.email,
       fullname: user.fullname,
     },
-    process.env.JWT_SECRET_KEY,
+    config.JWT_SECRET_KEY,
     {
       expiresIn: "1d",
     },
@@ -71,7 +72,7 @@ async function loginUser(req, res) {
       email: user.email,
       fullname: user.fullname,
     },
-    process.env.JWT_SECRET_KEY,
+    config.JWT_SECRET_KEY,
     {
       expiresIn: "365d",
     },

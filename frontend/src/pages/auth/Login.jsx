@@ -1,33 +1,24 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/auth/authSlice";
 import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import {
-  Mail,
-  Lock,
-  ArrowRight,
-  Sparkles,
-  Bot,
-  Zap,
-  ChevronLeft,
-  Github,
-  Chrome,
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
-const LoginForm = () => {
+const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.theme?.mode || "dark");
   const reduxLoading = useSelector(selectAuthLoading);
   const reduxError = useSelector(selectAuthError);
+  
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
+  
   const [authError, setAuthError] = useState("");
 
   const onSubmit = async (data) => {
@@ -40,203 +31,139 @@ const LoginForm = () => {
     }
   };
 
+  const isDarkMode = theme === "dark";
+
   return (
-    <div className={`h-screen w-full flex flex-col lg:flex-row overflow-hidden ${theme === "dark" ? "bg-[#050505]" : "bg-[#f9f9f9]"}`}>
-      {/* 1. LEFT SIDE: VISUAL ANCHOR (Hidden on small mobile if needed, but here made responsive) */}
-      <motion.section
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="relative w-full lg:w-1/2 h-[40vh] lg:h-full overflow-hidden group"
-      >
-        {/* Background Image with Neural Overlay */}
+    <div className={`min-h-screen w-full flex flex-col md:flex-row ${isDarkMode ? "bg-zinc-950 text-white" : "bg-white text-gray-900"}`}>
+      {/* Left side: Visual Image */}
+      <div className="w-full md:w-1/2 hidden md:block h-screen overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=2000"
-          className="absolute inset-0 w-full h-full object-cover brightness-[0.4] group-hover:scale-105 transition-transform duration-1000"
-          alt="Collective Sync"
+          className="h-full w-full object-cover"
+          src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/leftSideImage.png"
+          alt="leftSideImage"
         />
-        <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-black/60 via-transparent to-transparent z-10" />
+      </div>
 
-        {/* Cinematic Content */}
-        <div className="relative z-20 h-full flex flex-col justify-end p-10 lg:p-20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-3 mb-6"
-          >
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black font-black italic shadow-2xl">
-              S
-            </div>
-            <span className="text-xl font-black tracking-tighter uppercase text-white">
-              StudySync_AI
-            </span>
-          </motion.div>
-
-          <h2 className="text-4xl lg:text-7xl font-black tracking-tighter text-white leading-[0.9] mb-6">
-            ENTER THE <br />{" "}
-            <span className="text-indigo-500">COLLECTIVE.</span>
+      {/* Right side: Form container */}
+      <div className="w-full md:w-1/2 min-h-screen flex flex-col items-center justify-center p-6 md:p-12">
+        <form onSubmit={handleSubmit(onSubmit)} className="md:w-96 w-80 flex flex-col items-center justify-center">
+          <h2 className={`text-4xl font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
+            Sign in
           </h2>
-          <p className="text-zinc-400 max-w-md font-medium leading-relaxed">
-            Your intelligence, synchronized. Join 12,000+ professionals
-            architecture-syncing their knowledge bases.
+
+          <p className={`text-sm mt-3 ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
+            Welcome back! Please sign in to continue
           </p>
-        </div>
-      </motion.section>
 
-      {/* 2. RIGHT SIDE: THE GLASS PORTAL */}
-      <section className="relative w-full lg:w-1/2 h-full flex items-center justify-center p-6 lg:p-8">
-        {/* Background Mesh for depth */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 blur-[120px] pointer-events-none" />
+          <button
+            type="button"
+            className={`w-full mt-8 flex items-center justify-center h-12 rounded-full transition-colors ${
+              isDarkMode ? "bg-zinc-800/80 hover:bg-zinc-800" : "bg-gray-500/10 hover:bg-gray-500/20"
+            }`}
+          >
+            <img
+              src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/googleLogo.svg"
+              alt="googleLogo"
+            />
+          </button>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 lg:p-10 backdrop-blur-3xl relative z-30 overflow-hidden"
-        >
-          {/* Form Header */}
-          <div className="text-center mb-6">
-            <div className="inline-flex p-3 rounded-2xl mb-4 text-indigo-400 bg-indigo-500/10">
-              <Bot size={28} />
-            </div>
-            <h3 className={`text-2xl font-black tracking-tight uppercase ${theme === "dark" ? "text-white" : "text-black"}`}>
-              Neural Uplink
-            </h3>
-            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1">
-              Provide your credentials to sync
+          <div className="flex items-center gap-4 w-full my-5">
+            <div className={`w-full h-px ${isDarkMode ? "bg-zinc-800" : "bg-gray-300/90"}`}></div>
+            <p className={`w-full text-nowrap text-sm ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
+              or sign in with email
             </p>
+            <div className={`w-full h-px ${isDarkMode ? "bg-zinc-800" : "bg-gray-300/90"}`}></div>
           </div>
 
-          {authError && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-[10px] font-bold text-red-400 text-center uppercase tracking-widest">
-              {authError}
+          {(authError || reduxError) && (
+            <div className="w-full mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-xs text-red-500 text-center font-medium">
+              {authError || reduxError}
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {/* Email Input */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-zinc-600 tracking-[0.2em] uppercase ml-2">
-                Uplink_ID (Email)
+          {/* Email input */}
+          <div className="w-full flex flex-col">
+            <div className={`flex items-center w-full bg-transparent border h-12 rounded-full overflow-hidden pl-6 gap-2 transition-colors ${
+              errors.email ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
+            }`}>
+              <input
+                type="email"
+                placeholder="Email id"
+                {...register("email", { required: "Email is required" })}
+                className={`bg-transparent outline-none text-sm w-full h-full ${
+                  isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
+                }`}
+              />
+            </div>
+            {errors.email && (
+              <span className="text-xs text-red-500 ml-4 mt-1">{errors.email.message}</span>
+            )}
+          </div>
+
+          {/* Password input */}
+          <div className="w-full flex flex-col mt-6">
+            <div className={`flex items-center w-full bg-transparent border h-12 rounded-full overflow-hidden pl-6 gap-2 transition-colors ${
+              errors.password ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
+            }`}>
+              <input
+                type="password"
+                placeholder="Password"
+                {...register("password", { required: "Password is required" })}
+                className={`bg-transparent outline-none text-sm w-full h-full ${
+                  isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
+                }`}
+              />
+            </div>
+            {errors.password && (
+              <span className="text-xs text-red-500 ml-4 mt-1">{errors.password.message}</span>
+            )}
+          </div>
+
+          {/* Remember me & Forgot Password */}
+          <div className={`w-full flex items-center justify-between mt-8 ${isDarkMode ? "text-zinc-400" : "text-gray-500/80"}`}>
+            <div className="flex items-center gap-2">
+              <input
+                className="h-5 w-5 accent-indigo-500 rounded cursor-pointer"
+                type="checkbox"
+                id="checkbox"
+              />
+              <label className="text-sm cursor-pointer select-none" htmlFor="checkbox">
+                Remember me
               </label>
-              <div className="relative group">
-                <Mail
-                  size={18}
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
-                />
-                <input
-                  type="email"
-                  {...register("email", { required: "Uplink ID is required" })}
-                  placeholder="name@studysync.ai"
-                  className={`w-full rounded-2xl py-3 pl-14 pr-6 text-sm font-bold outline-none transition-all ${theme === "dark" ? "bg-white/5 border border-white/10 text-white focus:border-indigo-500/50 focus:bg-white/[0.08] placeholder:text-zinc-800" : "bg-black/5 border border-black/10 text-black focus:border-indigo-500/50 focus:bg-black/[0.08] placeholder:text-zinc-400"}`}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-[10px] text-red-500 font-bold ml-2">
-                  {errors.email.message}
-                </p>
-              )}
             </div>
 
-            {/* Password Input */}
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-zinc-600 tracking-[0.2em] uppercase ml-2">
-                Pass_Key
-              </label>
-              <div className="relative group">
-                <Lock
-                  size={18}
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-zinc-600 group-focus-within:text-indigo-400 transition-colors"
-                />
-                <input
-                  type="password"
-                  {...register("password", {
-                    required: "Pass Key is required",
-                  })}
-                  placeholder="••••••••"
-                  className={`w-full rounded-2xl py-3 pl-14 pr-6 text-sm font-bold outline-none transition-all ${theme === "dark" ? "bg-white/5 border border-white/10 text-white focus:border-indigo-500/50 focus:bg-white/[0.08] placeholder:text-zinc-800" : "bg-black/5 border border-black/10 text-black focus:border-indigo-500/50 focus:bg-black/[0.08] placeholder:text-zinc-400"}`}
-                />
-              </div>
-              {errors.password && (
-                <p className="text-[10px] text-red-500 font-bold ml-2">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
+            <span className="text-sm underline cursor-pointer hover:text-indigo-400 transition-colors">
+              Forgot password?
+            </span>
+          </div>
 
-            {/* Actions */}
-            <div className="pt-4 flex flex-col gap-4">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={isSubmitting || reduxLoading}
-                className={`group flex items-center justify-center gap-4 py-4 rounded-3xl text-xs font-black uppercase tracking-[0.2em] transition-all ${theme === "dark" ? "bg-white text-black hover:bg-indigo-50" : "bg-black text-white hover:bg-indigo-950"}`}
-              >
-                {isSubmitting || reduxLoading ? (
-                  <Zap size={18} className="animate-spin text-indigo-600" />
-                ) : (
-                  <>
-                    Initialize Sync{" "}
-                    <ArrowRight
-                      size={16}
-                      className="group-hover:translate-x-1 transition-transform"
-                    />
-                  </>
-                )}
-              </motion.button>
+          {/* Submit button */}
+          <button
+            type="submit"
+            disabled={isSubmitting || reduxLoading}
+            className="mt-8 w-full h-11 rounded-full text-white bg-indigo-500 hover:bg-indigo-600 transition-all font-medium flex items-center justify-center disabled:opacity-50 cursor-pointer"
+          >
+            {isSubmitting || reduxLoading ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              "Login"
+            )}
+          </button>
 
-              <div className="flex items-center gap-4 py-2">
-                <div className={`h-px flex-1 ${theme === "dark" ? "bg-white/5" : "bg-black/10"}`} />
-                <span className="text-[8px] font-black text-zinc-700 uppercase tracking-widest">
-                  Or Auth Via
-                </span>
-                <div className={`h-px flex-1 ${theme === "dark" ? "bg-white/5" : "bg-black/10"}`} />
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  className={`flex-1 py-3 border rounded-2xl flex items-center justify-center transition-all ${theme === "dark" ? "bg-white/5 border-white/10 hover:bg-white/10 text-white" : "bg-black/5 border-black/10 hover:bg-black/10 text-black"}`}
-                >
-                  <Chrome size={18} />
-                </button>
-                <button
-                  type="button"
-                  className={`flex-1 py-3 border rounded-2xl flex items-center justify-center transition-all ${theme === "dark" ? "bg-white/5 border-white/10 hover:bg-white/10 text-white" : "bg-black/5 border-black/10 hover:bg-black/10 text-black"}`}
-                >
-                  <Github size={18} />
-                </button>
-              </div>
-            </div>
-
-            {/* Register Path */}
-            <div className="mt-6 text-center">
-              <p className="text-xs text-zinc-600 font-medium">
-                New to the network?{" "}
-                <Link
-                  to="/register"
-                  className={`font-black hover:text-indigo-400 transition-colors uppercase tracking-widest text-[10px] ${theme === "dark" ? "text-white" : "text-black"}`}
-                >
-                  Create Protocol
-                </Link>
-              </p>
-            </div>
-          </form>
-        </motion.div>
-      </section>
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        input::placeholder { color: #27272a !important; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
-      `,
-        }}
-      />
+          {/* Navigation to Sign up */}
+          <p className={`text-sm mt-4 ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
+            Don’t have an account?{" "}
+            <Link
+              to="/register"
+              className="text-indigo-500 hover:underline font-medium"
+            >
+              Sign up
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 };
 
-// --- PREVIEW WRAPPER ---
-export default LoginForm;
+export default Login;
