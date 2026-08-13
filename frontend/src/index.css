@@ -356,22 +356,11 @@ html, body {
   border-radius: 50%;
   position: fixed;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 99;
   top: -25px;
   left: -25px;
   transform: translate3d(0, 0, 0);
   will-change: transform;
   transition: background-color 0.12s ease;
-}
-
-.cursor--light {
-  background-color: #fff;
-}
-
-.cursor--dark {
-  background-color: #111;
-}
-
-* {
-  cursor: none;
+  isolation: isolate;
 }
