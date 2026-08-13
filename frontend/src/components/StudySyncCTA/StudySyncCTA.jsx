@@ -15,6 +15,8 @@ const StudySyncCTA = ({
   primaryText,
   secondaryTo = "/find-groups",
   secondaryText = "Explore groups",
+  headline,
+  description,
   className = "",
 }) => {
   // Access auth state if available in Redux, fallback gracefully
@@ -68,15 +70,21 @@ const StudySyncCTA = ({
               id="cta-heading"
               className="text-[30px] sm:text-[36px] md:text-[42px] lg:text-[48px] xl:text-[54px] font-bold text-white tracking-[-1.5px] leading-[1.08] mb-4 sm:mb-5"
             >
-              Get started with{" "}
-              <span className="text-[#0075de] inline-block font-bold">
-                StudySync
-              </span>
+              {headline ? (
+                headline
+              ) : (
+                <>
+                  Get started with{" "}
+                  <span className="text-[#0075de] inline-block font-bold">
+                    StudySync
+                  </span>
+                </>
+              )}
             </h2>
 
             {/* Supporting Copy */}
             <p className="text-[14px] sm:text-[15px] md:text-[16px] text-slate-300/90 leading-relaxed max-w-[420px] mb-8 font-normal">
-              Find your people, share knowledge, and learn together.
+              {description || "Find your people, share knowledge, and learn together."}
             </p>
 
             {/* Action Buttons */}

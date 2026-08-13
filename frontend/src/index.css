@@ -364,3 +364,8 @@ html, body {
   transition: background-color 0.12s ease;
   isolation: isolate;
 }
+
+.workflow-preview {
+  position: sticky;
+  top: 120px;
+}
