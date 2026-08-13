@@ -1,84 +1,100 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
-import { MessageSquare, FileText, Plus } from "lucide-react";
+import { MessageSquare, FileText, Plus, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { joinGroup } from "../../../../features/groups/groupsSlice";
-
+import Card from "../../../design-system/Card";
+import Button from "../../../design-system/Button";
+import Pill from "../../../design-system/Pill";
+import Avatar from "../../../design-system/Avatar";
 
 const GroupCard = ({ group, isSuggested = false }) => {
-  const theme = useSelector((state) => state.theme.mode);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleJoin = async () => {
+  const handleJoin = async (e) => {
+    e.stopPropagation();
     const res = await dispatch(joinGroup(group._id));
     if (res.meta.requestStatus === "fulfilled") {
       navigate(`/group/${group._id}`);
     }
   };
-  return (
-    <motion.div
-      whileHover={{ scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.03)" }}
-      style={{ willChange: "transform, background-color" }}
-      className={`relative group p-6 rounded-[32px] border transition-all shadow-2xl border-2 border-black/10 duration-300 ${
-        isSuggested
-          ? theme === "dark" ? "bg-indigo-500/5 border-indigo-500/20 hover:border-indigo-500/40 shadow-[0_20px_50px_rgba(99,102,241,0.05)]" : "bg-indigo-400/5 border-indigo-400 hover:border-indigo-400/40 shadow-xl"
-          : theme === "dark" ? "bg-zinc-900/30 border-white/5 hover:border-white/10" : "bg-white/30 border-black/5 hover:border-black/10"
-      }`}
-    >
-      {/* Match Percentage for Suggested */}
-      {isSuggested && (
-        <div className="absolute top-6 right-6 px-2 py-1 bg-indigo-500 text-white text-[8px] font-black rounded-full uppercase tracking-widest">
-          {group.match}% Match
-        </div>
-      )}
 
-      <div className="flex items-start gap-5 mb-8">
-        <div className="relative">
-          <div
-            className={`absolute inset-0 blur-xl opacity-20 ${group.accent}`}
-          />
-          <img
-            src={group.image}
-            className={`relative w-16 h-16 rounded-2xl object-cover border ${theme === "dark" ? "border-white/10 text-white" : "border-black/10 text-black"}`}
-            alt={group.name}
-          />
+  return (
+    <Card
+      variant="white"
+      hoverable
+      onClick={() => navigate(`/group/${group._id}`)}
+      className="flex flex-col justify-between h-full group transition-all"
+    >
+      <div>
+        {/* Header Badges */}
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <Pill variant="gray" size="sm">
+            {group.field || "General"}
+          </Pill>
+          {isSuggested && group.match !== undefined && (
+            <Pill variant="sky" size="sm">
+              {group.match}% Match
+            </Pill>
+          )}
         </div>
-        <div className="flex-1">
-          <div className="text-[10px] font-black tracking-[0.2em] text-zinc-500 uppercase mb-1">
-            {group.field}
+
+        {/* Group Identity */}
+        <div className="flex items-start gap-4 mb-4">
+          <Avatar
+            src={group.image}
+            name={group.name}
+            size="lg"
+            borderColor="#0075de"
+          />
+          <div className="flex-1 min-w-0">
+            <h4 className="text-[18px] font-bold text-[#000000] tracking-[-0.3px] group-hover:text-[#0075de] transition-colors truncate">
+              {group.name}
+            </h4>
+            {group.description && (
+              <p className="text-[13px] text-[#615d59] line-clamp-2 mt-1">
+                {group.description}
+              </p>
+            )}
           </div>
-          <h4 className={`text-xl font-semibold tracking-tight group-hover:text-indigo-400 transition-colors ${theme === "light" ? "text-black" : "text-white"}`}>
-            {group.name}
-          </h4>
         </div>
       </div>
 
-      <div className="flex gap-2 mt-auto">
-        <button
+      {/* Action Buttons Row */}
+      <div className="flex items-center gap-2 pt-4 border-t border-black/[0.06] mt-4" onClick={(e) => e.stopPropagation()}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="flex-1"
+          icon={MessageSquare}
           onClick={() => navigate(`/group/${group._id}/chats`)}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black ${theme === "light" ? "border-2 border-black/10 shadow-xl" : ""} uppercase tracking-widest transition-all`}
         >
-          <MessageSquare size={14} /> Chat
-        </button>
-        <button
+          Chat
+        </Button>
+
+        <Button
+          variant="outlined"
+          size="sm"
+          className="flex-1"
+          icon={FileText}
           onClick={() => navigate(`/group/${group._id}`)}
-          className={`flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-[10px] font-black ${theme === "light" ? "border-2 border-black/10 shadow-xl" : ""} uppercase tracking-widest transition-all`}
         >
-          <FileText size={14} /> Notes
-        </button>
+          Notes
+        </Button>
+
         {isSuggested && (
-          <button 
+          <Button
+            variant="primary"
+            size="sm"
+            icon={Plus}
             onClick={handleJoin}
-            className={`p-3 bg-white text-black rounded-xl hover:bg-indigo-500 hover:text-white transition-all  ${theme === "light" ? "border-2 border-black/10" : ""} shadow-xl`}
           >
-            <Plus size={16} />
-          </button>
+            Join
+          </Button>
         )}
       </div>
-    </motion.div>
+    </Card>
   );
 };
 

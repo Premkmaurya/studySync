@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { TrendingUp, ArrowUpRight, Compass } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { Compass, BookOpen, Users, Plus, FileText, ArrowRight } from "lucide-react";
 import {
   joinedGroup,
   setFieldPercentages,
   setJoinedGroups,
   setSuggestedGroups,
+  fetchSuggestedGroups,
 } from "../../../features/groups/groupsSlice";
-import { fetchSuggestedGroups } from "../../../features/groups/groupsSlice";
 import GroupCard from "./components/GroupCard";
-
 import {
   selectJoinedGroups,
   selectSuggestedGroups,
@@ -18,9 +17,13 @@ import {
   selectGroupsLoading,
 } from "../../../features/groups/groupsSelectors";
 import { selectUser } from "../../../features/auth/authSelectors";
+import Button from "../../design-system/Button";
+import Card from "../../design-system/Card";
+import Pill from "../../design-system/Pill";
+import { LoadingState, EmptyState } from "../../design-system/States";
+import { PageHeader } from "../../design-system/SectionHeader";
 
-const Home = () => {
-  const theme = useSelector((state) => state.theme.mode);
+const TabHome = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -36,7 +39,7 @@ const Home = () => {
   const [hasMoreSuggested, setHasMoreSuggested] = useState(true);
 
   useEffect(() => {
-    const fetchJoinedGroups = async () => {
+    const fetchJoined = async () => {
       const res = await dispatch(joinedGroup({ page: 1, limit: 6 }));
       if (res.payload && res.payload.groups) {
         dispatch(setJoinedGroups(res.payload.groups));
@@ -44,8 +47,7 @@ const Home = () => {
         setJoinedPage(1);
       }
     };
-
-    fetchJoinedGroups();
+    fetchJoined();
   }, [dispatch]);
 
   useEffect(() => {
@@ -58,7 +60,6 @@ const Home = () => {
         setSuggestedPage(1);
       }
     };
-
     fetchSuggestions();
   }, [dispatch]);
 
@@ -77,192 +78,179 @@ const Home = () => {
     const res = await dispatch(fetchSuggestedGroups({ page: nextPage, limit: 6 }));
     if (res.payload) {
       dispatch(setSuggestedGroups([...suggestedGroups, ...res.payload.suggestedGroups]));
-      dispatch(setFieldPercentages(res.payload.fieldPercentages || fieldPercentages));
+      dispatch(
+        setFieldPercentages(res.payload.fieldPercentages || fieldPercentages)
+      );
       setHasMoreSuggested(res.payload.suggestedGroups?.length === 6);
       setSuggestedPage(nextPage);
     }
   };
 
-  // Helper function to add UI properties to suggested groups
-  const enrichedSuggestedGroups = suggestedGroups.map((group, index) => {
-    const accentColors = [
-      "bg-indigo-500",
-      "bg-purple-500",
-      "bg-pink-500",
-      "bg-blue-500",
-      "bg-cyan-500",
-    ];
-    return {
-      ...group,
-      id: group._id,
-      accent: accentColors[index % accentColors.length] || "bg-indigo-500",
-    };
-  });
+  const enrichedSuggestedGroups = suggestedGroups.map((group) => ({
+    ...group,
+    id: group._id,
+  }));
+
+  const firstName =
+    user?.fullname?.firstname || user?.username || "Student";
 
   return (
-    <div className={`relative pt-26 min-h-screen w-full ${theme === "dark" ? "bg-[#000] text-[#E5E7EB]" : "bg-[#f9f9f9] text-[#1a1a1a]"} font-sans overflow-x-hidden`}>
-      {/* 1. Background Visuals */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-5%] left-[10%] w-[40%] h-[40%] bg-indigo-600/10 blur-[90px] rounded-full" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-fuchsia-600/5 blur-[80px] rounded-full" />
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen py-10 px-6 md:px-12 max-w-[1440px] mx-auto">
+      {/* 1. Header & Greeting */}
+      <PageHeader
+        title={`Welcome back, ${firstName}`}
+        description="Continue learning with your communities and shared knowledge notes."
+        badge={<Pill variant="sky" size="sm">Dashboard</Pill>}
+        actions={
+          <div className="flex gap-3">
+            <Link to="/create-group">
+              <Button variant="primary" icon={Plus}>
+                Create Group
+              </Button>
+            </Link>
+            <Link to="/find-groups">
+              <Button variant="ghost" icon={Compass}>
+                Explore Groups
+              </Button>
+            </Link>
+          </div>
+        }
+      />
+
+      {/* 2. Stats Summary Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 my-8">
+        <Card variant="white" padding="p-5" className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-[8px] bg-[#e6f3fe] text-[#0075de] flex items-center justify-center">
+            <Users className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[22px] font-bold text-[#000000]">
+              {joinedGroups?.length || 0}
+            </div>
+            <div className="text-[13px] text-[#615d59]">Joined Groups</div>
+          </div>
+        </Card>
+
+        <Card variant="white" padding="p-5" className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-[8px] bg-[#fff4cc] text-[#e89d01] flex items-center justify-center">
+            <Compass className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[22px] font-bold text-[#000000]">
+              {suggestedGroups?.length || 0}
+            </div>
+            <div className="text-[13px] text-[#615d59]">Recommended Groups</div>
+          </div>
+        </Card>
+
+        <Card variant="white" padding="p-5" className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-[8px] bg-[#f64932]/10 text-[#f64932] flex items-center justify-center">
+            <FileText className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-[22px] font-bold text-[#000000]">
+              {Object.keys(fieldPercentages || {}).length}
+            </div>
+            <div className="text-[13px] text-[#615d59]">Active Topics</div>
+          </div>
+        </Card>
       </div>
 
-      {/* 2. Page Header */}
-      <header className="relative z-10 pt-16 px-6 max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-        <div>
-          <h1 className={`text-5xl md:text-7xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"}`}>
-            Hello,{" "}
-            <span className="text-indigo-500 capitalize">
-              {user.fullname.firstname}
-            </span>
-          </h1>
+      {/* 3. Joined Groups Section */}
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-[24px] font-bold text-[#000000] tracking-[-0.5px]">
+              Your Study Groups
+            </h2>
+            <p className="text-[14px] text-[#615d59]">
+              Groups you are actively participating in
+            </p>
+          </div>
+          {joinedGroups && joinedGroups.length > 0 && (
+            <Link to="/find-groups" className="text-[14px] font-semibold text-[#0075de] hover:underline flex items-center gap-1">
+              Find more groups <ArrowRight className="w-4 h-4" />
+            </Link>
+          )}
         </div>
-      </header>
 
-      {/* 3. Main Sections */}
-      <main className="relative z-10 px-6 max-w-7xl mx-auto space-y-24 pb-32">
-        {/* Joined Groups Section */}
-        {joinedGroups && joinedGroups.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-10">
-              <div className="flex items-center gap-4">
-                <h2 className={`text-3xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"}`}>
-                  Your Collectives
-                </h2>
-                <div className="h-px w-24 bg-gradient-to-r from-indigo-500/50 to-transparent" />
-              </div>
-            </div>
-
+        {loading && (!joinedGroups || joinedGroups.length === 0) ? (
+          <LoadingState message="Loading your study groups..." />
+        ) : joinedGroups && joinedGroups.length > 0 ? (
+          <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {loading ? (
-                <div className="col-span-full flex flex-col items-center justify-center py-20 gap-4">
-                  <div className="w-12 h-12 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                    Loading Your Collectives...
-                  </span>
-                </div>
-              ) : joinedGroups && joinedGroups.length > 0 ? (
-                joinedGroups.map((group) => (
-                  <GroupCard key={group._id || group.id} group={group} />
-                ))
-              ) : (
-                <div className="col-span-full text-center py-8">
-                  <p className="text-zinc-400">Join groups to see them here</p>
-                </div>
-              )}
+              {joinedGroups.map((group) => (
+                <GroupCard key={group._id || group.id} group={group} />
+              ))}
             </div>
             {hasMoreJoined && (
               <div className="flex justify-center mt-8">
-                <button
-                  onClick={loadMoreJoinedGroups}
-                  className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
-                >
-                  Load More
-                </button>
+                <Button variant="ghost" onClick={loadMoreJoinedGroups}>
+                  Load more groups
+                </Button>
               </div>
             )}
-          </section>
+          </>
+        ) : (
+          <EmptyState
+            icon={Users}
+            title="No study groups joined yet"
+            description="Explore open study groups in your field or launch your own group to start collaborating."
+            actionLabel="Explore groups"
+            onAction={() => navigate("/find-groups")}
+          />
         )}
+      </section>
 
-        {/* Suggested Discovery Section */}
-        <section className="relative">
-          {/* Section Glow */}
-          <div className="absolute inset-0 bg-indigo-500/5 blur-[70px] pointer-events-none rounded-full" />
+      {/* 4. Suggested Groups Section */}
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-[24px] font-bold text-[#000000] tracking-[-0.5px]">
+              Recommended for You
+            </h2>
+            <p className="text-[14px] text-[#615d59]">
+              Study groups matching your academic interests
+            </p>
+          </div>
+        </div>
 
-          <div className="relative">
-            <div className="flex items-center gap-4 mb-10">
-              <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-400">
-                <Compass size={20} />
-              </div>
-              <div>
-                <h2 className={`text-3xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-[#1a1a1a]"}`}>
-                  Neural Discovery
-                </h2>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
-                  Suggested for your profession
-                </p>
-              </div>
-            </div>
-
+        {loading && (!suggestedGroups || suggestedGroups.length === 0) ? (
+          <LoadingState message="Finding recommendations..." />
+        ) : enrichedSuggestedGroups && enrichedSuggestedGroups.length > 0 ? (
+          <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {loading ? (
-                <div className="col-span-full flex flex-col items-center justify-center py-20 gap-4">
-                  <div className="w-12 h-12 border-4 border-white/5 border-t-indigo-500 rounded-full animate-spin" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-600">
-                    Discovering Neural Suggestions...
-                  </span>
-                </div>
-              ) : enrichedSuggestedGroups &&
-                enrichedSuggestedGroups.length > 0 ? (
-                enrichedSuggestedGroups.map((group) => {
-                  const matchPercentage = fieldPercentages[group.field] || 0;
-                  return (
-                    <GroupCard
-                      key={group._id}
-                      group={{ ...group, match: matchPercentage }}
-                      isSuggested
-                    />
-                  );
-                })
-              ) : (
-                <div className="col-span-full text-center py-8">
-                  <p className="text-zinc-400">No suggested groups available</p>
-                </div>
-              )}
-
-              {/* Promotion/Stats Bento Card */}
-              <div className="p-8 bg-gradient-to-br from-indigo-600 to-fuchsia-600 rounded-[32px] shadow-2xl relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-full h-full bg-black/20" />
-                <div className="relative z-10 flex flex-col h-full">
-                  <TrendingUp size={32} color="white" className="text-white mb-6" />
-                  <h3 className={`text-2xl tracking-tighter mb-2 leading-tight text-white`}>
-                    Professional Velocity
-                  </h3>
-                  <div className={`text-xs font-medium mb-8 text-white/80`}>
-                    {Object.keys(fieldPercentages).length > 0 ? (
-                      <div>
-                        <p className="mb-2">Your interests:</p>
-                        <div className="space-y-1">
-                          {Object.entries(fieldPercentages)
-                            .sort(([, a], [, b]) => b - a)
-                            .map(([field, percentage]) => (
-                              <div key={field} className="flex justify-between">
-                                <span>{field}:</span>
-                                <span className="text-indigo-300 font-bold">
-                                  {percentage}%
-                                </span>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <p>Join groups to get personalized suggestions</p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => navigate("/find-groups")}
-                    className="mt-auto w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-black hover:text-white transition-all"
-                  >
-                    Explore All Groups
-                  </button>
-                </div>
-              </div>
+              {enrichedSuggestedGroups.map((group) => {
+                const matchPercentage = fieldPercentages[group.field] || 0;
+                return (
+                  <GroupCard
+                    key={group._id || group.id}
+                    group={{ ...group, match: matchPercentage }}
+                    isSuggested
+                  />
+                );
+              })}
             </div>
             {hasMoreSuggested && (
               <div className="flex justify-center mt-8">
-                <button
-                  onClick={loadMoreSuggestedGroups}
-                  className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
-                >
-                  Load More
-                </button>
+                <Button variant="ghost" onClick={loadMoreSuggestedGroups}>
+                  Load more recommendations
+                </Button>
               </div>
             )}
-          </div>
-        </section>
-      </main>
+          </>
+        ) : (
+          <EmptyState
+            icon={Compass}
+            title="No recommendations found"
+            description="Explore the directory to discover groups across all academic fields."
+            actionLabel="Browse directory"
+            onAction={() => navigate("/find-groups")}
+          />
+        )}
+      </section>
     </div>
   );
 };
 
-export default Home;
+export default TabHome;

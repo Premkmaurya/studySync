@@ -4,21 +4,24 @@ import { loginUser } from "../../features/auth/authSlice";
 import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Loader2 } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import Button from "../../components/design-system/Button";
+import Input from "../../components/design-system/Input";
+import Card from "../../components/design-system/Card";
+import Pill from "../../components/design-system/Pill";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme?.mode || "dark");
   const reduxLoading = useSelector(selectAuthLoading);
   const reduxError = useSelector(selectAuthError);
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
-  
+
   const [authError, setAuthError] = useState("");
 
   const onSubmit = async (data) => {
@@ -27,140 +30,121 @@ const Login = () => {
     if (loginUser.fulfilled.match(resultAction)) {
       navigate("/home");
     } else {
-      setAuthError(resultAction.payload || "Authentication failed. Please check your credentials.");
+      setAuthError(
+        resultAction.payload || "Authentication failed. Please check your credentials."
+      );
     }
   };
 
-  const isDarkMode = theme === "dark";
-
   return (
-    <div className={`min-h-screen w-full flex flex-col md:flex-row ${isDarkMode ? "bg-zinc-950 text-white" : "bg-white text-gray-900"}`}>
-      {/* Left side: Visual Image */}
-      <div className="w-full md:w-1/2 hidden md:block h-screen overflow-hidden">
-        <img
-          className="h-full w-full object-cover"
-          src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/leftSideImage.png"
-          alt="leftSideImage"
-        />
+    <div className="min-h-screen w-full bg-[#f6f5f4] flex flex-col md:flex-row text-[#000000]">
+      {/* Left side: Editorial product statement panel */}
+      <div className="hidden md:flex w-1/2 bg-[#02093a] text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
+        <Link to="/" className="flex items-center gap-2.5 z-10">
+          <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <span className="font-bold text-[20px] tracking-[-0.3px] text-white">
+            studySync
+          </span>
+        </Link>
+
+        <div className="z-10 max-w-lg my-auto flex flex-col gap-6">
+          <Pill variant="sky" size="sm" className="w-fit">
+            Academic Collaboration Platform
+          </Pill>
+          <h1 className="text-[40px] lg:text-[48px] font-bold tracking-[-1.5px] leading-[1.1]">
+            Welcome back to your shared knowledge base.
+          </h1>
+          <p className="text-[16px] text-white/80 font-['Source_Serif_4',Georgia,serif] italic leading-relaxed">
+            "Knowledge increases by sharing but not by saving." Pick up right where you left off with your study groups and notes.
+          </p>
+        </div>
+
+        <div className="z-10 text-[13px] text-white/60">
+          © {new Date().getFullYear()} StudySync Platform
+        </div>
       </div>
 
-      {/* Right side: Form container */}
-      <div className="w-full md:w-1/2 min-h-screen flex flex-col items-center justify-center p-6 md:p-12">
-        <form onSubmit={handleSubmit(onSubmit)} className="md:w-96 w-80 flex flex-col items-center justify-center">
-          <h2 className={`text-4xl font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-            Sign in
-          </h2>
-
-          <p className={`text-sm mt-3 ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
-            Welcome back! Please sign in to continue
-          </p>
-
-          <button
-            type="button"
-            className={`w-full mt-8 flex items-center justify-center h-12 rounded-full transition-colors ${
-              isDarkMode ? "bg-zinc-800/80 hover:bg-zinc-800" : "bg-gray-500/10 hover:bg-gray-500/20"
-            }`}
-          >
-            <img
-              src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/googleLogo.svg"
-              alt="googleLogo"
-            />
-          </button>
-
-          <div className="flex items-center gap-4 w-full my-5">
-            <div className={`w-full h-px ${isDarkMode ? "bg-zinc-800" : "bg-gray-300/90"}`}></div>
-            <p className={`w-full text-nowrap text-sm ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
-              or sign in with email
-            </p>
-            <div className={`w-full h-px ${isDarkMode ? "bg-zinc-800" : "bg-gray-300/90"}`}></div>
-          </div>
-
-          {(authError || reduxError) && (
-            <div className="w-full mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-xs text-red-500 text-center font-medium">
-              {authError || reduxError}
-            </div>
-          )}
-
-          {/* Email input */}
-          <div className="w-full flex flex-col">
-            <div className={`flex items-center w-full bg-transparent border h-12 rounded-full overflow-hidden pl-6 gap-2 transition-colors ${
-              errors.email ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
-            }`}>
-              <input
-                type="email"
-                placeholder="Email id"
-                {...register("email", { required: "Email is required" })}
-                className={`bg-transparent outline-none text-sm w-full h-full ${
-                  isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
-                }`}
-              />
-            </div>
-            {errors.email && (
-              <span className="text-xs text-red-500 ml-4 mt-1">{errors.email.message}</span>
-            )}
-          </div>
-
-          {/* Password input */}
-          <div className="w-full flex flex-col mt-6">
-            <div className={`flex items-center w-full bg-transparent border h-12 rounded-full overflow-hidden pl-6 gap-2 transition-colors ${
-              errors.password ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
-            }`}>
-              <input
-                type="password"
-                placeholder="Password"
-                {...register("password", { required: "Password is required" })}
-                className={`bg-transparent outline-none text-sm w-full h-full ${
-                  isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
-                }`}
-              />
-            </div>
-            {errors.password && (
-              <span className="text-xs text-red-500 ml-4 mt-1">{errors.password.message}</span>
-            )}
-          </div>
-
-          {/* Remember me & Forgot Password */}
-          <div className={`w-full flex items-center justify-between mt-8 ${isDarkMode ? "text-zinc-400" : "text-gray-500/80"}`}>
-            <div className="flex items-center gap-2">
-              <input
-                className="h-5 w-5 accent-indigo-500 rounded cursor-pointer"
-                type="checkbox"
-                id="checkbox"
-              />
-              <label className="text-sm cursor-pointer select-none" htmlFor="checkbox">
-                Remember me
-              </label>
-            </div>
-
-            <span className="text-sm underline cursor-pointer hover:text-indigo-400 transition-colors">
-              Forgot password?
-            </span>
-          </div>
-
-          {/* Submit button */}
-          <button
-            type="submit"
-            disabled={isSubmitting || reduxLoading}
-            className="mt-8 w-full h-11 rounded-full text-white bg-indigo-500 hover:bg-indigo-600 transition-all font-medium flex items-center justify-center disabled:opacity-50 cursor-pointer"
-          >
-            {isSubmitting || reduxLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              "Login"
-            )}
-          </button>
-
-          {/* Navigation to Sign up */}
-          <p className={`text-sm mt-4 ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
-            Don’t have an account?{" "}
-            <Link
-              to="/register"
-              className="text-indigo-500 hover:underline font-medium"
-            >
-              Sign up
+      {/* Right side: Clean Form Card */}
+      <div className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-6 md:p-12">
+        <div className="w-full max-w-md">
+          {/* Mobile Logo Header */}
+          <div className="md:hidden flex items-center gap-2.5 mb-8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <span className="font-bold text-[18px] text-[#000000]">studySync</span>
             </Link>
-          </p>
-        </form>
+          </div>
+
+          <Card variant="white" className="p-8 sm:p-10">
+            <div className="mb-6">
+              <h2 className="text-[26px] font-bold text-[#000000] tracking-[-0.5px]">
+                Sign in
+              </h2>
+              <p className="text-[14px] text-[#615d59] mt-1">
+                Enter your credentials to access your account
+              </p>
+            </div>
+
+            {(authError || reduxError) && (
+              <div className="mb-6 p-3.5 bg-[#e32d14]/10 border border-[#e32d14]/20 rounded-[8px] text-[13px] text-[#e32d14] font-medium">
+                {authError || reduxError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+              <Input
+                label="Email address"
+                type="email"
+                placeholder="name@university.edu"
+                error={errors.email?.message}
+                {...register("email", { required: "Email is required" })}
+              />
+
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                error={errors.password?.message}
+                {...register("password", { required: "Password is required" })}
+              />
+
+              <div className="flex items-center justify-between text-[13px]">
+                <label className="flex items-center gap-2 text-[#615d59] cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="rounded border-black/20 text-[#0075de] focus:ring-[#0075de]"
+                  />
+                  <span>Remember me</span>
+                </label>
+                <a href="#forgot" className="text-[#0075de] hover:underline font-medium">
+                  Forgot password?
+                </a>
+              </div>
+
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                size="lg"
+                loading={isSubmitting || reduxLoading}
+                className="mt-2"
+              >
+                Sign in
+              </Button>
+            </form>
+
+            <div className="mt-8 pt-6 border-t border-black/[0.08] text-center text-[14px] text-[#615d59]">
+              New to StudySync?{" "}
+              <Link to="/register" className="text-[#0075de] font-semibold hover:underline">
+                Create an account
+              </Link>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );

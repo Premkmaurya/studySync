@@ -2,71 +2,68 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectMyNotes } from "../../../../../../features/notes/notesSelectors";
-import { FileText, MoreVertical } from "lucide-react";
+import { FileText, ArrowRight } from "lucide-react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import Card from "../../../../../design-system/Card";
+import Button from "../../../../../design-system/Button";
+import { EmptyState } from "../../../../../design-system/States";
 
 dayjs.extend(relativeTime);
 
 const NoteSection = () => {
-  const theme = useSelector((state) => state.theme.mode);
   const myNotes = useSelector(selectMyNotes);
   const navigate = useNavigate();
+
   const handleClick = (note) => {
-    // First navigate to group
-    navigate(`/group/${note.groupId._id}`);
-    // Then navigate to note after a brief delay
-    setTimeout(() => {
-      navigate(`/group/${note.groupId._id}/note`, {
-        state: {
-          title: note.title,
-          content: note.content,
-          isViewOnly: true,
-          groupName: note.groupId.name,
-          profession: note.groupId.field,
-        },
-      });
-    }, 300);
+    navigate(`/group/${note.groupId?._id || note.groupId}/note`, {
+      state: {
+        title: note.title,
+        content: note.content,
+        isViewOnly: true,
+        groupName: note.groupId?.name || "Group Note",
+        profession: note.groupId?.field || "General",
+      },
+    });
   };
 
+  if (!myNotes || myNotes.length === 0) {
+    return (
+      <EmptyState
+        icon={FileText}
+        title="No Notes Created Yet"
+        description="Write shared study notes inside group workspaces to compile your knowledge."
+      />
+    );
+  }
+
   return (
-    <div className="space-y-4">
-      {myNotes?.length > 0 ? (
-        myNotes.map((note, i) => (
-          <div
-            onClick={() => handleClick(note)}
-            key={i}
-            className="flex items-center justify-between p-6 bg-zinc-900/30 border border-white/5 rounded-3xl hover:bg-white/5 transition-all cursor-pointer group"
-          >
-            <div className="flex items-center gap-6">
-              <div className="p-3 bg-white/5 rounded-xl text-zinc-500 group-hover:text-indigo-400">
-                <FileText size={20} />
-              </div>
-              <div>
-                <h4 className="text-lg font-bold text-white tracking-tight">
-                  {note.title} #{i}
-                </h4>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
-                  {dayjs(note.createdAt).fromNow()}
-                </p>
-              </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {myNotes.map((note, i) => (
+        <Card
+          key={note._id || i}
+          variant="white"
+          hoverable
+          onClick={() => handleClick(note)}
+          className="flex items-center justify-between p-5 group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-[8px] bg-[#e6f3fe] text-[#0075de]">
+              <FileText className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-[16px] font-bold text-[#000000] tracking-[-0.3px] group-hover:text-[#0075de] transition-colors">
+                {note.title || "Untitled Note"}
+              </h4>
+              <span className="text-[12px] text-[#757575]">
+                {dayjs(note.createdAt).fromNow()}
+              </span>
             </div>
           </div>
-        ))
-      ) : (
-        <div className="text-center py-20">
-          <h3 className="text-2xl font-bold text-white mb-4">
-            No Notes Created Yet
-          </h3>
-          <p className="text-zinc-500 mb-6">
-            Start creating notes to see them here. Your notes will be displayed
-            in this section once you have created them.
-          </p>
-          <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
-            Create Your First Note
-          </button>
-        </div>
-      )}
+
+          <Button variant="text" size="sm" icon={ArrowRight} />
+        </Card>
+      ))}
     </div>
   );
 };

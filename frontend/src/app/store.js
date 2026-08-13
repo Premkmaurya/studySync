@@ -20,5 +20,5 @@ export const store = configureStore({
     getDefaultMiddleware({
       serializableCheck: false, // In case any object isn't strictly serializable in some rapid prototyping
     }),
-  devTools: process.env.NODE_ENV !== 'production',
-});
+  devTools: import.meta.env.MODE !== 'production',
+});

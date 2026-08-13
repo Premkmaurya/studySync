@@ -1,23 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Outlet, useLocation } from 'react-router-dom';
 import NavSidebar from './NavSidebar';
 
 export default function MainLayout() {
-  const theme = useSelector((state) => state.theme.mode);
   const location = useLocation();
   const isGroupRoute = location.pathname.startsWith('/group');
 
   return (
-    <div className="flex h-screen">
-      {/* Sidebar Component */}
+    <div className="min-h-screen bg-[#f6f5f4] text-[#000000] flex flex-col antialiased">
+      {/* Top Navigation Header for App Pages */}
       {!isGroupRoute && <NavSidebar />}
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto" style={{ WebkitTransform: 'translate3d(0,0,0)', willChange: 'scroll-position' }}>
-          <Outlet />
-        </div>
+      <main className="flex-1 w-full flex flex-col">
+        <Outlet />
       </main>
     </div>
   );

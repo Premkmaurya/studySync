@@ -1,8 +1,8 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
-
-import { CloudUpload } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Save, Sparkles, Check } from "lucide-react";
+import Button from "../../../design-system/Button";
+import Pill from "../../../design-system/Pill";
 
 const Header = ({
   groupName,
@@ -12,45 +12,48 @@ const Header = ({
   setIsAiPanelOpen,
   handleSave,
   isSaving,
+  groupId,
 }) => {
-  const theme = useSelector((state) => state.theme.mode);
   return (
-    <header className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl">
-      <div className={`${theme === "dark" ? "bg-zinc-900/40 border-white/10" : "bg-zinc-100/40 border-black/10"} backdrop-blur-3xl border rounded-[24px] px-6 py-3 flex items-center justify-between shadow-[0_8px_32px_rgba(0,0,0,0.4)]`}>
-        <div className="flex items-center gap-4">
-          <div className={`flex flex-col border-l ${theme === "dark" ? "border-white/10" : "border-black/10"} pl-5`}>
-            <span className={`text-[10px] uppercase tracking-[0.3em] ${theme === "dark" ? "text-indigo-400" : "text-indigo-600"} font-black leading-none mb-1`}>
+    <header className="sticky top-0 z-40 bg-[#f6f5f4] border-b border-black/[0.08] px-6 py-3">
+      <div className="max-w-4xl mx-auto flex items-center justify-between">
+        {/* Left: Back & Group Metadata */}
+        <div className="flex items-center gap-3">
+          <Link to={groupId ? `/group/${groupId}` : "/home"}>
+            <Button variant="text" size="sm" icon={ArrowLeft}>
+              Back to Group
+            </Button>
+          </Link>
+          <div className="h-4 w-px bg-black/10" />
+          <div className="flex items-center gap-2">
+            <span className="text-[14px] font-bold text-[#000000]">{groupName}</span>
+            <Pill variant="sky" size="sm">
               {profession}
-            </span>
-            <h2 className={`text-sm font-bold tracking-tight ${theme === "dark" ? "text-white/90" : "text-black/90"}`}>
-              {groupName}
-            </h2>
+            </Pill>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        {/* Right: Actions */}
+        <div className="flex items-center gap-3">
           {!isViewOnly ? (
-            <button
+            <Button
+              variant="primary"
+              size="sm"
+              icon={isSaving ? Check : Save}
+              loading={isSaving}
               onClick={handleSave}
-              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-xs font-black transition-all active:scale-95 ${
-                isSaving
-                  ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
-                  : "bg-white text-black hover:bg-indigo-50 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-              }`}
             >
-              <CloudUpload
-                size={18}
-                className={isSaving ? "animate-bounce" : ""}
-              />
-              {isSaving ? "SYNCING..." : "SAVE CHANGES"}
-            </button>
+              {isSaving ? "Saving..." : "Save Note"}
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={Sparkles}
               onClick={() => setIsAiPanelOpen(!isAiPanelOpen)}
-              className="p-2.5 bg-white/95 border cursor-pointer border-white/10 rounded-xl transition-all text-black"
             >
               AI Summary
-            </button>
+            </Button>
           )}
         </div>
       </div>

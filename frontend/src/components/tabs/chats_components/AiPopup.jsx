@@ -1,10 +1,9 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useParams } from "react-router-dom";
 
-// Icons (Inline SVG for Zero Dependencies)
 const SparklesIcon = () => (
   <svg
     width="20"
@@ -15,7 +14,7 @@ const SparklesIcon = () => (
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className="text-indigo-400"
+    className="text-[#0075de]"
   >
     <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
     <path d="M5 3v4" />
@@ -48,12 +47,8 @@ export default function AIPopup({ isOpen, onClose, setContent }) {
   const [inputValue, setInputValue] = useState("");
   const inputRef = useRef();
 
-  const { groupId } = useParams();
-
-  // Socket Logic
   useEffect(() => {
-    if (!isOpen) return; // ✅ connect only when popup opens
-
+    if (!isOpen) return;
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
@@ -67,14 +62,13 @@ export default function AIPopup({ isOpen, onClose, setContent }) {
     setSocket(socketInstance);
 
     return () => {
-      socketInstance.disconnect(); // ✅ disconnect when popup closes
+      socketInstance.disconnect();
     };
-  }, [isOpen]);
+  }, [isOpen, onClose, setContent]);
 
-  // Handle Esc
   useEffect(() => {
     const handleEsc = (e) => {
-      e.key === "Escape" && onClose();
+      if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
@@ -98,122 +92,82 @@ export default function AIPopup({ isOpen, onClose, setContent }) {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-9999 flex items-center justify-center p-4">
-          {/* Backdrop */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className={`absolute inset-0 backdrop-blur-md ${
-              theme === "light" ? "bg-white/60 text-black" : "bg-black/60 text-white"
-            }`}
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
           />
 
-          {/* Modal Card */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className={`relative w-full max-w-xl overflow-hidden rounded-3xl border shadow-[0_0_50px_-12px_rgba(99,102,241,0.3)] backdrop-blur-2xl ${
-              theme === "light"
-                ? "bg-white/80 border-black/10"
-                : "bg-[#0D0D0D]/80 border-white/10"
-            }`}
+            className="relative w-full max-w-xl bg-white border border-black/[0.12] rounded-[12px] p-6 shadow-none"
           >
-            {/* Thinking Progress Bar */}
             {loading && (
-              <motion.div
-                initial={{ x: "-100%" }}
-                animate={{ x: "100%" }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
-                className="absolute top-0 h-0.5 w-full bg-linear-to-r from-transparent via-indigo-500 to-transparent"
-              />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-[#0075de] animate-pulse rounded-t-[12px]" />
             )}
 
-            <div className="p-6">
-              {/* Header */}
-              <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-inner ${theme === "light" ? "bg-indigo-500/10" : "bg-indigo-500/20"}`}>
-                    <SparklesIcon />
-                  </div>
-                  <div>
-                    <h3 className={`text-sm font-bold tracking-tight ${theme === "light" ? "text-black" : "text-white"} uppercase opacity-90`}>
-                      Syncie AI
-                    </h3>
-                    <p className={`text-[11px] ${theme === "light" ? "text-black/40" : "text-white/40"} font-medium`}>
-                      LENS-V2 MODEL ACTIVE
-                    </p>
-                  </div>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-[8px] bg-[#e6f3fe] flex items-center justify-center">
+                  <SparklesIcon />
                 </div>
-                <button
-                  onClick={onClose}
-                  className={`rounded-full p-2 ${theme === "light" ? "text-black/40 hover:bg-black/10" : "text-white/40 hover:bg-white/10"} transition-colors`}
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M18 6 6 18M6 6l12 12" />
-                  </svg>
-                </button>
+                <div>
+                  <h3 className="text-[16px] font-bold text-[#000000]">
+                    AI Note Assistant
+                  </h3>
+                  <p className="text-[12px] text-[#757575]">
+                    Prompt to generate notes directly in editor
+                  </p>
+                </div>
               </div>
-
-              {/* Input Area */}
-              <div className="relative group">
-                <textarea
-                  ref={inputRef}
-                  value={inputValue}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  placeholder="Ask anything about your notes..."
-                  className={`w-full resize-none rounded-2xl border border-white/5 bg-white/3 p-4 text-base ${theme === "light" ? "text-black placeholder:text-black/20" : "text-white placeholder:text-white/20"} focus:border-indigo-500/50 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300`}
-                  rows="4"
-                  autoFocus
-                />
-
-                {/* Floating Send Button */}
-                <button
-                  onClick={handleSend}
-                  disabled={loading || !inputValue.trim()}
-                  className={`absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-300 ${
-                    inputValue.trim()
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:scale-105 active:scale-95"
-                      : "bg-white/5 text-white/20"
-                  }`}
-                >
-                  {loading ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
-                  ) : (
-                    <SendIcon />
-                  )}
-                </button>
-              </div>
-
-              {/* Suggestions */}
-              <div className="mt-4 flex flex-wrap gap-2">
-                {suggestions.map((text) => (
-                  <button
-                    key={text}
-                    onClick={() => setInputValue(text)}
-                    className={`rounded-full border bg-white/2 px-3 py-1.5 text-xs ${theme === "light" ? "text-black/50 border-black/20 hover:border-black/20 hover:bg-black/5 hover:text-black" : "text-white/50 border-white/20 hover:border-white/20 hover:bg-white/5 hover:text-white"} transition-all`}
-                  >
-                    {text}
-                  </button>
-                ))}
-              </div>
+              <button
+                onClick={onClose}
+                className="text-[#757575] hover:text-black p-1 rounded-[6px]"
+              >
+                ✕
+              </button>
             </div>
 
-            {/* Footer Status */}
-            <div className={`flex items-center justify-center border-t border-white/5  py-3 ${theme === "light" ? "text-white bg-black/2" : "text-black bg-white/2"} text-xs`}>
-              <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest ${theme === "light" ? "text-black/40" : "text-white/40"}`}>
-                <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                System Operational
-              </div>
+            <div className="relative">
+              <textarea
+                ref={inputRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Ask anything about your notes..."
+                className="w-full resize-none rounded-[8px] border border-black/[0.12] bg-white p-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20"
+                rows="4"
+                autoFocus
+              />
+
+              <button
+                onClick={handleSend}
+                disabled={loading || !inputValue.trim()}
+                className={`absolute bottom-3 right-3 p-2 rounded-[6px] transition-all ${
+                  inputValue.trim()
+                    ? "bg-[#0075de] text-white hover:bg-[#097fe8]"
+                    : "bg-black/5 text-[#757575]"
+                }`}
+              >
+                {loading ? "..." : <SendIcon />}
+              </button>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {suggestions.map((text) => (
+                <button
+                  key={text}
+                  onClick={() => setInputValue(text)}
+                  className="rounded-full border border-black/[0.08] bg-black/[0.02] hover:bg-black/[0.05] px-3 py-1 text-[12px] text-[#615d59]"
+                >
+                  {text}
+                </button>
+              ))}
             </div>
           </motion.div>
         </div>

@@ -1,26 +1,33 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Camera, X, Sparkles, Zap, Users, Rocket } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+import { Camera, X, Plus, BookOpen, Users } from "lucide-react";
+import { useDispatch } from "react-redux";
 import { createGroup } from "../../../../../features/groups/groupsSlice";
+import Button from "../../../../design-system/Button";
+import Input from "../../../../design-system/Input";
+import Card from "../../../../design-system/Card";
+import Pill from "../../../../design-system/Pill";
+import Avatar from "../../../../design-system/Avatar";
+import { PageHeader } from "../../../../design-system/SectionHeader";
 
 const CreateGroupForm = () => {
-  const theme = useSelector((state) => state.theme.mode);
-
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm();
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [imagePreview, setImagePreview] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [isPublic, setIsPublic] = useState(true);
 
-  const dispatch = useDispatch();
+  const watchedName = watch("name", "");
+  const watchedField = watch("field", "Engineering");
+  const watchedDescription = watch("description", "");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -38,8 +45,8 @@ const CreateGroupForm = () => {
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("description", data.description);
-    formData.append("field", data.field);
+    formData.append("description", data.description || "");
+    formData.append("field", data.field || "Engineering");
     formData.append("privacy", isPublic ? "public" : "private");
     if (imageFile) formData.append("image", imageFile);
 
@@ -49,245 +56,193 @@ const CreateGroupForm = () => {
     }
   };
 
-
   return (
-    <motion.form
-      onSubmit={handleSubmit(onSubmit)}
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
-    >
-      {/* Left: Identity Section (Image Upload) */}
-      <div className="lg:col-span-5 space-y-6">
-        <div className={`backdrop-blur-3xl border rounded-[40px] p-8 shadow-2xl relative overflow-hidden group transition-all ${
-          theme === "dark" ? "bg-zinc-900/40 border-white/5" : "bg-white border-black/5"
-        }`}>
-          <div className="absolute inset-0 bg-linear-to-br from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+    <div className="w-full max-w-5xl mx-auto">
+      <PageHeader
+        title="Create a study group"
+        description="Set up a shared workspace for your course, project, or study topic."
+        badge={<Pill variant="sky" size="sm">New Group</Pill>}
+      />
 
-          <h3 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-500 mb-8">
-            Group Identity
-          </h3>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
+      >
+        {/* Left Column: Group Details Form */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <Card variant="white" className="p-8 flex flex-col gap-6">
+            <h3 className="text-[18px] font-bold text-[#000000] border-b border-black/[0.06] pb-3">
+              Group Details
+            </h3>
 
-          <div className="relative aspect-square w-full max-w-60 mx-auto">
-            <div
-              className={`w-full h-full rounded-[48px] border-2 border-dashed flex flex-col items-center justify-center transition-all overflow-hidden ${
-                imagePreview 
-                  ? "border-solid border-indigo-500/50 shadow-[0_0_40px_rgba(99,102,241,0.2)]" 
-                  : (theme === "dark" ? "border-white/10 hover:border-white/20" : "border-black/10 hover:border-black/20")
-              }`}
-            >
-              {imagePreview ? (
-                <>
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute top-4 right-4 p-2 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-all"
-                  >
-                    <X size={16} />
-                  </button>
-                </>
-              ) : (
-                <label className="flex flex-col items-center cursor-pointer group/label">
-                  <div className={`p-6 rounded-3xl mb-4 group-hover/label:bg-indigo-500 group-hover/label:text-white transition-all ${
-                    theme === "dark" ? "bg-white/5" : "bg-black/5 text-zinc-500"
-                  }`}>
-                    <Camera size={32} />
-                  </div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
-                    Upload Avatar
-                  </span>
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={handleImageChange}
-                    accept="image/*"
-                  />
-                </label>
-              )}
-            </div>
-          </div>
+            {/* Name Input */}
+            <Input
+              label="Group Name"
+              placeholder="e.g. Data Structures & Algorithms Peer Group"
+              error={errors.name?.message}
+              {...register("name", { required: "Group name is required" })}
+            />
 
-          <div className="mt-10 space-y-4">
-            <div className={`p-4 rounded-2xl border transition-all ${
-              theme === "dark" ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"
-            }`}>
-              <p className={`text-[11px] leading-relaxed italic ${theme === "dark" ? "text-zinc-400" : "text-zinc-500"}`}>
-                "Collective identity fosters better knowledge sharing. Choose an
-                avatar that represents your group's focus."
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right: Configuration Section */}
-      <div className="lg:col-span-7 space-y-6">
-        <div className={`backdrop-blur-3xl border rounded-[40px] p-6 shadow-2xl space-y-10 transition-all ${
-          theme === "dark" ? "bg-zinc-900/40 border-white/5" : "bg-white border-black/5"
-        }`}>
-          {/* Name Input */}
-          <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400">
-              Hub Nomenclature
-            </label>
-            <div className="relative">
-              <input
-                {...register("name", { required: "Name is required" })}
-                placeholder="Enter collective name..."
-                className={`w-full bg-transparent text-2xl tracking-tighter outline-none border-b-2 transition-all pb-1 ${
-                  theme === "dark" ? "text-white border-white/5 focus:border-indigo-500 placeholder:text-zinc-800" : "text-black border-black/5 focus:border-indigo-500 placeholder:text-zinc-300"
-                }`}
-              />
-              {errors.name && (
-                <p className="absolute -bottom-6 left-0 text-[10px] text-red-400 font-bold">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Grid Inputs */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
-                Domain Focus
+            {/* Field/Category Select */}
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-[13px] font-medium text-[#111111]">
+                Category / Subject
               </label>
-              <div className="relative">
-                <select
-                  {...register("field", { required: "Please select a field" })}
-                  className={`w-full border rounded-2xl py-4 px-4 text-sm font-bold outline-none appearance-none focus:border-indigo-500/50 transition-all ${
-                    theme === "dark" ? "bg-white/5 border-white/10 text-white" : "bg-black/5 border-black/10 text-black"
-                  }`}
-                >
-                  <option value="" disabled selected className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Select Domain
-                  </option>
-                  <option value="Engineering" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Web Engineering
-                  </option>
-                  <option value="dsa" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Algorithms
-                  </option>
-                  <option value="ai-ml" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Neural Networks
-                  </option>
-                  <option value="cybersecurity" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Security
-                  </option>
-                  <option value="design" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Visual Systems
-                  </option>
-                  <option value="bio" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Bio-Tech
-                  </option>
-                  <option value="other" className={theme === "dark" ? "bg-zinc-900" : "bg-white"}>
-                    Others
-                  </option>
-                </select>
-                <Zap
-                  size={14}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-600 pointer-events-none"
-                />
-              </div>
+              <select
+                {...register("field", { required: "Please select a category" })}
+                className="w-full bg-white text-[#111111] text-[14px] px-3.5 py-2 rounded-[8px] border border-black/[0.12] outline-none focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20"
+              >
+                <option value="Engineering">Web Engineering</option>
+                <option value="dsa">Algorithms & Data Structures</option>
+                <option value="ai-ml">Artificial Intelligence & ML</option>
+                <option value="cybersecurity">Cybersecurity & Networks</option>
+                <option value="design">Design & Visual Systems</option>
+                <option value="bio">Biotechnology</option>
+                <option value="other">Other / General</option>
+              </select>
+              {errors.field && (
+                <span className="text-[12px] text-[#e32d14] font-medium">
+                  {errors.field.message}
+                </span>
+              )}
             </div>
 
-            <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
+            {/* Privacy Toggle */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] font-medium text-[#111111]">
                 Privacy Mode
               </label>
-              <div className="flex gap-2">
-                <button
+              <div className="flex gap-3">
+                <Button
                   type="button"
+                  variant={isPublic ? "primary" : "ghost"}
+                  className="flex-1"
                   onClick={() => setIsPublic(true)}
-                  className={`flex-1 py-2.5 rounded-xl text-[10px] font-black transition-all ${
-                    isPublic 
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" 
-                      : (theme === "dark" ? "bg-white/5 border border-white/10 text-zinc-500 hover:text-white" : "bg-black/5 border border-black/10 text-zinc-500 hover:text-black")
-                  }`}
                 >
-                  PUBLIC
-                </button>
-                <button
+                  Public Group
+                </Button>
+                <Button
                   type="button"
+                  variant={!isPublic ? "primary" : "ghost"}
+                  className="flex-1"
                   onClick={() => setIsPublic(false)}
-                  className={`flex-1 py-2.5 rounded-xl text-[10px] font-black transition-all ${
-                    !isPublic 
-                      ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20" 
-                      : (theme === "dark" ? "bg-white/5 border border-white/10 text-zinc-500 hover:text-white" : "bg-black/5 border border-black/10 text-zinc-500 hover:text-black")
-                  }`}
                 >
-                  PRIVATE
-                </button>
+                  Private Group
+                </Button>
               </div>
             </div>
-          </div>
 
-          {/* Description */}
-          <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
-              Operational Mission
-            </label>
-            <textarea
-              {...register("description")}
-              rows={4}
-              placeholder="What is the primary goal of this collective?"
-              className={`w-full border rounded-3xl py-3 px-5 text-sm outline-none focus:border-indigo-500/50 transition-all resize-none ${
-                theme === "dark" ? "bg-white/5 border-white/10 text-white placeholder:text-zinc-700" : "bg-black/5 border-black/10 text-black placeholder:text-zinc-400"
-              }`}
-            />
-          </div>
-
-          {/* Bottom Action */}
-          <div className={`pt-6 border-t flex items-center justify-between text-xs ${
-            theme === "dark" ? "border-white/5" : "border-black/5"
-          }`}>
-            <div className="flex items-center gap-2">
-              <div className={`p-2 rounded-lg ${theme === "dark" ? "bg-zinc-800" : "bg-zinc-100"}`}>
-                <Users size={16} className={theme === "dark" ? "text-zinc-400" : "text-zinc-500"} />
-              </div>
-              <span className={`text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}>
-                Initial Capacity: 50 Members
-              </span>
+            {/* Description */}
+            <div className="flex flex-col gap-1.5 w-full">
+              <label className="text-[13px] font-medium text-[#111111]">
+                Description
+              </label>
+              <textarea
+                {...register("description")}
+                rows={4}
+                placeholder="Describe what your study group focuses on, study goals, or weekly schedules..."
+                className="w-full bg-white text-[#111111] placeholder-[#757575] text-[14px] px-3.5 py-2 rounded-[8px] border border-black/[0.12] outline-none focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20 resize-none"
+              />
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              type="submit"
-              disabled={isSubmitting}
-              className={`group flex items-center gap-3 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wide transition-all active:shadow-none ${
-                theme === "dark" 
-                  ? "bg-white text-black hover:bg-indigo-50 shadow-[0_15px_40px_rgba(255,255,255,0.1)]" 
-                  : "bg-black text-white hover:bg-zinc-900 shadow-xl shadow-black/10"
-              }`}
-            >
-              {isSubmitting ? (
-                <div className="flex items-center gap-3">
-                  <Sparkles
-                    size={18}
-                    className="animate-spin text-indigo-600"
-                  />
-                  <span>Initializing...</span>
+            {/* Avatar Upload */}
+            <div className="flex flex-col gap-2 pt-2 border-t border-black/[0.06]">
+              <label className="text-[13px] font-medium text-[#111111]">
+                Group Avatar (Optional)
+              </label>
+              <div className="flex items-center gap-4">
+                <div className="relative w-16 h-16 rounded-full border border-black/15 bg-[#f6f5f4] flex items-center justify-center overflow-hidden shrink-0">
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="w-6 h-6 text-[#757575]" />
+                  )}
                 </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <span>Launch Hub</span>
-                  <Rocket
-                    size={18}
-                    className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
-                  />
+                <div className="flex items-center gap-2">
+                  <label className="cursor-pointer">
+                    <span className="inline-flex items-center justify-center font-medium text-[13px] px-3 py-1.5 rounded-[8px] bg-[#e6f3fe] text-[#0075de] hover:bg-[#d4ebfe] transition-colors">
+                      Choose Image
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={handleImageChange}
+                      accept="image/*"
+                    />
+                  </label>
+                  {imagePreview && (
+                    <Button variant="text" size="sm" onClick={removeImage}>
+                      Remove
+                    </Button>
+                  )}
                 </div>
-              )}
-            </motion.button>
-          </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-black/[0.06]">
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
+                loading={isSubmitting}
+              >
+                Create Study Group
+              </Button>
+            </div>
+          </Card>
         </div>
-      </div>
-    </motion.form>
+
+        {/* Right Column: Live Card Preview */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          <span className="text-[13px] font-semibold text-[#757575] uppercase tracking-wider">
+            Live Group Preview
+          </span>
+          <Card variant="white" className="p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <Pill variant="gray" size="sm">
+                {watchedField || "Category"}
+              </Pill>
+              <Pill variant="sky" size="sm">
+                {isPublic ? "Public" : "Private"}
+              </Pill>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <Avatar
+                src={imagePreview}
+                name={watchedName || "New Group"}
+                size="lg"
+                borderColor="#0075de"
+              />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-[18px] font-bold text-[#000000] truncate">
+                  {watchedName || "Untitled Study Group"}
+                </h4>
+                <p className="text-[13px] text-[#615d59] line-clamp-3 mt-1 leading-relaxed">
+                  {watchedDescription ||
+                    "Your group description will appear here as you type."}
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-black/[0.06] flex items-center justify-between text-[13px] text-[#757575]">
+              <div className="flex items-center gap-1">
+                <Users className="w-4 h-4" />
+                <span>1 member (you)</span>
+              </div>
+              <Pill variant="sky" size="sm">
+                Workspace Preview
+              </Pill>
+            </div>
+          </Card>
+        </div>
+      </form>
+    </div>
   );
 };
 

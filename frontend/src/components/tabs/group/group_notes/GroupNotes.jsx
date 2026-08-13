@@ -1,28 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { useNavigate, useParams } from "react-router-dom";
-import { createPortal } from "react-dom";
-import { Plus, Search } from "lucide-react";
+import { useNavigate, useParams, useOutletContext } from "react-router-dom";
+import { Plus, FileText } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import NotesGrid from "./components/NotesGrid";
-import {
-  selectNotes,
-  selectNotesLoading,
-} from "../../../../features/notes/notesSelectors";
-import {
-  getNoteById,
-  searchNotes,
-  setLoading,
-  setNotes,
-} from "../../../../features/notes/notesSlice";
+import { selectNotesLoading, selectNotes } from "../../../../features/notes/notesSelectors";
+import { getNoteById, setLoading, setNotes } from "../../../../features/notes/notesSlice";
+import Button from "../../../design-system/Button";
+import Pill from "../../../design-system/Pill";
+import { PageHeader } from "../../../design-system/SectionHeader";
+import { LoadingState } from "../../../design-system/States";
 
 const GroupNotes = () => {
-  const theme = useSelector((state) => state.theme.mode);
   const [page, setPage] = useState(1);
   const [hasMoreNotes, setHasMoreNotes] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { groupId } = useParams();
+  const outletContext = useOutletContext() || {};
+  const group = outletContext.group;
 
   const loading = useSelector(selectNotesLoading);
   const notes = useSelector(selectNotes);
@@ -32,20 +27,15 @@ const GroupNotes = () => {
     notesRef.current = notes;
   }, [notes]);
 
-
   useEffect(() => {
     if (!groupId) return;
-
     let isCancelled = false;
 
     const loadNotes = async () => {
       dispatch(setLoading(true));
-
       let res = await dispatch(getNoteById({ noteId: groupId, page, limit: 8 }));
 
-
       if (isCancelled) return;
-
       const fetchedNotes = res.payload?.notes || res.payload?.note || [];
       const nextNotes =
         page === 1
@@ -57,7 +47,7 @@ const GroupNotes = () => {
       dispatch(setLoading(false));
     };
 
-    const timer = setTimeout(loadNotes, 300);
+    const timer = setTimeout(loadNotes, 200);
     return () => {
       isCancelled = true;
       clearTimeout(timer);
@@ -65,59 +55,43 @@ const GroupNotes = () => {
   }, [groupId, page, dispatch]);
 
   return (
-    <div className={`relative w-full min-h-screen p-6 md:p-12 ${theme === "dark" ? "bg-[#0e0e0f] text-slate-200" : "bg-[#f9f9f9] text-[#1a1a1a]"}`}>
-      {/* 1. SEARCH HUB */}
-      <section className="mb-16">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
-          <div className="space-y-2">
-            <h1 className={`text-4xl md:text-5xl font-black tracking-tighter uppercase ${theme === "dark" ? "text-white" : "text-black"}`}>
-              Knowledge_Base
-            </h1>
-          </div>
+    <div className="p-6 md:p-10 max-w-5xl mx-auto">
+      {/* Workspace Header */}
+      <PageHeader
+        title={group?.name || "Group Knowledge Base"}
+        description={
+          group?.description ||
+          "Shared notes and study materials curated by members of this group."
+        }
+        badge={<Pill variant="sky" size="sm">Knowledge Base</Pill>}
+        actions={
+          <Button
+            variant="primary"
+            icon={Plus}
+            onClick={() => navigate(`/group/${groupId}/note`)}
+          >
+            Create Note
+          </Button>
+        }
+      />
 
-          <div className="relative w-full md:w-80 group">
-            <div className="absolute -inset-1 rounded-2xl blur opacity-10 group-focus-within:opacity-30 transition-opacity" />
-          </div>
-        </div>
-      </section>
-
-      {/* 2. THE NOTES GRID */}
-      {loading ? (
-        <div className="py-40 flex flex-col items-center gap-4">
-          <div className={`w-10 h-10 border-2 border-t-indigo-500 rounded-full animate-spin ${theme === "dark" ? "border-white/5" : "border-black/5"}`} />
-          <span className={`text-[10px] font-black uppercase tracking-widest ${theme === "dark" ? "text-zinc-600" : "text-zinc-400"}`}>
-            Accessing Vault...
-          </span>
-        </div>
-      ) : (
-        <>
-          <NotesGrid />
-          {hasMoreNotes && !loading && (
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={() => setPage((prev) => prev + 1)}
-                className="px-6 py-3 bg-indigo-500 text-white text-sm font-bold uppercase tracking-widest rounded-xl hover:bg-indigo-600 transition-all"
-              >
-                Load More
-              </button>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* 3. QUANTUM FLOATING ACTION BUTTON */}
-      {createPortal(
-        <motion.button
-          onClick={() => navigate(`/group/${groupId}/note`)}
-          className={`fixed bottom-10 right-10 z-[100] p-4 rounded-full group shadow-2xl transition-all ${
-            theme === "dark" ? "bg-white text-black hover:bg-indigo-500 hover:text-white" : "bg-black text-white hover:bg-indigo-500"
-          }`}
-        >
-          <Plus size={20} className="transition-transform" />
-          <div className={`absolute inset-0 rounded-full border-2 opacity-20 pointer-events-none ${theme === "dark" ? "border-white/20" : "border-black/20"}`} />
-        </motion.button>,
-        document.body,
-      )}
+      {/* Main Grid */}
+      <div className="mt-8">
+        {loading && (!notes || notes.length === 0) ? (
+          <LoadingState message="Loading group notes..." />
+        ) : (
+          <>
+            <NotesGrid />
+            {hasMoreNotes && !loading && (
+              <div className="flex justify-center mt-8">
+                <Button variant="ghost" onClick={() => setPage((prev) => prev + 1)}>
+                  Load more notes
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

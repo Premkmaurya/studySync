@@ -1,35 +1,16 @@
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-
-// Framer Motion
-import { AnimatePresence } from "framer-motion";
-
-// React Router
+import React, { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
-
-// Using lucide-react as the primary, stable icon engine
-
-// Custom Components
+import { AnimatePresence } from "framer-motion";
+import api from "../../../services/api";
 import AIPopup from "../chats_components/AiPopup";
 import ChatSidebar from "../chats_components/ChatSidebar";
 import Header from "./components/Header";
-
-// Axios and Socket.io
-import axios from "axios";
-import Editor from "./components/Editor";
-
 export default function NotesEditor() {
-  const theme = useSelector((state) => state.theme.mode);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [aiText, setAiText] = useState("");
-  const [content, setContent] = useState("");
-
   const location = useLocation();
-  const contentFromState = location.state?.content;
+  const { groupId } = useParams();
 
-  const [isViewOnly, setIsViewOnly] = useState(
-    location.state?.isViewOnly || false,
-  );
+  const contentFromState = location.state?.content;
+  const [isViewOnly] = useState(location.state?.isViewOnly || false);
   const [isAisummarize, setIsAisummarize] = useState(false);
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -38,59 +19,57 @@ export default function NotesEditor() {
   const [isAiPanelOpen, setIsAiPanelOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editor, setEditor] = useState(null);
+  const [aiText, setAiText] = useState("");
+  const [content, setContent] = useState("");
 
-  const { groupId } = useParams();
-  const groupName = location.state?.groupName || "Unknown Group";
-  const profession = location.state?.profession || "Unknown Profession";
+  const groupName = location.state?.groupName || "Study Group";
+  const profession = location.state?.profession || "General";
   const id = location.state?.id || null;
 
   const handleSave = async () => {
     setIsSaving(true);
-    if (!editor || !title) return;
+    if (!editor || !title) {
+      setIsSaving(false);
+      return;
+    }
     const editorContent = editor.getHTML();
-    const response = await axios.post(
-      "http://localhost:3000/api/notes/create",
-      { content: editorContent, title, groupId },
-      {
-        withCredentials: true,
-      },
-    );
-    setIsSaving(false);
-    setIsModalOpen(false);
+    try {
+      await api.post("/notes/create", {
+        content: editorContent,
+        title,
+        groupId,
+      });
+    } catch (err) {
+      console.error("Error saving note:", err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
-    <div className="overflow-hidden">
-      <div>
-        <AIPopup
-          isOpen={isAIOpen}
-          onClose={() => setIsAIOpen(false)}
-          setContent={setContent}
-        />
-      </div>
-      <div
-        className={`relative min-h-screen w-full overflow-x-hidden selection:bg-indigo-500/40 font-sans text-editor-container ${
-          isModalOpen ? "blur-sm" : ""
-        } relative ${theme === "dark" ? "bg-[#0e0e0f]" : "bg-[#ffffff]"}`}
-      >
-        {/* Background Elements */}
-        <div className="absolute top-0 -left-20 w-[700px] h-[700px] bg-indigo-600/5 blur-[160px] rounded-full pointer-events-none" />
-        <div className="absolute bottom-0 -right-20 w-[600px] h-[600px] bg-fuchsia-600/5 blur-[160px] rounded-full pointer-events-none" />
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen flex flex-col">
+      <AIPopup
+        isOpen={isAIOpen}
+        onClose={() => setIsAIOpen(false)}
+        setContent={setContent}
+      />
 
-        {/* Floating Header */}
-        <Header
-          groupName={groupName}
-          profession={profession}
-          isViewOnly={isViewOnly}
-          isAiPanelOpen={isAiPanelOpen}
-          setIsAiPanelOpen={setIsAiPanelOpen}
-          isShareOpen={isShareOpen}
-          setIsShareOpen={setIsShareOpen}
-          handleSave={handleSave}
-          isSaving={isSaving}
-        />
+      {/* Editor Header Bar */}
+      <Header
+        groupName={groupName}
+        profession={profession}
+        isViewOnly={isViewOnly}
+        isAiPanelOpen={isAiPanelOpen}
+        setIsAiPanelOpen={setIsAiPanelOpen}
+        isShareOpen={isShareOpen}
+        setIsShareOpen={setIsShareOpen}
+        handleSave={handleSave}
+        isSaving={isSaving}
+        groupId={groupId}
+      />
 
-        {/* editor */}
+      {/* Document Workspace */}
+      <div className="flex-1 max-w-4xl w-full mx-auto px-6 py-8">
         <Editor
           isViewOnly={isViewOnly}
           contentFromState={contentFromState}
@@ -105,19 +84,20 @@ export default function NotesEditor() {
           setEditor={setEditor}
           content={content}
         />
-        {/* AI Summary Sidebar */}
-        <AnimatePresence>
-          {isAiPanelOpen && (
-            <ChatSidebar
-              id={id}
-              isAiPanelOpen={isAiPanelOpen}
-              setIsAiPanelOpen={setIsAiPanelOpen}
-              aiText={aiText}
-              setIsAisummarize={setIsAisummarize}
-            />
-          )}
-        </AnimatePresence>
       </div>
+
+      {/* AI Summary Sidebar */}
+      <AnimatePresence>
+        {isAiPanelOpen && (
+          <ChatSidebar
+            id={id}
+            isAiPanelOpen={isAiPanelOpen}
+            setIsAiPanelOpen={setIsAiPanelOpen}
+            aiText={aiText}
+            setIsAisummarize={setIsAisummarize}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

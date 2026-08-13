@@ -4,12 +4,15 @@ import { registerUser } from "../../features/auth/authSlice";
 import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Loader2 } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import Button from "../../components/design-system/Button";
+import Input from "../../components/design-system/Input";
+import Card from "../../components/design-system/Card";
+import Pill from "../../components/design-system/Pill";
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme?.mode || "dark");
   const reduxLoading = useSelector(selectAuthLoading);
   const reduxError = useSelector(selectAuthError);
 
@@ -35,157 +38,119 @@ const Register = () => {
     }
   };
 
-  const isDarkMode = theme === "dark";
-
   return (
-    <div className={`min-h-screen w-full flex flex-col md:flex-row ${isDarkMode ? "bg-zinc-950 text-white" : "bg-white text-gray-900"}`}>
-      {/* Left side: Visual Image */}
-      <div className="w-full md:w-1/2 hidden md:block h-screen overflow-hidden">
-        <img
-          className="h-full w-full object-cover"
-          src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/leftSideImage.png"
-          alt="leftSideImage"
-        />
+    <div className="min-h-screen w-full bg-[#f6f5f4] flex flex-col md:flex-row text-[#000000]">
+      {/* Left side: Editorial accent panel */}
+      <div className="hidden md:flex w-1/2 bg-[#02093a] text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
+        <Link to="/" className="flex items-center gap-2.5 z-10">
+          <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
+            <BookOpen className="w-4 h-4" />
+          </div>
+          <span className="font-bold text-[20px] tracking-[-0.3px] text-white">
+            studySync
+          </span>
+        </Link>
+
+        <div className="z-10 max-w-lg my-auto flex flex-col gap-6">
+          <Pill variant="marigold" size="sm" className="w-fit">
+            Create Your Account
+          </Pill>
+          <h1 className="text-[40px] lg:text-[48px] font-bold tracking-[-1.5px] leading-[1.1]">
+            Join a community of students learning together.
+          </h1>
+          <p className="text-[16px] text-white/80 font-['Source_Serif_4',Georgia,serif] italic leading-relaxed">
+            Discover active study groups, create shared notes, and accelerate your academic goals with peers.
+          </p>
+        </div>
+
+        <div className="z-10 text-[13px] text-white/60">
+          © {new Date().getFullYear()} StudySync Platform
+        </div>
       </div>
 
-      {/* Right side: Form container */}
-      <div className="w-full md:w-1/2 min-h-screen flex flex-col items-center justify-center p-6 md:p-12">
-        <form onSubmit={handleSubmit(onSubmit)} className="md:w-96 w-80 flex flex-col items-center justify-center">
-          <h2 className={`text-4xl font-medium ${isDarkMode ? "text-white" : "text-gray-900"}`}>
-            Sign up
-          </h2>
-
-          <p className={`text-sm mt-3 ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
-            Welcome! Please enter your details to sign up
-          </p>
-
-          <button
-            type="button"
-            className={`w-full mt-6 flex items-center justify-center h-12 rounded-full transition-colors ${
-              isDarkMode ? "bg-zinc-800/80 hover:bg-zinc-800" : "bg-gray-500/10 hover:bg-gray-500/20"
-            }`}
-          >
-            <img
-              src="https://raw.githubusercontent.com/prebuiltui/prebuiltui/main/assets/login/googleLogo.svg"
-              alt="googleLogo"
-            />
-          </button>
-
-          <div className="flex items-center gap-4 w-full my-4">
-            <div className={`w-full h-px ${isDarkMode ? "bg-zinc-800" : "bg-gray-300/90"}`}></div>
-            <p className={`w-full text-nowrap text-sm ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
-              or sign up with email
-            </p>
-            <div className={`w-full h-px ${isDarkMode ? "bg-zinc-800" : "bg-gray-300/90"}`}></div>
-          </div>
-
-          {(authError || reduxError) && (
-            <div className="w-full mb-3 p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-xs text-red-500 text-center font-medium">
-              {authError || reduxError}
-            </div>
-          )}
-
-          {/* First Name & Last Name inputs */}
-          <div className="w-full flex gap-3">
-            <div className="w-1/2 flex flex-col">
-              <div className={`flex items-center w-full bg-transparent border h-11 rounded-full overflow-hidden px-4 transition-colors ${
-                errors.firstname ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
-              }`}>
-                <input
-                  type="text"
-                  placeholder="First name"
-                  {...register("firstname", { required: "First name is required" })}
-                  className={`bg-transparent outline-none text-sm w-full h-full ${
-                    isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
-                  }`}
-                />
+      {/* Right side: Clean Form Card */}
+      <div className="w-full md:w-1/2 min-h-screen flex items-center justify-center p-6 md:p-12">
+        <div className="w-full max-w-md">
+          {/* Mobile Logo Header */}
+          <div className="md:hidden flex items-center gap-2.5 mb-8">
+            <Link to="/" className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
+                <BookOpen className="w-4 h-4" />
               </div>
-              {errors.firstname && (
-                <span className="text-[11px] text-red-500 ml-3 mt-1">{errors.firstname.message}</span>
-              )}
-            </div>
-
-            <div className="w-1/2 flex flex-col">
-              <div className={`flex items-center w-full bg-transparent border h-11 rounded-full overflow-hidden px-4 transition-colors ${
-                errors.lastname ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
-              }`}>
-                <input
-                  type="text"
-                  placeholder="Last name"
-                  {...register("lastname", { required: "Last name is required" })}
-                  className={`bg-transparent outline-none text-sm w-full h-full ${
-                    isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
-                  }`}
-                />
-              </div>
-              {errors.lastname && (
-                <span className="text-[11px] text-red-500 ml-3 mt-1">{errors.lastname.message}</span>
-              )}
-            </div>
-          </div>
-
-          {/* Email input */}
-          <div className="w-full flex flex-col mt-4">
-            <div className={`flex items-center w-full bg-transparent border h-11 rounded-full overflow-hidden pl-6 gap-2 transition-colors ${
-              errors.email ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
-            }`}>
-              <input
-                type="email"
-                placeholder="Email id"
-                {...register("email", { required: "Email is required" })}
-                className={`bg-transparent outline-none text-sm w-full h-full ${
-                  isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
-                }`}
-              />
-            </div>
-            {errors.email && (
-              <span className="text-[11px] text-red-500 ml-4 mt-1">{errors.email.message}</span>
-            )}
-          </div>
-
-          {/* Password input */}
-          <div className="w-full flex flex-col mt-4">
-            <div className={`flex items-center w-full bg-transparent border h-11 rounded-full overflow-hidden pl-6 gap-2 transition-colors ${
-              errors.password ? "border-red-500" : isDarkMode ? "border-zinc-700/80 focus-within:border-indigo-500" : "border-gray-300/60 focus-within:border-indigo-500"
-            }`}>
-              <input
-                type="password"
-                placeholder="Password"
-                {...register("password", { required: "Password is required" })}
-                className={`bg-transparent outline-none text-sm w-full h-full ${
-                  isDarkMode ? "text-white placeholder-zinc-500" : "text-gray-800 placeholder-gray-500/80"
-                }`}
-              />
-            </div>
-            {errors.password && (
-              <span className="text-[11px] text-red-500 ml-4 mt-1">{errors.password.message}</span>
-            )}
-          </div>
-
-          {/* Submit button */}
-          <button
-            type="submit"
-            disabled={isSubmitting || reduxLoading}
-            className="mt-6 w-full h-11 rounded-full text-white bg-indigo-500 hover:bg-indigo-600 transition-all font-medium flex items-center justify-center disabled:opacity-50 cursor-pointer"
-          >
-            {isSubmitting || reduxLoading ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
-            ) : (
-              "Sign up"
-            )}
-          </button>
-
-          {/* Navigation to Login */}
-          <p className={`text-sm mt-4 ${isDarkMode ? "text-zinc-400" : "text-gray-500/90"}`}>
-            Already have an account?{" "}
-            <Link
-              to="/login"
-              className="text-indigo-500 hover:underline font-medium"
-            >
-              Sign in
+              <span className="font-bold text-[18px] text-[#000000]">studySync</span>
             </Link>
-          </p>
-        </form>
+          </div>
+
+          <Card variant="white" className="p-8 sm:p-10">
+            <div className="mb-6">
+              <h2 className="text-[26px] font-bold text-[#000000] tracking-[-0.5px]">
+                Create an account
+              </h2>
+              <p className="text-[14px] text-[#615d59] mt-1">
+                Enter your details to start collaborating on StudySync
+              </p>
+            </div>
+
+            {(authError || reduxError) && (
+              <div className="mb-6 p-3.5 bg-[#e32d14]/10 border border-[#e32d14]/20 rounded-[8px] text-[13px] text-[#e32d14] font-medium">
+                {authError || reduxError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="First name"
+                  type="text"
+                  placeholder="Alex"
+                  error={errors.firstname?.message}
+                  {...register("firstname", { required: "First name is required" })}
+                />
+                <Input
+                  label="Last name"
+                  type="text"
+                  placeholder="Morgan"
+                  error={errors.lastname?.message}
+                  {...register("lastname", { required: "Last name is required" })}
+                />
+              </div>
+
+              <Input
+                label="Email address"
+                type="email"
+                placeholder="name@university.edu"
+                error={errors.email?.message}
+                {...register("email", { required: "Email is required" })}
+              />
+
+              <Input
+                label="Password"
+                type="password"
+                placeholder="Create a password"
+                error={errors.password?.message}
+                {...register("password", { required: "Password is required" })}
+              />
+
+              <Button
+                type="submit"
+                variant="primary"
+                fullWidth
+                size="lg"
+                loading={isSubmitting || reduxLoading}
+                className="mt-3"
+              >
+                Sign up
+              </Button>
+            </form>
+
+            <div className="mt-8 pt-6 border-t border-black/[0.08] text-center text-[14px] text-[#615d59]">
+              Already have an account?{" "}
+              <Link to="/login" className="text-[#0075de] font-semibold hover:underline">
+                Sign in
+              </Link>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   );

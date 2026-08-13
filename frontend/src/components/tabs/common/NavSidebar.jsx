@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { NavLink, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -7,20 +6,19 @@ import {
   Compass,
   FileText,
   Plus,
-  Sparkles,
+  BookOpen,
+  User,
   Menu,
   X,
-  ArrowRight,
-  User,
 } from "lucide-react";
-import ThemeToggle from "../../common/ThemeToggle";
+import Button from "../../design-system/Button";
+import Avatar from "../../design-system/Avatar";
 
-const NavBar = () => {
+const NavSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const theme = useSelector((state) => state.theme.mode);
+  const user = useSelector((state) => state.auth.user);
 
-  // Close menu on route change
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
@@ -32,173 +30,114 @@ const NavBar = () => {
   ];
 
   return (
-    <motion.nav
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      style={{ WebkitTransform: "translate3d(0,0,0)" }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] max-w-5xl w-[95%]"
-    >
-      <motion.div
-        layout
-        className={`px-6 py-4 md:px-8 backdrop-blur-2xl border rounded-[32px] flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.3)] overflow-hidden transition-all ${
-          theme === "light"
-            ? "bg-white/60 border-black/10"
-            : "bg-[#0e0e0f]/80 border-white/10"
-        }`}
-      >
-        <div className="flex items-center justify-between w-full">
-          {/* Left: Logo/Brand */}
-          <NavLink
-            to="/home"
-            className="flex items-center gap-2 group relative z-[110]"
-          >
-            <div
-              className={`p-2.5 rounded-2xl group-hover:bg-indigo-500/20 transition-all ${
-                theme === "light" ? "bg-indigo-500/15" : "bg-indigo-500/10"
-              }`}
-            >
-              <Sparkles size={20} className="text-indigo-500" />
+    <header className="sticky top-0 left-0 w-full z-[100] bg-[#f6f5f4] border-b border-black/[0.08]">
+      <div className="max-w-[1440px] mx-auto px-6 md:px-12 h-16 flex items-center justify-between">
+        {/* Left: Brand Logo & Main Nav */}
+        <div className="flex items-center gap-10">
+          <NavLink to="/home" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold text-sm">
+              <BookOpen className="w-4 h-4" />
             </div>
-            <span
-              className={`text-sm font-semibold tracking-tighter group-hover:text-indigo-400 transition-colors ${
-                theme === "light" ? "text-black" : "text-white"
-              }`}
-            >
+            <span className="font-bold text-[18px] tracking-[-0.3px] text-[#000000]">
               studySync
             </span>
           </NavLink>
 
-          {/* Center: Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* Desktop Nav Items */}
+          <nav className="hidden md:flex items-center gap-1.5">
             {navItems.map((item) => (
               <NavLink
                 key={item.label}
                 to={item.path}
                 className={({ isActive }) =>
-                  `px-4 py-2 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-2 border-2 ${
+                  `px-3.5 py-1.5 rounded-[8px] text-[14px] font-medium transition-all flex items-center gap-2 ${
                     isActive
-                      ? theme === "light"
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-black border-white"
-                      : theme === "light"
-                        ? "bg-transparent text-gray-500 border-gray-300 hover:text-black hover:border-black/20"
-                        : "bg-transparent text-zinc-500 border-zinc-700 hover:text-white hover:border-white/20"
+                      ? "bg-[#e6f3fe] text-[#0075de]"
+                      : "text-[#615d59] hover:text-[#000000] hover:bg-black/[0.04]"
                   }`
                 }
               >
-                <item.icon size={16} />
+                <item.icon className="w-4 h-4 shrink-0" />
                 <span>{item.label}</span>
               </NavLink>
             ))}
-          </div>
-
-          {/* Right: Action Button + Profile (Desktop) */}
-          <div className="hidden md:flex items-center gap-3 relative z-[110]">
-            <NavLink
-              to="/create-group"
-              className={`px-5 py-2.5 rounded-2xl text-[11px] font-black uppercase tracking-widest ${
-                theme === "light" 
-                  ? "bg-black text-white hover:bg-gray-800 shadow-black/10" 
-                  : "bg-white text-black hover:bg-gray-300 shadow-white/5"
-              } transition-all flex items-center gap-2 shadow-lg`}
-            >
-              <Plus color={`${theme === "light" ? "white" : "black"}`} size={18} />
-              <span
-                className={`${theme === "light" ? "text-white" : "text-black"}`}
-              >
-                New Hub
-              </span>
-            </NavLink>
-
-            <ThemeToggle />
-
-            <NavLink to="/profile" className="relative group block">
-              <User color={theme === "light" ? "black" : "white"} size={25} />
-            </NavLink>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className={`md:hidden relative z-[110] p-2 ${theme === "light" ? "text-black hover:bg-black/5" : "text-white hover:bg-white/5"} rounded-xl transition-colors`}
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          </nav>
         </div>
 
-        {/* Mobile Dropdown Menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0, marginTop: 0 }}
-              animate={{ opacity: 1, height: "auto", marginTop: 24 }}
-              exit={{ opacity: 0, height: 0, marginTop: 0 }}
-              transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-              className="flex flex-col gap-4 md:hidden relative z-[105]"
-            >
-              <div className="flex flex-col gap-2">
-                {navItems.map((item, index) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + index * 0.05 }}
-                  >
-                    <NavLink
-                      to={item.path}
-                      onClick={() => setIsOpen(false)}
-                      className={({ isActive }) =>
-                        `px-4 py-3 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all flex items-center gap-3 border-2 ${
-                          isActive
-                            ? theme === "light"
-                              ? "bg-black text-white border-black"
-                              : "bg-white text-black border-white"
-                            : theme === "light"
-                              ? "bg-transparent text-gray-500 border-gray-300 hover:text-black hover:border-black/20"
-                              : "bg-transparent text-zinc-500 border-zinc-700 hover:text-white hover:border-white/20"
-                        }`
-                      }
-                    >
-                      <item.icon size={18} />
-                      <span className="flex-1">{item.label}</span>
-                      <ArrowRight size={16} />
-                    </NavLink>
-                  </motion.div>
-                ))}
-              </div>
+        {/* Right: Actions & User Avatar */}
+        <div className="hidden md:flex items-center gap-4">
+          <NavLink to="/create-group">
+            <Button variant="ghost" size="sm" icon={Plus}>
+              Create Group
+            </Button>
+          </NavLink>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className={`mt-4 flex flex-col gap-3 pt-4 border-t ${theme === "light" ? "border-black/10" : "border-white/10"}`}
-              >
-                <div className="flex items-center justify-center">
-                  <ThemeToggle />
-                </div>
-                <NavLink
-                  to="/create-group"
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center justify-center w-full py-4 ${theme === "light" ? "bg-black text-white hover:bg-gray-800" : "bg-white text-black hover:bg-zinc-200"} text-[11px] font-black uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95`}
-                >
-                  <Plus size={16} className="mr-2" />
-                  Create New Hub
-                </NavLink>
-                <NavLink
-                  to="/profile"
-                  onClick={() => setIsOpen(false)}
-                  className={`flex items-center justify-center w-full py-4 bg-transparent border-2 ${theme === "light" ? "border-black text-black hover:bg-black/5" : "border-zinc-700 text-white hover:bg-white/5"} text-[11px] font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95`}
-                >
-                  My Profile
-                </NavLink>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-    </motion.nav>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `flex items-center gap-2 p-1 rounded-[8px] transition-colors ${
+                isActive ? "bg-black/[0.05]" : "hover:bg-black/[0.04]"
+              }`
+            }
+          >
+            <Avatar
+              name={user?.username || user?.email || "User"}
+              size="sm"
+              borderColor={location.pathname === "/profile" ? "#0075de" : "#e6f3fe"}
+            />
+            <span className="text-[14px] font-medium text-[#111111] pr-1">
+              {user?.username || "Account"}
+            </span>
+          </NavLink>
+        </div>
+
+        {/* Mobile Toggle */}
+        <div className="md:hidden flex items-center">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 rounded-[6px] text-[#111111] hover:bg-black/5"
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Drawer */}
+      {isOpen && (
+        <div className="md:hidden bg-[#f6f5f4] border-b border-black/[0.08] px-6 py-4 flex flex-col gap-3">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.path}
+              className={({ isActive }) =>
+                `px-4 py-2.5 rounded-[8px] text-[15px] font-medium flex items-center gap-3 ${
+                  isActive
+                    ? "bg-[#e6f3fe] text-[#0075de]"
+                    : "text-[#615d59] hover:bg-black/5"
+                }`
+              }
+            >
+              <item.icon className="w-4 h-4" />
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
+          <div className="pt-2 border-t border-black/[0.06] flex flex-col gap-2">
+            <NavLink to="/create-group">
+              <Button variant="ghost" fullWidth icon={Plus}>
+                Create Group
+              </Button>
+            </NavLink>
+            <NavLink to="/profile">
+              <Button variant="outlined" fullWidth icon={User}>
+                Profile ({user?.username || "Account"})
+              </Button>
+            </NavLink>
+          </div>
+        </div>
+      )}
+    </header>
   );
 };
 
-export default NavBar;
+export default NavSidebar;

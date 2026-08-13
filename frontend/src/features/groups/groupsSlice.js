@@ -225,7 +225,7 @@ const groupsSlice = createSlice({
           }
         }
       })
-      .addCase(deleteGroup.fulfilled, (state, action) => {
+      .addCase(deleteGroup.fulfilled, (state) => {
         state.loading = false;
         // Optionally remove the deleted group from state
       })

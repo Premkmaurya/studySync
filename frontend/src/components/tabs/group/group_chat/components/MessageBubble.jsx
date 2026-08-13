@@ -1,60 +1,35 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { motion } from "framer-motion";
+import Avatar from "../../../../design-system/Avatar";
 
 const MessageBubble = ({ message }) => {
-  const theme = useSelector((state) => state.theme.mode);
   const isYou = message.isYou;
+  const fullName = `${message.sender?.firstname || ""} ${message.sender?.lastname || ""}`.trim() || "Member";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: "spring", stiffness: 300, damping: 24 }}
-      className={`flex w-full mb-6 ${isYou ? "justify-end" : "justify-start"}`}
-    >
-      <div
-        className={`flex max-w-[80%] gap-4 ${isYou ? "flex-row-reverse" : "flex-row"}`}
-      >
-        {/* Avatar */}
-        <div className="shrink-0 mt-auto">
-          <div
-            className={`w-7 h-7 rounded-xl flex items-center justify-center text-[10px] font-black border transition-all ${
-              isYou
-                ? "bg-indigo-500 text-white border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.4)]"
-                : theme === "dark" ? "bg-zinc-800 text-zinc-400 border-white/5 shadow-xl" : "bg-zinc-200 text-zinc-600 border-black/5 shadow-xl"
-            }`}
-          >
-            {isYou
-              ? "YOU"
-              : `${message.sender.firstname[0]}${message.sender.lastname[0]}`}
-          </div>
-        </div>
+    <div className={`flex w-full mb-4 ${isYou ? "justify-end" : "justify-start"}`}>
+      <div className={`flex max-w-[85%] sm:max-w-[75%] gap-3 ${isYou ? "flex-row-reverse" : "flex-row"}`}>
+        <Avatar
+          name={isYou ? "You" : fullName}
+          size="sm"
+          borderColor={isYou ? "#0075de" : "#e6f3fe"}
+        />
 
-        {/* Bubble Content */}
         <div className={`flex flex-col ${isYou ? "items-end" : "items-start"}`}>
           {!isYou && (
-            <span className={`text-[10px] font-black uppercase tracking-widest mb-2 ml-1 ${theme === "dark" ? "text-zinc-500" : "text-zinc-400"}`}>
-              {message.sender.firstname} {message.sender.lastname}
+            <span className="text-[12px] font-semibold text-[#111111] mb-1">
+              {fullName}
             </span>
           )}
           <div
-            className={`relative px-5 py-3.5 rounded-2xl text-sm leading-relaxed ${
+            className={`px-4 py-2.5 rounded-[12px] text-[14px] leading-relaxed shadow-none border ${
               isYou
-                ? `bg-indigo-500/10 border border-indigo-500/20 rounded-tr-none ${theme === "dark" ? "text-indigo-100" : "text-indigo-900"}`
-                : theme === "dark"
-                  ? "bg-white/5 backdrop-blur-md border border-white/5 text-zinc-200 rounded-tl-none"
-                  : "bg-black/5 backdrop-blur-md border border-black/5 text-zinc-800 rounded-tl-none"
+                ? "bg-[#0075de] text-white border-[#0075de]"
+                : "bg-white text-[#111111] border-black/[0.08]"
             }`}
           >
             {message.text}
-
-            {/* Soft glow for "You" messages */}
-            {isYou && (
-              <div className="absolute inset-0 bg-indigo-500/5 blur-xl pointer-events-none -z-10" />
-            )}
           </div>
-          <span className={`text-[8px] font-bold uppercase tracking-widest mt-2 px-1 ${theme === "dark" ? "text-zinc-700" : "text-zinc-400"}`}>
+          <span className="text-[11px] text-[#757575] mt-1 px-1">
             {new Date().toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
@@ -62,7 +37,7 @@ const MessageBubble = ({ message }) => {
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

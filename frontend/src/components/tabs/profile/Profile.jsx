@@ -1,21 +1,12 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import {
-  User,
-  Users,
-  FileText,
-  Bookmark,
-} from "lucide-react";
+import { User, Users, FileText, Bookmark } from "lucide-react";
 import MainContent from "./components/mainContent/MainContent";
 import HeroSection from "./components/HeroSection";
 import TabSwitch from "./components/TabSwitch";
-
-// --- MAIN PROFILE VIEW ---
+import { PageHeader } from "../../design-system/SectionHeader";
+import Pill from "../../design-system/Pill";
 
 const Profile = () => {
-  const theme = useSelector((state) => state.theme.mode);
   const [activeTab, setActiveTab] = useState("profile");
 
   const tabs = [
@@ -26,51 +17,24 @@ const Profile = () => {
   ];
 
   return (
-    <div className={`relative min-h-screen w-full ${theme === "dark" ? "bg-[#000] text-[#E5E7EB]" : "bg-white text-black"} font-sans overflow-x-hidden`}>
-      {/* 1. Spatial Background Mesh */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, transform: "translateZ(0)" }}
-            animate={{ opacity: 0.15 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
-            style={{ willChange: "opacity" }}
-            className={`absolute top-0 right-0 w-[70%] h-[70%] blur-[100px] rounded-full ${
-              activeTab === "profile"
-                ? "bg-indigo-600"
-                : activeTab === "groups"
-                  ? "bg-fuchsia-600"
-                  : activeTab === "notes"
-                    ? "bg-cyan-600"
-                    : "bg-emerald-600"
-            }`}
-          />
-        </AnimatePresence>
-        <div className={`absolute bottom-0 left-0 w-[40%] h-[40%] ${theme === "dark" ? "bg-zinc-800/20" : "bg-zinc-300/20"} blur-[80px] rounded-full`} />
-      </div>
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen py-10 px-6 md:px-12 max-w-[1440px] mx-auto">
+      <PageHeader
+        title="Personal Learning Profile"
+        description="Manage your identity, joined study groups, and saved knowledge notes."
+        badge={<Pill variant="sky" size="sm">Profile</Pill>}
+      />
 
-      <main
-        className="relative z-10 pt-36 pb-20 px-6 max-w-6xl mx-auto"
-        style={{ WebkitTransform: "translate3d(0,0,0)" }}
-      >
-        {/* 3. Hero Section */}
+      <div className="mt-8">
         <HeroSection />
-
-        {/* 4. Tab Switcher (Floating Pill) */}
         <TabSwitch
           tabs={tabs}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
-
-        {/* 5. Dynamic Content Area */}
         <MainContent activeTab={activeTab} />
-      </main>
+      </div>
     </div>
   );
 };
-
 
 export default Profile;

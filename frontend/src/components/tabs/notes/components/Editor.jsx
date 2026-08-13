@@ -1,17 +1,13 @@
-import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { RichTextEditor, Link } from "@mantine/tiptap";
+import { useEditor } from "@tiptap/react";
+import Highlight from "@tiptap/extension-highlight";
+import StarterKit from "@tiptap/starter-kit";
+import TextAlign from "@tiptap/extension-text-align";
+import Superscript from "@tiptap/extension-superscript";
+import SubScript from "@tiptap/extension-subscript";
+import Placeholder from "@tiptap/extension-placeholder";
 
-// Icons
-import {
-  TbClearFormatting,
-  TbH1,
-  TbH2,
-  TbH3,
-  TbH4,
-  TbH5,
-  TbH6,
-  TbBlockquote,
-} from "react-icons/tb";
 import {
   FaBold,
   FaItalic,
@@ -26,32 +22,21 @@ import {
   FaAlignRight,
   FaAlignJustify,
 } from "react-icons/fa";
+import {
+  TbClearFormatting,
+  TbH1,
+  TbH2,
+  TbH3,
+  TbBlockquote,
+} from "react-icons/tb";
 import { MdFormatListBulleted } from "react-icons/md";
 import { GoListOrdered } from "react-icons/go";
 import { LuUndo2, LuRedo2 } from "react-icons/lu";
-import { Sparkles, Bot } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import Button from "../../../design-system/Button";
 
-// Framer Motion
-import { motion } from "framer-motion";
-
-// Mantine TipTap Editor
-import { RichTextEditor, Link } from "@mantine/tiptap";
-import { useEditor } from "@tiptap/react";
-import Highlight from "@tiptap/extension-highlight";
-import StarterKit from "@tiptap/starter-kit";
-import TextAlign from "@tiptap/extension-text-align";
-import Superscript from "@tiptap/extension-superscript";
-import SubScript from "@tiptap/extension-subscript";
-import Placeholder from "@tiptap/extension-placeholder";
-
-// Styles
 import "@mantine/tiptap/styles.css";
 import "@mantine/core/styles.css";
-
-// Styles
-import "@mantine/tiptap/styles.css";
-import "@mantine/core/styles.css";
-
 
 const Editor = ({
   isViewOnly,
@@ -62,10 +47,8 @@ const Editor = ({
   setIsAIOpen,
   setAiText,
   setEditor,
-  content
+  content,
 }) => {
-  const theme = useSelector((state) => state.theme.mode);
-
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
     extensions: [
@@ -75,8 +58,7 @@ const Editor = ({
       SubScript,
       Highlight,
       Placeholder.configure({
-        placeholder:
-          "Generate notes (ctrl+shift+K).Start typing to dismiss or don't show this again.",
+        placeholder: "Start typing your study notes or AI summary here...",
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
@@ -86,8 +68,8 @@ const Editor = ({
 
   useEffect(() => {
     setAiText(contentFromState || content);
-  },[]);
-    
+  }, []);
+
   useEffect(() => {
     if (editor && content) {
       editor.commands.focus("end");
@@ -101,137 +83,83 @@ const Editor = ({
     }
   }, [editor, setEditor]);
 
-  const constraintsRef = useRef(null);
-
   return (
-    <RichTextEditor editor={editor} className="border border-transparent">
-      {!isViewOnly && (
-        <div ref={constraintsRef} className="fixed inset-0 z-50 pointer-events-none">
-          <motion.div
-            drag
-            dragConstraints={constraintsRef}
-            dragElastic={0}
-            dragMomentum={false}
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            className="absolute bottom-10 left-1/2 -translate-x-1/2 pointer-events-auto flex items-center gap-1 bg-white/50 backdrop-blur-3xl p-2 rounded-[24px]"
+    <div className="flex flex-col gap-6 w-full">
+      {/* Title Input & AI Trigger */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-4 border-b border-black/[0.08] pb-4">
+        <input
+          type="text"
+          value={title}
+          disabled={isViewOnly}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full bg-transparent text-[32px] sm:text-[40px] font-bold text-[#000000] tracking-[-1px] outline-none placeholder-[#757575]"
+          placeholder="Untitled Note"
+        />
+
+        {!isViewOnly && (
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={Sparkles}
+            onClick={() => setIsAIOpen(!isAIOpen)}
           >
-            <RichTextEditor.Toolbar
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "transparent",
-              }}
-            >
-              <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-50 h-8 flex items-center justify-center">
-                <RichTextEditor.Bold icon={() => <FaBold size={14} color="black" />} />
-                <RichTextEditor.Italic icon={() => <FaItalic size={14} color="black" />} />
-                <RichTextEditor.Underline
-                  icon={() => <FaUnderline size={14} color="black" />}
-                />
-                <RichTextEditor.Strikethrough
-                  icon={() => <FaStrikethrough size={14} color="black" />}
-                />
-                <RichTextEditor.ClearFormatting
-                  icon={() => <TbClearFormatting size={14} color="black" />} />
-                <RichTextEditor.Highlight
-                  icon={() => <FaHighlighter size={14} color="black" />}
-                />
-                <RichTextEditor.Code icon={() => <FaCode size={14} color="black" />} />
+            AI Assistant
+          </Button>
+        )}
+      </div>
+
+      {/* TipTap Rich Text Editor Container */}
+      <RichTextEditor
+        editor={editor}
+        className="bg-white border border-black/[0.08] rounded-[12px] p-4 min-h-[500px] shadow-none"
+      >
+        {!isViewOnly && (
+          <div className="sticky top-16 z-30 bg-white/95 backdrop-blur-md pb-3 border-b border-black/[0.08] mb-4">
+            <RichTextEditor.Toolbar className="flex flex-wrap gap-1 bg-transparent border-none p-0">
+              <RichTextEditor.ControlsGroup className="flex gap-0.5 bg-black/[0.03] p-1 rounded-[6px]">
+                <RichTextEditor.Bold icon={() => <FaBold size={13} />} />
+                <RichTextEditor.Italic icon={() => <FaItalic size={13} />} />
+                <RichTextEditor.Underline icon={() => <FaUnderline size={13} />} />
+                <RichTextEditor.Strikethrough icon={() => <FaStrikethrough size={13} />} />
+                <RichTextEditor.ClearFormatting icon={() => <TbClearFormatting size={13} />} />
+                <RichTextEditor.Highlight icon={() => <FaHighlighter size={13} />} />
+                <RichTextEditor.Code icon={() => <FaCode size={13} />} />
               </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-42 h-8 flex items-center justify-center">
-                <RichTextEditor.H1 icon={() => <TbH1 size={18} color="black" />} />
-                <RichTextEditor.H2 icon={() => <TbH2 size={18} color="black" />} />
-                <RichTextEditor.H3 icon={() => <TbH3 size={18} color="black" />} />
-                <RichTextEditor.H4 icon={() => <TbH4 size={18} color="black" />} />
-                <RichTextEditor.H5 icon={() => <TbH5 size={18} color="black" />} />
-                <RichTextEditor.H6 icon={() => <TbH6 size={18} color="black" />} />
+              <RichTextEditor.ControlsGroup className="flex gap-0.5 bg-black/[0.03] p-1 rounded-[6px]">
+                <RichTextEditor.H1 icon={() => <TbH1 size={16} />} />
+                <RichTextEditor.H2 icon={() => <TbH2 size={16} />} />
+                <RichTextEditor.H3 icon={() => <TbH3 size={16} />} />
               </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-29 h-8 flex items-center justify-center">
-                <RichTextEditor.Blockquote
-                  icon={() => <TbBlockquote size={14} color="black" />}
-                />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList
-                  icon={() => <MdFormatListBulleted size={14} color="black" />}
-                />
-                <RichTextEditor.OrderedList
-                  icon={() => <GoListOrdered size={14} color="black" />}
-                />
+              <RichTextEditor.ControlsGroup className="flex gap-0.5 bg-black/[0.03] p-1 rounded-[6px]">
+                <RichTextEditor.Blockquote icon={() => <TbBlockquote size={13} />} />
+                <RichTextEditor.BulletList icon={() => <MdFormatListBulleted size={13} />} />
+                <RichTextEditor.OrderedList icon={() => <GoListOrdered size={13} />} />
               </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-20 h-8 flex items-center justify-center gap-2">
-                <RichTextEditor.Link icon={() => <FaLink size={14} color="black" />} />
-                <RichTextEditor.Unlink icon={() => <FaUnlink size={14} color="black" />} />
+              <RichTextEditor.ControlsGroup className="flex gap-0.5 bg-black/[0.03] p-1 rounded-[6px]">
+                <RichTextEditor.Link icon={() => <FaLink size={13} />} />
+                <RichTextEditor.Unlink icon={() => <FaUnlink size={13} />} />
               </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-32 h-8 flex items-center justify-center gap-2">
-                <RichTextEditor.AlignLeft
-                  icon={() => <FaAlignLeft size={14} color="black" />}
-                />
-                <RichTextEditor.AlignCenter
-                  icon={() => <FaAlignCenter size={14} color="black" />}
-                />
-                <RichTextEditor.AlignJustify
-                  icon={() => <FaAlignJustify size={14} color="black" />}
-                />
-                <RichTextEditor.AlignRight
-                  icon={() => <FaAlignRight size={14} color="black" />}
-                />
+              <RichTextEditor.ControlsGroup className="flex gap-0.5 bg-black/[0.03] p-1 rounded-[6px]">
+                <RichTextEditor.AlignLeft icon={() => <FaAlignLeft size={13} />} />
+                <RichTextEditor.AlignCenter icon={() => <FaAlignCenter size={13} />} />
+                <RichTextEditor.AlignRight icon={() => <FaAlignRight size={13} />} />
               </RichTextEditor.ControlsGroup>
 
-              <RichTextEditor.ControlsGroup className="bg-[#1f1f21] rounded-lg w-15 h-8 flex items-center justify-center">
-                <RichTextEditor.Undo icon={() => <LuUndo2 size={14} color="black" />} />
-                <RichTextEditor.Redo icon={() => <LuRedo2 size={14} color="black" />} />
+              <RichTextEditor.ControlsGroup className="flex gap-0.5 bg-black/[0.03] p-1 rounded-[6px]">
+                <RichTextEditor.Undo icon={() => <LuUndo2 size={13} />} />
+                <RichTextEditor.Redo icon={() => <LuRedo2 size={13} />} />
               </RichTextEditor.ControlsGroup>
             </RichTextEditor.Toolbar>
-            <motion.button
-              whileHover={{
-                scale: 1.05,
-                boxShadow: "0 0 20px rgba(79, 70, 229, 0.4)",
-              }}
-              onClick={() => setIsAIOpen(!isAIOpen)}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-indigo-600 rounded-xl text-lg w-22 h-10 text-white ml-2 shadow-lg"
-            >
-              <Sparkles size={16} />
-              AI
-            </motion.button>
-          </motion.div>
-        </div>
-      )}
-      <div className="w-full h-[80vh] ">
-        <motion.div className="bg-zinc-900/20 mt-[3rem] backdrop-blur-sm rounded-[48px] p-12 md:p-20 shadow-3xl min-h-[850px] w-full relative transition-all hover:bg-zinc-900/30">
-          <input
-            type="text"
-            value={title}
-            style={{ fontSize: "3rem", fontWeight: "bold" }}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full bg-transparent text-5xl md:text-6xl font-black tracking-tighter text-white placeholder:text-zinc-800 outline-none mb-6"
-            placeholder="Draft Name..."
-          />
+          </div>
+        )}
 
-          <div className="flex flex-wrap items-center gap-4 mb-14 text-[10px] font-black text-zinc-500 tracking-[0.2em] uppercase">
-            <span className="flex items-center gap-2 bg-indigo-500/10 text-indigo-400 px-3 py-1.5 rounded-lg border border-indigo-500/20">
-              <Bot size={14} /> AI ENGINE ENGAGED
-            </span>
-            <span className="hidden sm:block opacity-20">|</span>
-            <span className="tracking-widest">
-              {new Date().toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
-            </span>
-          </div>
-          <div className="prose max-w-none wrap-break-word whitespace-pre-wrap text-lg leading-relaxed text-black">
-            <RichTextEditor.Content />
-          </div>
-        </motion.div>
-      </div>
-    </RichTextEditor>
+        <RichTextEditor.Content className="text-[16px] text-[#000000] leading-relaxed min-h-[400px]" />
+      </RichTextEditor>
+    </div>
   );
 };
 

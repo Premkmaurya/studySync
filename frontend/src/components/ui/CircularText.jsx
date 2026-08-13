@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
-import { motion, useAnimation, useMotionValue } from 'motion/react';
+/* eslint-disable no-unused-vars */
+import React, { useEffect } from 'react';
+import { motion, useAnimation, useMotionValue } from 'framer-motion';
 
 const getRotationTransition = (duration, from, loop = true) => ({
   from,

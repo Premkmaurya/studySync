@@ -1,23 +1,22 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React from "react";
+import Card from "../../../../../design-system/Card";
 
-const StartCard = ({ label, value, icon: Icon, color }) => {
-  const theme = useSelector((state) => state.theme.mode);
+const StartCard = ({ label, value, icon: IconComponent }) => {
   return (
-    <div className={`${theme === "dark" ? "bg-white/5 border-white/5" : "bg-black/5 border-black/5"} border rounded-3xl p-6 ${theme === "dark" ? "hover:bg-white/10" : "hover:bg-black/10"} transition-all group`}>
-    <div
-      className={`p-3 rounded-2xl w-fit mb-4 ${color} bg-opacity-10 shadow-lg`}
-    >
-      <Icon size={20} className={color} />
-    </div>
-    <div className={`text-2xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-black"}`}>
-      {value}
-    </div>
-    <div className={`text-[10px] font-bold uppercase tracking-widest ${theme === "dark" ? "text-zinc-500" : "text-zinc-600"} mt-1`}>
-      {label}
-    </div>
-  </div>
-  )
-}
+    <Card variant="white" className="p-5 flex flex-col gap-2">
+      {IconComponent && (
+        <div className="w-9 h-9 rounded-[8px] bg-[#e6f3fe] text-[#0075de] flex items-center justify-center mb-1">
+          <IconComponent className="w-4 h-4" />
+        </div>
+      )}
+      <div className="text-[24px] font-bold text-[#000000] tracking-[-0.5px]">
+        {value}
+      </div>
+      <div className="text-[12px] font-medium text-[#757575]">
+        {label}
+      </div>
+    </Card>
+  );
+};
 
-export default StartCard
+export default StartCard;

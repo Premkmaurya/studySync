@@ -1,198 +1,187 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Menu, X, ArrowRight, Moon, Sun } from "lucide-react";
-import { useSelector, useDispatch } from "react-redux";
-import { toggleTheme } from "../../features/theme/themeSlice";
-import ThemeToggle from "./ThemeToggle";
+import { Menu, X, Sparkles, ArrowRight } from "lucide-react";
+import { useSelector } from "react-redux";
 
+/**
+ * StudySync Navbar
+ * Floating pill-style top navigation bar inspired by modern editorial tech landing pages.
+ * Features a left brand mark, a grouped right navigation cluster with a high-contrast primary CTA,
+ * light translucent surface, and responsive mobile menu.
+ */
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const dispatch = useDispatch();
+  const user = useSelector((state) => state?.auth?.user);
 
-  const user = useSelector((state) => state.auth.user);
-  const theme = useSelector((state) => state.theme.mode);
-  // Handle scroll effect for background
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu on route change
-  useEffect(() => setIsOpen(false), [location]);
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
 
   const navItems = [
-    { label: "About", path: "/about" },
+    { label: "Home", path: "/" },
+    { label: "Explore", path: "/find-groups" },
     { label: "Features", path: "/features" },
+    { label: "About", path: "/about" },
     { label: "Contact", path: "/contact" },
   ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 backdrop-blur-2xl border-b ${
-        theme === "light"
-          ? "bg-white/80 border-black/10"
-          : "bg-black/80 border-white/10"
-      } ${scrolled || isOpen ? "py-3" : "py-5"}`}
+    <header 
+      className="fixed top-3 sm:top-4 inset-x-0 z-50 px-3 sm:px-6 pointer-events-none"
+      aria-label="Main navigation header"
     >
-      <div className="flex items-center justify-between px-6 md:px-12 h-10 max-w-7xl mx-auto">
-        {/* 1. LOGO SECTION */}
-        <Link to="/" className="flex items-center gap-2 group relative z-[110]">
-          <div className={`p-2 rounded-xl transition-colors ${
-            theme === "light"
-              ? "bg-indigo-500/20"
-              : "bg-indigo-500/10 group-hover:bg-indigo-500/20"
-          }`}>
-            <Bot className="text-indigo-500" size={22} />
+      {/* Floating Outer Container */}
+      <div 
+        className={`pointer-events-auto mx-auto w-[94%] sm:w-[95%] max-w-[1280px] h-14 sm:h-[58px] px-4 sm:px-6 rounded-[14px] sm:rounded-[16px] flex items-center justify-between transition-all duration-300 ${
+          scrolled
+            ? "bg-white/95 backdrop-blur-md border border-black/10 shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
+            : "bg-white/90 backdrop-blur-sm border border-black/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.04)]"
+        }`}
+      >
+        {/* BRAND MARK (Left) */}
+        <Link 
+          to="/" 
+          className="flex items-center gap-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de] rounded-md"
+        >
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center shadow-sm group-hover:scale-105 group-hover:bg-[#097fe8] transition-all duration-200">
+            <Sparkles className="w-4 h-4 text-white" aria-hidden="true" />
           </div>
-          <span className={`text-xl font-black tracking-tight uppercase transition-colors ${
-            theme === "light" ? "text-black" : "text-white"
-          }`}>
-            StudySync
+          <span className="font-bold text-[17px] sm:text-[18px] tracking-[-0.4px] text-[#000000]">
+            study<span className="text-[#0075de]">Sync</span>
           </span>
         </Link>
 
-        {/* 2. DESKTOP NAVIGATION */}
-        <div className="hidden md:flex items-center gap-10">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              to={item.path}
-              className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${
-                theme === "light"
-                  ? "text-gray-500 hover:text-black"
-                  : "text-zinc-500 hover:text-white"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-          
-          {/* Theme Toggle */}
-          <ThemeToggle />
-          
+        {/* DESKTOP GROUPED NAVIGATION CLUSTER (Right) */}
+        <div className="hidden md:flex items-center gap-2 bg-black/[0.03] p-1 rounded-[12px] border border-black/[0.04]">
+          {/* Nav Links */}
+          <nav className="flex items-center gap-1 px-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className={`px-3.5 py-1.5 text-[13px] font-semibold tracking-[0.02em] rounded-[8px] transition-all duration-150 ${
+                    isActive
+                      ? "bg-white text-[#000000] shadow-sm"
+                      : "text-[#615d59] hover:text-[#000000] hover:bg-white/60"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* High-Contrast Primary CTA Button */}
+          <div className="pl-1">
+            {!user ? (
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#05080d] hover:bg-[#151c28] active:bg-[#000000] text-white text-[13px] font-semibold rounded-[10px] transition-all duration-200 shadow-sm hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
+              >
+                <span>Get started</span>
+                <ArrowRight className="w-3.5 h-3.5 text-white/80" aria-hidden="true" />
+              </Link>
+            ) : (
+              <Link
+                to="/home"
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white text-[13px] font-semibold rounded-[10px] transition-all duration-200 shadow-sm hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
+              >
+                <span>Dashboard</span>
+                <ArrowRight className="w-3.5 h-3.5 text-white/90" aria-hidden="true" />
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* MOBILE CONTROLS & HAMBURGER */}
+        <div className="flex md:hidden items-center gap-2">
           {!user ? (
             <Link
-              to="/login"
-              className={`flex items-center px-6 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-full transition-all shadow-lg active:scale-95 ${
-                theme === "light"
-                  ? "bg-black text-white hover:bg-indigo-600"
-                  : "bg-white text-black hover:bg-indigo-500 hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-              }`}
+              to="/register"
+              className="px-3.5 py-1.5 bg-[#05080d] text-white text-[12px] font-semibold rounded-[8px] shadow-sm"
             >
-              Login
+              Get started
             </Link>
           ) : (
             <Link
               to="/home"
-              className={`flex items-center px-6 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-full transition-all shadow-lg active:scale-95 ${
-                theme === "light"
-                  ? "bg-black text-white hover:bg-indigo-600"
-                  : "bg-white text-black hover:bg-indigo-500 hover:text-white shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-              }`}
+              className="px-3.5 py-1.5 bg-[#0075de] text-white text-[12px] font-semibold rounded-[8px] shadow-sm"
             >
-              Explore
+              Dashboard
             </Link>
           )}
-        </div>
 
-        {/* 3. MOBILE MENU TOGGLE & THEME */}
-        <div className="md:hidden flex items-center gap-3 relative z-[110]">
-          <ThemeToggle />
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`p-2 rounded-xl transition-colors ${
-              theme === "light"
-                ? "text-black hover:bg-black/5"
-                : "text-white hover:bg-white/5"
-            }`}
+            aria-expanded={isOpen}
+            aria-label="Toggle navigation menu"
+            className="p-1.5 rounded-[8px] text-[#111111] hover:bg-black/5 active:bg-black/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
-
-        {/* 4. MOBILE DRAWER */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
-              className={`absolute top-0 left-0 w-full min-h-screen flex flex-col pt-32 px-8 z-[105] overflow-hidden transition-colors ${
-                theme === "light" ? "bg-white" : "bg-[#050505]"
-              }`}
-            >
-              {/* Background Glows for Mobile Menu */}
-              {theme === "dark" && (
-                <>
-                  <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-indigo-600/20 blur-[100px] rounded-full pointer-events-none" />
-                  <div className="absolute bottom-[-5%] left-[-5%] w-48 h-48 bg-fuchsia-600/10 blur-[80px] rounded-full pointer-events-none" />
-                </>
-              )}
-
-              <div className="flex flex-col gap-8">
-                {navItems.map((item, index) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + index * 0.05 }}
-                  >
-                    <Link
-                      to={item.path}
-                      className={`text-4xl font-black tracking-tighter uppercase flex items-center justify-between group transition-colors ${
-                        theme === "light" ? "text-black" : "text-white"
-                      }`}
-                    >
-                      {item.label}
-                      <ArrowRight
-                        size={24}
-                        className="text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                      />
-                    </Link>
-                  </motion.div>
-                ))}
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-12"
-                >
-                  {!user ? (
-                    <Link
-                      to="/login"
-                      className={`flex items-center justify-center w-full py-4 text-xs font-black uppercase tracking-[0.3em] rounded-3xl shadow-2xl transition-all active:scale-95 ${
-                        theme === "light"
-                          ? "bg-black text-white hover:bg-indigo-600"
-                          : "bg-white text-black hover:bg-indigo-500 hover:text-white"
-                      }`}
-                    >
-                      Login
-                    </Link>
-                  ) : (
-                    <Link
-                      to="/home"
-                      className={`flex items-center justify-center w-full py-4 text-xs font-black uppercase tracking-[0.3em] rounded-3xl shadow-2xl transition-all active:scale-95 ${
-                        theme === "light"
-                          ? "bg-black text-white hover:bg-indigo-600"
-                          : "bg-white text-black hover:bg-indigo-500 hover:text-white"
-                      }`}
-                    >
-                      Explore
-                    </Link>
-                  )}
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
-    </nav>
+
+      {/* MOBILE DRAWER */}
+      {isOpen && (
+        <div className="pointer-events-auto md:hidden mx-auto w-[94%] max-w-[1280px] mt-2 bg-white/95 backdrop-blur-md rounded-[16px] border border-black/10 p-5 shadow-xl flex flex-col gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <nav className="flex flex-col gap-1">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className={`px-3 py-2.5 rounded-[10px] text-[15px] font-medium transition-colors ${
+                    isActive
+                      ? "bg-[#0075de]/10 text-[#0075de] font-semibold"
+                      : "text-[#111111] hover:bg-black/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="pt-2 border-t border-black/[0.08] flex flex-col gap-2">
+            {!user ? (
+              <>
+                <Link
+                  to="/login"
+                  className="w-full py-2.5 text-center text-[14px] font-semibold text-[#111111] rounded-[10px] border border-black/15 hover:bg-black/5 transition-colors"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  className="w-full py-2.5 text-center text-[14px] font-semibold text-white bg-[#05080d] rounded-[10px] shadow-sm hover:bg-[#151c28] transition-colors"
+                >
+                  Get started
+                </Link>
+              </>
+            ) : (
+              <Link
+                to="/home"
+                className="w-full py-2.5 text-center text-[14px] font-semibold text-white bg-[#0075de] rounded-[10px] shadow-sm hover:bg-[#097fe8] transition-colors"
+              >
+                Go to Dashboard
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
   );
 };
 

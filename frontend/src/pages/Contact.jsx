@@ -1,153 +1,118 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import {
-  motion,
-  AnimatePresence,
-} from "framer-motion";
-import {
-  Mail,
-  MapPin,
-  Globe,
-  Send,
-  ChevronDown,
-  MessageSquare,
-  Zap,
-  ShieldCheck,
-  ArrowRight,
-  Bot,
-  Twitter,
-  Github,
-  Linkedin,
-} from "lucide-react";
-import Footer from "../components/home/footer/Footer";
-import Faq from "../components/home/FAQ/Faq";
-import ContactForm from "../components/contact/ContactForm";
-import ContactDetails from "../components/contact/ContactDetails";
+import { Link } from "react-router-dom";
+import { Mail, MapPin, Send, CheckCircle2 } from "lucide-react";
+import Button from "../components/design-system/Button";
+import Input from "../components/design-system/Input";
+import Card from "../components/design-system/Card";
+import Pill from "../components/design-system/Pill";
+import { SectionHeader } from "../components/design-system/SectionHeader";
+import StudySyncFooter from "../components/home/footer/StudySyncFooter";
 
 const Contact = () => {
-  const theme = useSelector((state) => state.theme.mode);
+  const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (formData.name && formData.email && formData.message) {
+      setSubmitted(true);
+    }
+  };
+
   return (
-    <div className={`relative min-h-screen w-full selection:bg-indigo-500/30 font-sans overflow-x-hidden transition-colors ${
-      theme === 'light'
-        ? 'bg-white text-slate-900'
-        : 'bg-[#050505] text-slate-200'
-    }`}>
-      {/* 1. CINEMATIC ATMOSPHERE */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-0 left-0 w-[50%] h-[50%] bg-indigo-600/20 blur-3xl rounded-full transform-gpu opacity-50" />
-        <div className="absolute bottom-0 right-0 w-[50%] h-[50%] bg-fuchsia-600/10 blur-3xl rounded-full transform-gpu opacity-50" />
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen">
+      {/* Hero Section */}
+      <section className="pt-24 pb-16 px-6 md:px-12 max-w-[1440px] mx-auto text-center flex flex-col items-center">
+        <Pill variant="sky" size="sm" className="mb-4">
+          Contact Us
+        </Pill>
+        <h1 className="text-[40px] sm:text-[60px] font-bold tracking-[-2px] leading-tight max-w-2xl mb-4">
+          Get in touch with the StudySync team.
+        </h1>
+        <p className="text-[18px] text-[#615d59] font-['Source_Serif_4',Georgia,serif] italic max-w-xl leading-relaxed mb-12">
+          Have feedback, questions about study groups, or need support? Send us a message and we'll get back to you promptly.
+        </p>
+      </section>
 
-        {/* Grain Texture & Grid Line Motif */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `url("https://grainy-gradients.vercel.app/noise.svg")`,
-          }}
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:60px_60px]" />
-      </div>
-
-      {/* 2. HERO SECTION */}
-      <main className="relative z-10 pt-28">
-        <section className="max-w-7xl mx-auto px-6 text-center mb-30">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-3 px-5 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400 mb-12"
-          >
-            <Zap size={14} className="fill-current" />
-            Establish_Contact
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`text-6xl md:text-9xl font-black tracking-tighter leading-[0.85] uppercase mb-12 ${
-              theme === 'light' ? 'text-black' : 'text-white'
-            }`}
-          >
-            Reach The <br />{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-current to-fuchsia-500">
-              Collective.
-            </span>
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className={`text-xl max-w-2xl mx-auto font-medium leading-relaxed ${
-              theme === 'light' ? 'text-zinc-600' : 'text-zinc-500'
-            }`}
-          >
-            Whether you're looking for technical support, partnership protocols,
-            or specialized hub creation, our neural team is ready.
-          </motion.p>
-        </section>
-
-        {/* 3. DETAIL BENTO GRID */}
-        <section className="w-full max-w-screen mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 mb-30">
-          <ContactDetails />
-        </section>
-
-        {/* 4. THE GLASS TERMINAL (CONTACT FORM) */}
-        <section className="max-w-5xl mx-auto px-6 mb-30">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10 p-1 pb-10 bg-gradient-to-br from-white/10 to-transparent rounded-[48px] shadow-3xl"
-          >
-            <ContactForm />
-          </motion.div>
-        </section>
-
-        {/* 5. FAQ SECTION */}
-        <section className={`relative py-18 border-y transition-colors ${
-          theme === 'light'
-            ? 'bg-black/[0.01] border-black/5'
-            : 'bg-white/[0.01] border-white/5'
-        }`}>
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="h-px w-12 bg-indigo-500/50" />
-                <span className={`text-[10px] font-black uppercase tracking-[0.4em] ${
-                  theme === 'light' ? 'text-zinc-600' : 'text-zinc-500'
-                }`}>
-                  Query_Database
-                </span>
-                <div className="h-px w-12 bg-indigo-500/50" />
+      {/* Main Content Form Card */}
+      <section className="pb-24 px-6 md:px-12 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Details Column */}
+          <div className="flex flex-col gap-6">
+            <Card variant="white" className="flex flex-col gap-3">
+              <div className="w-8 h-8 rounded-[8px] bg-[#e6f3fe] text-[#0075de] flex items-center justify-center">
+                <Mail className="w-4 h-4" />
               </div>
-              <h2 className={`text-5xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] ${
-                theme === 'light' ? 'text-black' : 'text-white'
-              }`}>
-                Frequent <br /> Protocols.
-              </h2>
-            </div>
-            <Faq />
-          </div>
-        </section>
-      </main>
-      <footer className={`relative z-10 ${
-        theme === 'light' ? 'bg-white' : 'bg-[#050505]'
-      }`}>
-        <Footer />
-      </footer>
+              <h4 className="text-[16px] font-bold text-[#000000]">Email support</h4>
+              <p className="text-[13px] text-[#615d59]">support@studysync.edu</p>
+            </Card>
 
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        .shadow-3xl { box-shadow: 0 50px 100px -20px rgba(0,0,0,0.8); }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: ${theme === 'light' ? '#f9f9f9' : '#050505'}; }
-        ::-webkit-scrollbar-thumb { background: ${theme === 'light' ? '#e5e5e5' : '#1a1a1a'}; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
-        h1, h2 { letter-spacing: -0.05em !important; }
-      `,
-        }}
-      />
+            <Card variant="white" className="flex flex-col gap-3">
+              <div className="w-8 h-8 rounded-[8px] bg-[#fff4cc] text-[#e89d01] flex items-center justify-center">
+                <MapPin className="w-4 h-4" />
+              </div>
+              <h4 className="text-[16px] font-bold text-[#000000]">Campus Hub</h4>
+              <p className="text-[13px] text-[#615d59]">San Francisco, CA</p>
+            </Card>
+          </div>
+
+          {/* Form Column */}
+          <div className="md:col-span-2">
+            <Card variant="white" className="p-8">
+              {submitted ? (
+                <div className="flex flex-col items-center justify-center text-center py-10 gap-3">
+                  <CheckCircle2 className="w-12 h-12 text-[#0075de]" />
+                  <h3 className="text-[20px] font-bold text-[#000000]">Message received!</h3>
+                  <p className="text-[14px] text-[#615d59]">
+                    Thank you for reaching out. A team member will respond to your email shortly.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  <Input
+                    label="Full Name"
+                    type="text"
+                    placeholder="Alex Morgan"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+
+                  <Input
+                    label="Email address"
+                    type="email"
+                    placeholder="alex@university.edu"
+                    required
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+
+                  <div className="flex flex-col gap-1.5 w-full">
+                    <label className="text-[13px] font-medium text-[#111111]">
+                      Message
+                    </label>
+                    <textarea
+                      rows={5}
+                      required
+                      placeholder="How can we help your study group?"
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full bg-white text-[#111111] placeholder-[#757575] text-[14px] px-3.5 py-2 rounded-[8px] border border-black/[0.12] outline-none focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20"
+                    />
+                  </div>
+
+                  <Button type="submit" variant="primary" size="lg" icon={Send} iconPosition="right">
+                    Send message
+                  </Button>
+                </form>
+              )}
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <StudySyncFooter />
     </div>
   );
 };

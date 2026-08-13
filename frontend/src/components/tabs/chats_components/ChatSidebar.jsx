@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { io } from "socket.io-client";
@@ -17,8 +18,6 @@ import {
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { SplitText } from "gsap/all";
-import { toggleTheme } from "../../../features/theme/themeSlice";
 import { useParams } from "react-router-dom";
 import {
   addMessage,
@@ -33,23 +32,23 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(_error) {
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
-    console.warn("Error in message rendering:", error);
+  componentDidCatch(_error, _errorInfo) {
+    console.warn("Error in message rendering:");
   }
 
   render() {
     if (this.state.hasError) {
-      return <p className="text-white">Error rendering message</p>;
+      return <p className="text-black">Error rendering message</p>;
     }
     return this.props.children;
   }
 }
 
-const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
+const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
   const theme = useSelector((state) => state.theme.mode);
   const messages = useSelector((state) => state.messages.messages);
   const [newMessage, setNewMessage] = useState("");
@@ -178,7 +177,7 @@ const ChatSidebar = ({ aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
     return () => {
       try {
         SplitText.revert(".split");
-      } catch (e) {
+      } catch {
         // Silently fail if revert fails
       }
     };

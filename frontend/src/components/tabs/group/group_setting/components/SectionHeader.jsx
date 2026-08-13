@@ -1,27 +1,26 @@
-import { useSelector } from "react-redux";
-import { Icon } from "lucide-react";
+import React from "react";
 
 const SectionHeader = ({
   icon: Icon,
   title,
   description,
-  color = "indigo",
 }) => {
-  const theme = useSelector((state) => state.theme.mode);
   return (
-    <div className="flex items-start gap-4 mb-8">
-      <div
-        className={`p-3 rounded-2xl ${theme === "dark" ? `bg-${color}-500/10 text-${color}-400 border border-${color}-500/20 shadow-lg shadow-${color}-500/5` : `bg-${color}-400/10 text-${color}-600 border border-${color}-400/20 shadow-lg shadow-${color}-400/5`}`}
-      >
-        <Icon size={22} />
-      </div>
+    <div className="flex items-start gap-4 mb-6">
+      {Icon && (
+        <div className="p-2.5 rounded-[8px] bg-[#e6f3fe] text-[#0075de]">
+          <Icon className="w-5 h-5" />
+        </div>
+      )}
       <div>
-        <h3 className={`text-xl font-black tracking-tighter ${theme === "dark" ? "text-white" : "text-black"} uppercase`}>
+        <h3 className="text-[20px] font-bold text-[#000000] tracking-[-0.3px]">
           {title}
         </h3>
-        <p className={`text-xs font-medium ${theme === "dark" ? "text-zinc-500" : "text-zinc-600"} mt-1 max-w-md leading-relaxed`}>
-          {description}
-        </p>
+        {description && (
+          <p className="text-[14px] text-[#615d59] mt-0.5 max-w-md leading-relaxed">
+            {description}
+          </p>
+        )}
       </div>
     </div>
   );
