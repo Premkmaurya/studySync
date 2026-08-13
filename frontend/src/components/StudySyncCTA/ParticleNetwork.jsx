@@ -350,7 +350,7 @@ const ParticleNetwork = ({ className = "" }) => {
     <div className={`relative w-full h-full min-h-[220px] sm:min-h-[260px] md:min-h-[320px] overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
-        className="block w-full h-full cursor-crosshair"
+        className="block w-full h-full"
         role="img"
         aria-label="Abstract connected network particle visualization representing knowledge flow and student community convergence"
       />

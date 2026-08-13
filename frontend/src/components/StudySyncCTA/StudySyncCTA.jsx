@@ -87,7 +87,7 @@ const StudySyncCTA = ({
                 className="group relative inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-medium text-[15px] rounded-[8px] transition-all duration-200 shadow-[0_4px_16px_rgba(0,117,222,0.3)] hover:shadow-[0_6px_20px_rgba(0,117,222,0.45)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#05080d]"
               >
                 <span>{resolvedPrimaryText}</span>
-                <ArrowRight className="w-4 h-4 text-white transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
+                <ArrowRight className="w-12 h-12 text-white transition-transform duration-200 group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
 
               {/* Secondary CTA - Subordinate */}
@@ -95,7 +95,7 @@ const StudySyncCTA = ({
                 to={secondaryTo}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent hover:bg-white/[0.07] active:bg-white/[0.12] text-white/90 hover:text-white font-medium text-[15px] rounded-[8px] border border-white/20 hover:border-white/40 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#05080d]"
               >
-                <Compass className="w-4 h-4 text-white/70" aria-hidden="true" />
+                <Compass className="w-12 h-12 text-white/70" aria-hidden="true" />
                 <span>{secondaryText}</span>
               </Link>
             </div>

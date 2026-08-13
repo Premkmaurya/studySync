@@ -345,3 +345,33 @@ html, body, #root {
   -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
+html, body {
+  cursor: none;
+}
+
+.cursor {
+  width: 30px;
+  height: 30px;
+  background-color: #111;
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  top: -25px;
+  left: -25px;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  transition: background-color 0.12s ease;
+}
+
+.cursor--light {
+  background-color: #fff;
+}
+
+.cursor--dark {
+  background-color: #111;
+}
+
+* {
+  cursor: none;
+}

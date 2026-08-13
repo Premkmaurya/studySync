@@ -1,14 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Users, ArrowRight, Compass, ShieldCheck } from "lucide-react";
+import Reveal from "../motion/Reveal";
+import StaggerContainer, { StaggerItem } from "../motion/StaggerContainer";
 
 /**
  * GroupShowcase
  * Core storytelling section 2: FIND YOUR PEOPLE / STUDY GROUPS
- * Asymmetric editorial split layout featuring realistic StudySync group cards with restrained accent surfaces.
+ * Asymmetric editorial split layout featuring realistic StudySync group cards with micro-interaction feedback.
  */
 const GroupShowcase = ({ className = "" }) => {
-  // Realistic StudySync group data with restrained accent surfaces
   const sampleGroups = [
     {
       id: "ai-ml",
@@ -19,6 +20,7 @@ const GroupShowcase = ({ className = "" }) => {
       accentBg: "bg-[#e6f3fe]",
       accentBorder: "border-[#0075de]/30",
       accentTag: "text-[#0075de] bg-[#0075de]/10",
+      activity: "Active today",
     },
     {
       id: "dsa",
@@ -29,6 +31,7 @@ const GroupShowcase = ({ className = "" }) => {
       accentBg: "bg-[#fff4cc]",
       accentBorder: "border-[#e89d01]/30",
       accentTag: "text-[#e89d01] bg-[#e89d01]/10",
+      activity: "Weekly discussions",
     },
     {
       id: "web-dev",
@@ -39,6 +42,7 @@ const GroupShowcase = ({ className = "" }) => {
       accentBg: "bg-[#f64932]/10",
       accentBorder: "border-[#f64932]/25",
       accentTag: "text-[#f64932] bg-[#f64932]/10",
+      activity: "3 live channels",
     },
     {
       id: "system-design",
@@ -49,6 +53,7 @@ const GroupShowcase = ({ className = "" }) => {
       accentBg: "bg-[#f6f5f4]",
       accentBorder: "border-black/10",
       accentTag: "text-[#615d59] bg-black/5",
+      activity: "Shared archives",
     },
   ];
 
@@ -57,10 +62,10 @@ const GroupShowcase = ({ className = "" }) => {
       className={`py-20 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto ${className}`}
       aria-labelledby="group-showcase-heading"
     >
-      <div className="grid grid-cols-1 px-6 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         
         {/* LEFT COLUMN: Editorial Headline & Copy */}
-        <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+        <Reveal direction="up" distance={18} className="lg:col-span-5 flex flex-col justify-between space-y-6">
           <div>
             <span className="text-[11px] font-mono font-semibold tracking-[0.16em] uppercase text-[#0075de] bg-[#e6f3fe] px-3 py-1 rounded-full border border-[#0075de]/20 inline-block mb-4">
               Community Discovery
@@ -79,8 +84,8 @@ const GroupShowcase = ({ className = "" }) => {
           {/* Key Community Highlights */}
           <div className="space-y-4 pt-2">
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-[#e6f3fe] text-[#0075de] flex items-center justify-center shrink-0 mt-0.5">
-                <Compass className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-full bg-[#e6f3fe] text-[#0075de] flex items-center justify-center shrink-0 mt-0.5">
+                <Compass className="w-4.5 h-4.5" />
               </div>
               <div>
                 <h4 className="text-[15px] font-bold text-[#000000]">Subject-focused groups</h4>
@@ -89,8 +94,8 @@ const GroupShowcase = ({ className = "" }) => {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-[#e6f3fe] text-[#0075de] flex items-center justify-center shrink-0 mt-0.5">
-                <ShieldCheck className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-full bg-[#e6f3fe] text-[#0075de] flex items-center justify-center shrink-0 mt-0.5">
+                <ShieldCheck className="w-4.5 h-4.5" />
               </div>
               <div>
                 <h4 className="text-[15px] font-bold text-[#000000]">Private or public study hubs</h4>
@@ -103,52 +108,55 @@ const GroupShowcase = ({ className = "" }) => {
           <div className="pt-2">
             <Link
               to="/find-groups"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-medium text-[15px] rounded-[8px] transition-all duration-200 shadow-sm hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
+              className="group inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-medium text-[15px] rounded-[8px] transition-all duration-200 shadow-xs hover:-translate-y-0.5 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
             >
               <span>Explore groups</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4.5 h-4.5 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </div>
-        </div>
+        </Reveal>
 
-        {/* RIGHT COLUMN: Asymmetric Collection of Group Cards */}
-        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+        {/* RIGHT COLUMN: Staggered Asymmetric Collection of Group Cards */}
+        <StaggerContainer staggerDelay={0.08} className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           {sampleGroups.map((group) => (
-            <div
-              key={group.id}
-              className={`rounded-[12px] p-6 border ${group.accentBorder} ${group.accentBg} transition-all duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col justify-between min-h-[220px]`}
-            >
-              <div>
-                {/* Category Pill & Member Count Header */}
-                <div className="flex items-center justify-between mb-4">
-                  <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded ${group.accentTag}`}>
-                    {group.category}
-                  </span>
-                  <div className="flex items-center gap-1.5 text-[12px] text-[#757575] font-medium">
-                    <Users className="w-3.5 h-3.5" />
-                    <span>{group.membersCount} members</span>
+            <StaggerItem key={group.id}>
+              <div
+                className={`group rounded-[12px] p-6 border ${group.accentBorder} ${group.accentBg} transition-all duration-200 hover:-translate-y-1 hover:shadow-md flex flex-col justify-between min-h-[220px]`}
+              >
+                <div>
+                  {/* Category Pill & Member Count Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <span className={`text-[11px] font-mono font-semibold px-2.5 py-0.5 rounded ${group.accentTag}`}>
+                      {group.category}
+                    </span>
+                    <div className="flex items-center gap-1.5 text-[12px] text-[#757575] font-medium">
+                      <Users className="w-4 h-4 text-[#0075de]" />
+                      <span>{group.membersCount} members</span>
+                    </div>
                   </div>
+
+                  {/* Group Title & Description */}
+                  <h3 className="text-[18px] font-bold text-[#000000] mb-2 leading-snug group-hover:text-[#0075de] transition-colors duration-150">
+                    {group.name}
+                  </h3>
+                  <p className="text-[13px] text-[#615d59] leading-relaxed">
+                    {group.description}
+                  </p>
                 </div>
 
-                {/* Group Title & Description */}
-                <h3 className="text-[18px] font-bold text-[#000000] mb-2 leading-snug">
-                  {group.name}
-                </h3>
-                <p className="text-[13px] text-[#615d59] leading-relaxed">
-                  {group.description}
-                </p>
+                {/* Card Footer Link with Hover Arrow */}
+                <div className="pt-4 mt-2 border-t border-black/[0.06] flex items-center justify-between text-[12px]">
+                  <span className="font-semibold text-[#0075de] inline-flex items-center gap-1">
+                    View group <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                  </span>
+                  <span className="text-[11px] font-mono text-[#757575] bg-white/60 px-2 py-0.5 rounded border border-black/5">
+                    {group.activity}
+                  </span>
+                </div>
               </div>
-
-              {/* Card Footer Link */}
-              <div className="pt-4 mt-2 border-t border-black/[0.06] flex items-center justify-between">
-                <span className="text-[12px] font-semibold text-[#0075de] hover:underline flex items-center gap-1">
-                  View group <ArrowRight className="w-3 h-3" />
-                </span>
-                <span className="w-2 h-2 rounded-full bg-[#0075de]/60" />
-              </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
       </div>
     </section>

@@ -9,12 +9,14 @@ import {
   Linkedin,
   MessageCircle
 } from "lucide-react";
+import LineReveal from "../../motion/LineReveal";
+import HoverArrow from "../../motion/HoverArrow";
 
 /**
  * StudySyncFooter
  * A premium, highly distinctive editorial footer for StudySync inspired by modern brand visual systems.
  * Features a refined asymmetric curved surface, compact typography for perfect screen fit,
- * multi-column navigation, newsletter integration, interactive social icons, and a giant bottom "studySync" wordmark.
+ * multi-column navigation, newsletter integration, interactive social icons, and a giant bottom "studySync" wordmark reveal.
  */
 const StudySyncFooter = ({ className = "" }) => {
   const [email, setEmail] = useState("");
@@ -154,7 +156,7 @@ const StudySyncFooter = ({ className = "" }) => {
                     <button
                       type="submit"
                       disabled={subscribed}
-                      className="shrink-0 px-4 py-2 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white text-[12px] font-medium rounded-full transition-all duration-200 flex items-center gap-1 shadow-md shadow-[#0075de]/30 hover:scale-[1.02]"
+                      className="group shrink-0 px-12 py-2 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white text-[12px] font-medium rounded-full transition-all duration-200 flex items-center gap-1 shadow-md shadow-[#0075de]/30 hover:scale-[1.02]"
                     >
                       {subscribed ? (
                         <>
@@ -164,7 +166,7 @@ const StudySyncFooter = ({ className = "" }) => {
                       ) : (
                         <>
                           <span>Join</span>
-                          <ArrowRight className="w-3 h-3" />
+                          <HoverArrow className="w-3 h-3" />
                         </>
                       )}
                     </button>
@@ -191,9 +193,9 @@ const StudySyncFooter = ({ className = "" }) => {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={social.label}
-                      className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#0075de] text-slate-200 hover:text-white flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10"
+                      className="w-9 h-9 rounded-full bg-white/10 hover:bg-[#0075de] text-slate-200 hover:text-white flex items-center justify-center transition-all duration-200 hover:scale-110 border border-white/10"
                     >
-                      <social.icon className="w-3.5 h-3.5" />
+                      <social.icon className="w-4.5 h-4.5" />
                     </a>
                   ))}
                 </div>
@@ -203,13 +205,13 @@ const StudySyncFooter = ({ className = "" }) => {
 
           </div>
 
-          {/* BOTTOM MASSIVE BRAND WORDMARK */}
+          {/* BOTTOM MASSIVE BRAND WORDMARK WITH REVEAL */}
           <div className="relative pt-4 overflow-hidden select-none">
-            <div className="w-full flex items-center justify-center leading-none">
-              <span className="text-[12vw] sm:text-[13vw] md:text-[100px] lg:text-[140px] xl:text-[170px] font-black tracking-[-0.04em] text-white/90 uppercase text-center block transform translate-y-[12%] pointer-events-none font-sans">
-                study<span className="text-[#0075de]">sync</span>
-              </span>
-            </div>
+              <div className="w-full flex items-center justify-center leading-none">
+                <span className="text-[12vw] sm:text-[13vw] md:text-[100px] lg:text-[140px] xl:text-[170px] font-black tracking-[-0.04em] text-white/90 uppercase text-center block transform translate-y-[12%] pointer-events-none font-sans">
+                  study<span className="text-[#0075de]">sync</span>
+                </span>
+              </div>
           </div>
 
         </div>
