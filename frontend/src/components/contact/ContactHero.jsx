@@ -20,22 +20,10 @@ const ContactHero = () => {
 
   return (
     <section className="pt-28 sm:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto text-center">
-      <div className="flex flex-col items-center">
-        
-        {/* Eyebrow */}
-        <motion.div
-          initial={shouldReduceMotion ? {} : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: DURATION.COMPONENT, ease: EASING.SMOOTH }}
-          className="mb-4"
-        >
-          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] text-[11px] font-semibold tracking-widest uppercase font-mono">
-            GET IN TOUCH
-          </span>
-        </motion.div>
+      <div className="flex flex-col items-center mt-8">
 
         {/* Headline — Line-Based Reveal */}
-        <h1 className="text-[42px] sm:text-[64px] font-bold text-[#000000] tracking-[-2px] leading-[1.05] mb-5">
+        <h1 className="text-[42px] sm:text-[64px] font-bold text-[#000000] tracking-[-2px] leading-[1.05] my-5">
           <div className="overflow-hidden py-0.5">
             <motion.div
               initial={shouldReduceMotion ? {} : { y: "100%", opacity: 0 }}
