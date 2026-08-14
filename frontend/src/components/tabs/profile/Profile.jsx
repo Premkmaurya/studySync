@@ -17,7 +17,7 @@ const Profile = () => {
   ];
 
   return (
-    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen py-10 px-6 md:px-12 max-w-[1440px] mx-auto">
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-28 sm:pt-36 pb-12 px-6 md:px-12 max-w-[1440px] mx-auto">
       <PageHeader
         title="Personal Learning Profile"
         description="Manage your identity, joined study groups, and saved knowledge notes."

@@ -70,7 +70,7 @@ const SavedNotesContent = () => {
   }, [dispatch, searchTerm, selectedCategory, page]);
 
   return (
-    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen py-10 px-6 md:px-12 max-w-[1440px] mx-auto">
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen mt-[6rem] pt-28 sm:pt-36 pb-12 px-6 md:px-12 max-w-[1440px] mx-auto">
       {/* Header */}
       <PageHeader
         title="Your saved notes"

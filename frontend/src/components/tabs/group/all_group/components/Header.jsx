@@ -20,7 +20,7 @@ const Header = ({
   setSelectedCategory,
 }) => {
   return (
-    <div className="mb-10">
+    <div className="mb-10 mt-[6rem]">
       <PageHeader
         title="Find your study group"
         description="Discover student study groups across engineering, algorithms, security, and design."
