@@ -65,8 +65,9 @@ const GroupMembers = () => {
 
       {/* Controls */}
       <div className="mt-8 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="w-full md:w-80">
+        <div className="w-full md:w-[480px] lg:w-[560px]">
           <SearchInput
+            className="h-[2.5rem] text-base"
             placeholder="Search members by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

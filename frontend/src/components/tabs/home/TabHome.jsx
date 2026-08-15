@@ -26,9 +26,9 @@ import RecommendedGroups from "../../dashboard/RecommendedGroups";
 import DashboardSkeleton from "../../dashboard/DashboardSkeleton";
 
 /**
- * TabHome — Authenticated Workspace Dashboard
- * Redesigned authenticated learning workspace prioritizing current activity, joined groups,
- * continuation state, shared knowledge notes, and recommendations.
+ * TabHome — Redesigned Authenticated Learning Workspace Dashboard
+ * Establishes strong visual hierarchy & rhythm:
+ * WELCOME → ACTIVITY STRIP → HERO WORKSPACE SESSION → COMMUNITIES → 60/40 ASYMMETRIC KNOWLEDGE & DISCOVERY
  */
 const TabHome = () => {
   const dispatch = useDispatch();
@@ -74,7 +74,7 @@ const TabHome = () => {
     fetchSuggestions();
   }, [dispatch]);
 
-  // 3. Fetch Recent Notes for Knowledge Section
+  // 3. Fetch Recent Notes for Knowledge Base
   useEffect(() => {
     dispatch(fetchNotes({ page: 1, limit: 6 }));
   }, [dispatch]);
@@ -110,41 +110,41 @@ const TabHome = () => {
   const latestGroup = joinedGroups.length > 0 ? joinedGroups[0] : null;
 
   return (
-    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-28 sm:pt-36 pb-8 sm:pb-12 px-4 sm:px-6 md:px-10 max-w-[1400px] mx-auto overflow-x-clip">
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-36 sm:pt-44 md:pt-48 pb-16 px-4 sm:px-6 md:px-10 max-w-[1400px] overflow-x-clip">
       {initialLoading && loading ? (
         <DashboardSkeleton />
       ) : (
         <>
-          {/* 1. Welcome & Primary Actions */}
+          {/* 1. Welcome & Primary Workspace Actions */}
           <DashboardHeader
             user={user}
             joinedCount={joinedGroups.length}
             notesCount={notes.length}
           />
 
-          {/* 2. Compact Overview Metrics */}
+          {/* 2. Compact Horizontal Activity & Metrics Strip */}
           <DashboardOverview
             joinedCount={joinedGroups.length}
             notesCount={notes.length}
             topicsCount={Object.keys(fieldPercentages).length}
           />
 
-          {/* 3. Continue Learning Focus Card */}
+          {/* 3. Continue Learning Hero Workspace (Dominant Focus) */}
           <ContinueLearning latestGroup={latestGroup} />
 
-          {/* 4. Your Study Groups Grid */}
+          {/* 4. My Communities (Asymmetric Group Grid) */}
           <StudyGroupGrid
             groups={joinedGroups}
             hasMore={hasMoreJoined}
             onLoadMore={loadMoreJoinedGroups}
           />
 
-          {/* 5. 2-Column Knowledge & Recommendations Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start mb-12">
-            <div className="lg:col-span-6">
+          {/* 5. 60/40 Asymmetric Bottom Section (60% Recent Knowledge / 40% Discovery) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-14">
+            <div className="lg:col-span-7">
               <RecentKnowledge notes={notes} />
             </div>
-            <div className="lg:col-span-6">
+            <div className="lg:col-span-5">
               <RecommendedGroups
                 groups={enrichedSuggestedGroups}
                 fieldPercentages={fieldPercentages}

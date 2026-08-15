@@ -63,6 +63,7 @@ const Danger = () => {
           icon={Trash2}
           loading={isDeleting}
           onClick={handleDeleteGroup}
+          className="px-8"
         >
           Delete Group
         </Button>

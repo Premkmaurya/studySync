@@ -3,9 +3,12 @@ import { User, Users, FileText, Bookmark } from "lucide-react";
 import MainContent from "./components/mainContent/MainContent";
 import HeroSection from "./components/HeroSection";
 import TabSwitch from "./components/TabSwitch";
-import { PageHeader } from "../../design-system/SectionHeader";
-import Pill from "../../design-system/Pill";
 
+/**
+ * Profile — Redesigned Personal Learning Identity
+ * Transforms the profile into a personal workspace displaying identity, learning snapshot,
+ * joined study communities, created knowledge, and saved library entries.
+ */
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
 
@@ -17,22 +20,19 @@ const Profile = () => {
   ];
 
   return (
-    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-28 sm:pt-36 pb-12 px-6 md:px-12 max-w-[1440px] mx-auto">
-      <PageHeader
-        title="Personal Learning Profile"
-        description="Manage your identity, joined study groups, and saved knowledge notes."
-        badge={<Pill variant="sky" size="sm">Profile</Pill>}
+    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-36 sm:pt-44 md:pt-48 pb-16 px-4 sm:px-6 md:px-10 max-w-[1400px] overflow-x-clip">
+      {/* 01 — Hero Header Statement & Identity Object Card */}
+      <HeroSection />
+
+      {/* 02 — Compact Profile Navigation Tabs */}
+      <TabSwitch
+        tabs={tabs}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
 
-      <div className="mt-8">
-        <HeroSection />
-        <TabSwitch
-          tabs={tabs}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-        <MainContent activeTab={activeTab} />
-      </div>
+      {/* 03 — Active Tab Content Surface */}
+      <MainContent activeTab={activeTab} />
     </div>
   );
 };

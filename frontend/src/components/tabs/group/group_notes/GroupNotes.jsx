@@ -69,6 +69,7 @@ const GroupNotes = () => {
             variant="primary"
             icon={Plus}
             onClick={() => navigate(`/group/${groupId}/note`)}
+            className="px-8"
           >
             Create Note
           </Button>

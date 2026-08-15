@@ -34,7 +34,7 @@ const SubNavItem = ({ to, icon: Icon, label, end = false }) => {
         }
       `}
     >
-      <Icon className="w-4 h-4 shrink-0" />
+      <Icon className="w-16 h-16 shrink-0" />
       <span>{label}</span>
     </NavLink>
   );
@@ -77,7 +77,7 @@ const SingleGroupPage = () => {
       <div className="md:hidden flex items-center justify-between px-6 py-3 bg-[#f6f5f4] border-b border-black/[0.08] sticky top-0 z-30">
         <div className="flex items-center gap-2">
           <Link to="/home">
-            <ArrowLeft className="w-5 h-5 text-[#757575]" />
+            <ArrowLeft className="w-16 h-16 text-[#757575]" />
           </Link>
           <span className="font-bold text-[16px] text-[#000000] truncate max-w-[200px]">
             {group?.name || "Workspace"}
@@ -103,7 +103,7 @@ const SingleGroupPage = () => {
             to="/home"
             className="inline-flex items-center gap-2 text-[13px] font-medium text-[#757575] hover:text-[#000000] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-16 h-16" />
             <span>All Groups</span>
           </Link>
 

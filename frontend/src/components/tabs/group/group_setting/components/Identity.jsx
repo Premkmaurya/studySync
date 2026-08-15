@@ -134,7 +134,7 @@ const Identity = () => {
             )}
           </div>
 
-          <Button type="submit" variant="primary" loading={isSaving}>
+          <Button type="submit" variant="primary" loading={isSaving} className="px-8">
             Save Changes
           </Button>
         </div>
