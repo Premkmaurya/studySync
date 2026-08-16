@@ -67,7 +67,7 @@ const DashboardOverview = ({ joinedCount = 0, notesCount = 0, topicsCount = 0 })
                 className={`w-7 h-7 sm:w-8 sm:h-8 rounded-[6px] ${m.indicatorBg} flex items-center justify-center shrink-0`}
                 style={{ color: m.color }}
               >
-                <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <Icon className="w-16 h-16" />
               </div>
             </div>
           );

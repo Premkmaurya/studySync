@@ -14,7 +14,6 @@ const GroupChat = () => {
   const user = useSelector((state) => state.auth.user);
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [groupKey, setGroupKey] = useState(null);
   const { group } = useOutletContext();
   const scrollRef = useRef(null);
   const groupId = group?._id;
@@ -23,42 +22,24 @@ const GroupChat = () => {
 
   useEffect(() => {
     if (!groupId) return;
+
     const bootstrap = async () => {
       try {
-        const secureKeyStore = await import("../../../../utils/secureKeyStore").catch(() => null);
-        const cryptoUtils = await import("../../../../utils/crypto").catch(() => null);
-        if (!secureKeyStore || !cryptoUtils) return;
-
-        const passphrase = window.prompt("Enter your password to unlock encrypted chat keys");
-        const privateKeyBlob = await secureKeyStore.getSecret(`private-key:${user?.email}`);
-        if (!privateKeyBlob || !passphrase) return;
-        
-        const privateKey = await cryptoUtils.decryptPrivateKey(privateKeyBlob, passphrase);
-        const keyResponse = await axios.get(
-          `http://localhost:3000/api/groups/${groupId}/my-encrypted-key`,
-          { withCredentials: true }
-        );
-        const decryptedGroupKey = await cryptoUtils.decryptGroupKey(
-          keyResponse.data.encryptedGroupKey,
-          privateKey
-        );
-        setGroupKey(decryptedGroupKey);
-
         const msgResponse = await axios.get(
           `http://localhost:3000/api/messages/${groupId}`,
           { withCredentials: true }
         );
-        const decoded = await Promise.all(
-          msgResponse.data.chat.map(async (msg) => ({
-            id: msg._id,
-            text: await cryptoUtils.decryptMessage(msg.encryptedContent, decryptedGroupKey),
-            sender: {
-              firstname: msg.user?.fullname?.firstname || "User",
-              lastname: msg.user?.fullname?.lastname || "",
-            },
-            isYou: msg.user._id === msgResponse.data.userId,
-          }))
-        );
+
+        const decoded = (msgResponse.data.chat || []).map((msg) => ({
+          id: msg._id,
+          text: msg.text || msg.content || "",
+          sender: {
+            firstname: msg.user?.fullname?.firstname || "User",
+            lastname: msg.user?.fullname?.lastname || "",
+          },
+          isYou: msg.user?._id === msgResponse.data.userId,
+        }));
+
         setMessages(decoded);
       } catch {
         setMessages([]);
@@ -66,25 +47,17 @@ const GroupChat = () => {
     };
 
     bootstrap();
+
     const socketInstance = io("http://localhost:3000", {
       withCredentials: true,
     });
     socketInstance.emit("joinRoom", groupId);
-    socketInstance.on("newMessage", async (message) => {
-      let text = message.encryptedContent || message.text || "";
-      try {
-        const cryptoUtils = await import("../../../../utils/crypto").catch(() => null);
-        if (cryptoUtils && groupKey) {
-          text = await cryptoUtils.decryptMessage(message.encryptedContent, groupKey);
-        }
-      } catch {
-        // fallback text
-      }
+    socketInstance.on("newMessage", (message) => {
       setMessages((prev) => [
         ...prev,
         {
           id: message._id || Date.now(),
-          text,
+          text: message.text || message.content || "",
           sender: {
             firstname: message.user?.fullname?.firstname || "Member",
             lastname: message.user?.fullname?.lastname || "",
@@ -96,7 +69,7 @@ const GroupChat = () => {
 
     setSocket(socketInstance);
     return () => socketInstance.disconnect();
-  }, [groupId, user?.email, groupKey]);
+  }, [groupId, user?.email]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -109,28 +82,18 @@ const GroupChat = () => {
 
   const handleSendMessage = async () => {
     if (newMessage.trim() === "") return;
-    try {
-      const cryptoUtils = await import("../../../../utils/crypto").catch(() => null);
-      if (cryptoUtils && groupKey) {
-        const encryptedContent = await cryptoUtils.encryptMessage(newMessage, groupKey);
-        if (socket) {
-          socket.emit("newMessage", {
-            encryptedContent,
-            keyVersion: group?.keyVersion || 1,
-          });
-        }
-      } else if (socket) {
-        socket.emit("newMessage", { text: newMessage });
-      }
-    } catch {
-      if (socket) socket.emit("newMessage", { text: newMessage });
+
+    const text = newMessage.trim();
+
+    if (socket) {
+      socket.emit("newMessage", { text });
     }
 
     setMessages((prev) => [
       ...prev,
       {
         id: Date.now(),
-        text: newMessage,
+        text,
         sender: { firstname: "You", lastname: "" },
         isYou: true,
       },

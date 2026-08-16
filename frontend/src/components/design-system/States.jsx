@@ -15,12 +15,12 @@ export const EmptyState = ({
   return (
     <Card className={`flex flex-col items-center justify-center text-center p-10 max-w-md mx-auto ${className}`}>
       <div className="w-12 h-12 rounded-full bg-[#e6f3fe] text-[#0075de] flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6" />
+        <Icon className="w-14 h-14" />
       </div>
       <h3 className="text-[18px] font-semibold text-[#000000] mb-1.5">{title}</h3>
       <p className="text-[14px] text-[#615d59] mb-6 leading-relaxed">{description}</p>
       {actionLabel && onAction && (
-        <Button variant="primary" onClick={onAction}>
+        <Button variant="primary" className="px-8" onClick={onAction}>
           {actionLabel}
         </Button>
       )}
@@ -46,7 +46,7 @@ export const ErrorState = ({
   return (
     <Card className={`border-[#e32d14]/20 bg-[#e32d14]/5 p-6 max-w-md mx-auto text-center ${className}`}>
       <div className="w-10 h-10 rounded-full bg-[#e32d14]/10 text-[#e32d14] flex items-center justify-center mx-auto mb-3">
-        <AlertCircle className="w-5 h-5" />
+        <AlertCircle className="w-14 h-14" />
       </div>
       <h4 className="text-[16px] font-semibold text-[#000000] mb-1">{title}</h4>
       <p className="text-[13px] text-[#615d59] mb-4">{message}</p>

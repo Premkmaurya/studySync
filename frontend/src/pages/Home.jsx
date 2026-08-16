@@ -84,13 +84,7 @@ const Home = () => {
     <div className="bg-[#f6f5f4] text-[#000000] min-h-screen overflow-x-hidden">
       
       {/* 1. HERO SECTION */}
-      <section className="pt-24 sm:pt-36 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto text-center flex flex-col items-center">
-        {/* Hero Eyebrow */}
-        <div className="mb-4 sm:mb-6 mt-2 sm:mt-0">
-          <Pill variant="sky" size="md">
-            Shared Learning Workspace
-          </Pill>
-        </div>
+      <section className="pt-24 mt-[5rem] sm:pt-36 pb-16 sm:pb-20 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto text-center flex flex-col items-center">
 
         {/* Hero Headline with Highlighted Verb Pill */}
         <h1 className="text-[28px] sm:text-[52px] md:text-[68px] lg:text-[76px] font-bold text-[#000000] tracking-tight sm:tracking-[-2px] leading-[1.15] sm:leading-[1.05] max-w-4xl mb-4 sm:mb-6 px-1 sm:px-0">
@@ -182,7 +176,7 @@ const Home = () => {
       <GroupShowcase />
 
       {/* 4. BUILD SHARED KNOWLEDGE (Note Editor Showcase) */}
-      <div className="bg-white border-y border-black/[0.08]">
+      <div className="bg-white border-y px-6 border-black/[0.08]">
         <KnowledgeShowcase />
       </div>
 

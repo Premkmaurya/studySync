@@ -28,7 +28,7 @@ const AboutHero = () => {
 
   return (
     <section className="pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto overflow-hidden">
-      <div className="flex flex-col items-center text-center mt-[3rem]">
+      <div className="flex flex-col items-center text-center mt-[4rem]">
 
         {/* Headline — Line-Based Overflow Reveal */}
         <h1 className="text-[40px] sm:text-[60px] md:text-[76px] font-bold text-[#000000] tracking-[-2.5px] leading-[1.06] max-w-4xl">

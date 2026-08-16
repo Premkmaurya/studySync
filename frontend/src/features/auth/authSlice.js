@@ -33,6 +33,10 @@ export const fetchCurrentUser = createAsyncThunk(
       const data = await fetchCurrentApi();
       return data;
     } catch (error) {
+      const status = error.response?.status;
+      if (status === 401 || status === 403 || status === 404) {
+        return thunkAPI.rejectWithValue(null);
+      }
       return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch user');
     }
   }
@@ -93,7 +97,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || null;
       })
       
       // Login
@@ -108,7 +112,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || null;
       })
 
       // Fetch Current User
@@ -122,7 +126,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || null;
       })
 
       // Logout

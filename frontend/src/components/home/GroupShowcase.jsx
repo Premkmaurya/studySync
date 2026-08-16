@@ -62,7 +62,7 @@ const GroupShowcase = ({ className = "" }) => {
       className={`py-20 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto ${className}`}
       aria-labelledby="group-showcase-heading"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 px-6 items-center">
         
         {/* LEFT COLUMN: Editorial Headline & Copy */}
         <Reveal direction="up" distance={18} className="lg:col-span-5 flex flex-col justify-between space-y-6">

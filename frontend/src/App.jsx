@@ -88,13 +88,14 @@ function App() {
     const initialPath = location.pathname;
     const fetchUser = async () => {
       const res = await dispatch(fetchCurrentUser());
-      if (res.payload?.user) {
+      if (fetchCurrentUser.fulfilled.match(res) && res.payload?.user) {
         const loginPaths = ["/", "/login", "/register"];
         if (loginPaths.includes(initialPath)) {
           navigate("/home");
         }
       }
     };
+
     fetchUser();
   }, [dispatch, navigate, location.pathname]);
 

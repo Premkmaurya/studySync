@@ -5,7 +5,7 @@ const Avatar = ({
   name = "",
   size = "md", // 'sm' | 'md' | 'lg' | 'xl'
   borderColor = "#0075de",
-  className = "w-17 h-17",
+  className = "w-14 h-14",
 }) => {
   const getInitials = (n) => {
     if (!n) return "U";
@@ -26,7 +26,7 @@ const Avatar = ({
       style={{ borderColor }}
       className={`
         relative rounded-full border-2 bg-white flex items-center justify-center font-semibold text-[#000000] overflow-hidden shrink-0 select-none shadow-none
-        ${sizes[size] || sizes.xl}
+        ${sizes[size] || sizes.sm}
         ${className}
       `}
     >

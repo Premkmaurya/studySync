@@ -54,7 +54,7 @@ const MemberEntry = ({ member, onRemove }) => {
   return (
     <div className="flex items-center justify-between py-3.5 px-4 border-b border-black/[0.06] hover:bg-black/[0.02] transition-colors rounded-[8px]">
       <div className="flex items-center gap-3">
-        <Avatar name={fullName} size="md" borderColor="#0075de" />
+        <Avatar name={fullName} size="sm" borderColor="#0075de" />
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
             <span className="text-[14px] font-bold text-[#000000]">

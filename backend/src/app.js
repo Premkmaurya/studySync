@@ -1,37 +1,40 @@
-const express = require("express")
-const cookieParser = require("cookie-parser")
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
 
+const authRoutes = require("./routes/auth.routes");
+const groupRoutes = require("./routes/group.routes");
+const noteRoutes = require("./routes/notes.routes");
+const messageRoutes = require("./routes/messages.routes");
 
+const cors = require("cors");
+const authMiddleware = require("./middlewares/auth.middleware");
+const compression = require("compression");
+const {
+  notFoundHandler,
+  errorHandler,
+} = require("./middlewares/error.middleware");
 
-const authRoutes = require("./routes/auth.routes")
-const groupRoutes = require("./routes/group.routes")
-const noteRoutes = require("./routes/notes.routes")
-const messageRoutes = require("./routes/messages.routes")
+const app = express();
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
+app.use(cookieParser());
+app.use(express.json());
+app.use(compression());
+app.use(morgan("dev"));
 
-const cors = require("cors")
-const authMiddleware = require("./middlewares/auth.middleware")
-const compression = require("compression")
-const { notFoundHandler, errorHandler } = require("./middlewares/error.middleware")
+app.use("/api/auth", authRoutes);
+app.use("/api/groups", groupRoutes);
+app.use("/api/notes", noteRoutes);
+app.use("/api/messages", messageRoutes);
 
-const app = express()
-
-app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
-}))
-
-app.use(cookieParser())
-app.use(express.json())
-app.use(compression())
-
-app.use("/api/auth",authRoutes)
-app.use("/api/groups",groupRoutes)
-app.use("/api/notes",noteRoutes)
-app.use("/api/messages",messageRoutes)
-
-app.use(notFoundHandler)
-app.use(errorHandler)
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 module.exports = app;

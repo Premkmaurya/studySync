@@ -102,8 +102,8 @@ const HowItWorks = ({ className = "" }) => {
                           {item.tag}
                         </span>
                       </div>
-                      <div className={`w-12 h-12 rounded-[10px] ${item.accentBg} ${item.accentColor} flex items-center justify-center transition-transform duration-200 group-hover:scale-105`}>
-                        <IconComponent className="w-6 h-6" />
+                      <div className={`w-16 h-16 rounded-[10px] ${item.accentBg} ${item.accentColor} flex items-center justify-center transition-transform duration-200 group-hover:scale-105`}>
+                        <IconComponent className="w-16 h-16" />
                       </div>
                     </div>
 

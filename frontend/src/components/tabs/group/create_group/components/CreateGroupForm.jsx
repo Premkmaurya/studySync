@@ -51,6 +51,7 @@ const CreateGroupForm = () => {
     if (imageFile) formData.append("image", imageFile);
 
     const res = await dispatch(createGroup(formData));
+    console.log(res)
     if (res.meta.requestStatus === "fulfilled") {
       navigate(`/find-groups`);
     }

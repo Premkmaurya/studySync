@@ -20,7 +20,7 @@ const ContactHero = () => {
 
   return (
     <section className="pt-28 sm:pt-36 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto text-center">
-      <div className="flex flex-col items-center mt-8">
+      <div className="flex flex-col items-center mt-[6rem]">
 
         {/* Headline — Line-Based Reveal */}
         <h1 className="text-[42px] sm:text-[64px] font-bold text-[#000000] tracking-[-2px] leading-[1.05] my-5">

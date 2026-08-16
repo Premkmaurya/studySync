@@ -17,7 +17,7 @@ const FeaturesHero = () => {
   ];
 
   return (
-    <section className="pt-28 mt-[3rem] sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto text-center flex flex-col items-center">
+    <section className="pt-28 mt-[4rem] sm:pt-36 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto text-center flex flex-col items-center">
 
 
       {/* 100ms — Headline Line-Based Reveal */}

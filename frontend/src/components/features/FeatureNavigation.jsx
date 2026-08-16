@@ -55,7 +55,7 @@ const FeatureNavigation = () => {
   return (
     <nav
       aria-label="Features section navigation"
-      className="sticky top-[64px] z-40 w-full bg-[#f6f5f4]/95 backdrop-blur-md border-y border-black/[0.08] px-3 sm:px-6"
+      className="sticky top-[64px] z-10 w-full bg-[#f6f5f4]/95 backdrop-blur-md border-y border-black/[0.08] px-3 sm:px-6"
     >
       <div className="max-w-[1280px] mx-auto flex items-center justify-between h-13 overflow-x-auto hide-scrollbar">
         <div className="flex items-center gap-1 sm:gap-2 mx-auto sm:mx-0">

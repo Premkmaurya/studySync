@@ -102,37 +102,45 @@ const searchGroupById = asyncHandler(async (req, res) => {
 });
 
 const createGroup = asyncHandler(async (req, res) => {
-  const { name, description, field } = req.body;
-  const image = req.file;
-  const user = req.user;
-  let response = {};
-  if (image) {
-    response = await uploadImage(image.buffer);
+  try {
+    const { name, description, field } = req.body;
+    const image = req.file;
+    const user = req.user;
+    let response = {};
+    if (image) {
+      response = await uploadImage(image.buffer);
+    }
+    const group = await groupModel.create({
+      name,
+      description,
+      image: response.url,
+      field,
+      owner: user.id,
+      members: 1,
+    });
+    await userGroupModel.create({
+      userId: user.id,
+      groupId: group._id,
+    });
+
+    await Promise.all([
+      invalidateByPrefix("groups:all"),
+      invalidateByPrefix("groups:search"),
+      invalidateByPrefix(`groups:my:${user.id}`),
+      invalidateByPrefix(`groups:joined:${user.id}`),
+      invalidateByPrefix(`groups:suggested:${user.id}`),
+    ]);
+
+    return res.status(201).json({
+      group,
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      message: "Error creating group",
+      error: error.message,
+    });
   }
-  const group = await groupModel.create({
-    name,
-    description,
-    image: response.url,
-    field,
-    owner: user.id,
-    members: 1,
-  });
-  await userGroupModel.create({
-    userId: user.id,
-    groupId: group._id,
-  });
-
-  await Promise.all([
-    invalidateByPrefix("groups:all"),
-    invalidateByPrefix("groups:search"),
-    invalidateByPrefix(`groups:my:${user.id}`),
-    invalidateByPrefix(`groups:joined:${user.id}`),
-    invalidateByPrefix(`groups:suggested:${user.id}`),
-  ]);
-
-  return res.status(201).json({
-    group,
-  });
 });
 
 const getGroups = asyncHandler(async (req, res) => {
@@ -442,9 +450,7 @@ const removeMember = asyncHandler(async (req, res) => {
 
   const result = await userGroupModel.findOneAndDelete({ groupId, userId });
   if (!result) {
-    return res
-      .status(404)
-      .json({ message: "Member not found in this group" });
+    return res.status(404).json({ message: "Member not found in this group" });
   }
 
   await groupModel.findByIdAndUpdate(groupId, {

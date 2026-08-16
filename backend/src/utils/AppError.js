@@ -9,6 +9,7 @@ class AppError extends Error {
     this.errors = errors;
     this.isOperational = true;
 
+    console.log(`AppError: ${message}, StatusCode: ${statusCode}, Errors: ${JSON.stringify(errors)}`);
     Error.captureStackTrace(this, this.constructor);
   }
 }

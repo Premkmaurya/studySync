@@ -31,9 +31,15 @@ export const createGroup = createAsyncThunk(
     try {
       return await createGroupApi(groupData);
     } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to create group",
-      );
+      const data = error.response?.data;
+
+      const message =
+        data?.errors?.[0]?.msg ||
+        data?.message ||
+        error.message ||
+        "Failed to create group";
+
+      return thunkAPI.rejectWithValue(message);
     }
   },
 );
@@ -214,12 +220,16 @@ const groupsSlice = createSlice({
         // Handle both response formats: { group: {...} } or just {...}
         const updatedGroup = action.payload.group || action.payload;
         if (updatedGroup && updatedGroup._id) {
-          const index = state.groups.findIndex(g => g._id === updatedGroup._id);
+          const index = state.groups.findIndex(
+            (g) => g._id === updatedGroup._id,
+          );
           if (index !== -1) {
             state.groups[index] = updatedGroup;
           }
           // Also update in joinedGroups if present
-          const joinedIndex = state.joinedGroups.findIndex(g => g._id === updatedGroup._id);
+          const joinedIndex = state.joinedGroups.findIndex(
+            (g) => g._id === updatedGroup._id,
+          );
           if (joinedIndex !== -1) {
             state.joinedGroups[joinedIndex] = updatedGroup;
           }
@@ -249,6 +259,12 @@ const groupsSlice = createSlice({
   },
 });
 
-export const { setJoinedGroups, clearGroupsError, setGroups, setSuggestedGroups, setFieldPercentages } = groupsSlice.actions;
+export const {
+  setJoinedGroups,
+  clearGroupsError,
+  setGroups,
+  setSuggestedGroups,
+  setFieldPercentages,
+} = groupsSlice.actions;
 
 export default groupsSlice.reducer;
