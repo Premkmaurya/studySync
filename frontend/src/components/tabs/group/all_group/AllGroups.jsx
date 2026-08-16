@@ -203,7 +203,7 @@ const AllGroupsContent = () => {
         /* Empty Search / Filter State */
         <div className="bg-white rounded-[20px] border border-black/[0.08] p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 shadow-2xs my-4">
           <div className="w-12 h-12 rounded-full bg-[#ffb110]/15 text-[#b18164] flex items-center justify-center">
-            <Search className="w-6 h-6" />
+            <Search className="w-16 h-16" />
           </div>
           <h3 className="text-[18px] sm:text-[20px] font-bold text-[#111111]">
             No groups match your search.
@@ -220,7 +220,7 @@ const AllGroupsContent = () => {
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#f6f5f4] hover:bg-black/5 text-[#111111] text-[13px] font-semibold rounded-[8px] border border-black/[0.08] transition-colors cursor-pointer"
             >
-              <RotateCcw className="w-4 h-4 text-[#757575]" />
+              <RotateCcw className="w-16 h-16 text-[#757575]" />
               <span>Clear filters</span>
             </button>
             <Link
@@ -228,7 +228,7 @@ const AllGroupsContent = () => {
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors shadow-2xs"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-16 h-16" />
               <span>Create group</span>
             </Link>
           </div>
@@ -251,7 +251,7 @@ const AllGroupsContent = () => {
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors shadow-2xs"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-16 h-16" />
               <span>Create group →</span>
             </Link>
           </div>

@@ -43,7 +43,7 @@ const KnowledgeShowcase = ({ className = "" }) => {
               </div>
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 text-[11.5px] font-mono text-[#0075de] bg-[#e6f3fe] px-2.5 py-1 rounded-full border border-[#0075de]/20 font-medium">
-                  <Bookmark className="w-4 h-4" /> Saved Note
+                  <Bookmark className="w-16 h-16" /> Saved Note
                 </span>
               </div>
             </div>
@@ -92,7 +92,7 @@ const KnowledgeShowcase = ({ className = "" }) => {
                 <div className="pt-4 border-t border-black/[0.06] flex flex-wrap items-center justify-between gap-3 text-[12px] text-[#757575]">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1 bg-[#f6f5f4] px-2 py-0.5 rounded text-[11px] font-mono text-[#615d59]">
-                      <Tag className="w-4 h-4 text-[#0075de]" /> #algorithms
+                      <Tag className="w-16 h-16 text-[#0075de]" /> #algorithms
                     </span>
                     <span className="inline-flex items-center gap-1 bg-[#f6f5f4] px-2 py-0.5 rounded text-[11px] font-mono text-[#615d59]">
                       #data-structures
@@ -100,7 +100,7 @@ const KnowledgeShowcase = ({ className = "" }) => {
                   </div>
 
                   <div className="flex items-center gap-1.5 text-[11.5px] text-[#757575]">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-16 h-16" />
                     <span>Saved from AI & ML Group • Updated today</span>
                   </div>
                 </div>

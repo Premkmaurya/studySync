@@ -33,7 +33,7 @@ const CreateGroupCTA = () => {
           data-cursor-ignore="true"
           className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white text-[13px] font-semibold rounded-[8px] transition-all duration-150 shadow-2xs hover:-translate-y-0.5 shrink-0"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-16 h-16" />
           <span>Create group</span>
         </Link>
 

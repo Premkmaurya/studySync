@@ -124,12 +124,12 @@ const Identity = () => {
           <div>
             {saveSuccess && (
               <span className="text-[13px] text-green-600 font-medium flex items-center gap-1.5">
-                <Check className="w-4 h-4" /> Changes saved
+                <Check className="w-16 h-16" /> Changes saved
               </span>
             )}
             {saveError && (
               <span className="text-[13px] text-[#e32d14] font-medium flex items-center gap-1.5">
-                <AlertCircle className="w-4 h-4" /> {saveError}
+                <AlertCircle className="w-16 h-16" /> {saveError}
               </span>
             )}
           </div>

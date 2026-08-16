@@ -193,7 +193,7 @@ const ProductIdea = () => {
                       className="w-8 h-8 rounded-[8px] bg-[#f6f5f4] flex items-center justify-center"
                       style={{ color: cap.color }}
                     >
-                      <Icon className="w-4 h-4" />
+                      <Icon className="w-16 h-16" />
                     </div>
                     <h3 className="text-[14px] font-bold text-[#111111] tracking-wider font-mono">
                       {cap.title}

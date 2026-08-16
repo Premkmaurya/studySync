@@ -38,7 +38,7 @@ const SavedNote = () => {
     return (
       <div className="bg-white rounded-[20px] border border-black/[0.08] p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 shadow-2xs my-4">
         <div className="w-12 h-12 rounded-full bg-[#10b981]/10 text-[#10b981] flex items-center justify-center">
-          <Bookmark className="w-6 h-6 fill-[#10b981]" />
+          <Bookmark className="w-16 h-16 fill-[#10b981]" />
         </div>
         <h3 className="text-[18px] sm:text-[20px] font-bold text-[#111111]">
           Nothing Saved Yet
@@ -52,7 +52,7 @@ const SavedNote = () => {
             data-cursor-ignore="true"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors shadow-2xs cursor-pointer"
           >
-            <Compass className="w-4 h-4" />
+            <Compass className="w-16 h-16" />
             <span>Explore Notes →</span>
           </button>
         </div>
@@ -94,7 +94,7 @@ const SavedNote = () => {
           >
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-[8px] bg-[#0075de]/10 text-[#0075de] shrink-0">
-                <Bookmark className="w-4 h-4 fill-[#0075de]" />
+                <Bookmark className="w-16 h-16 fill-[#0075de]" />
               </div>
               <div className="space-y-0.5">
                 <h4 className="text-[16px] font-bold text-[#111111] tracking-[-0.3px] group-hover:text-[#0075de] transition-colors line-clamp-1">

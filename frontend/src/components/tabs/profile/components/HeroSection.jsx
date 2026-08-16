@@ -123,7 +123,7 @@ const HeroSection = () => {
               </div>
 
               <div className="flex items-center justify-center sm:justify-start gap-2 text-[13px] text-[#615d59]">
-                <Mail className="w-4 h-4 text-[#757575]" />
+                <Mail className="w-16 h-16 text-[#757575]" />
                 <span className="font-mono">{user?.email || "No email linked"}</span>
               </div>
 

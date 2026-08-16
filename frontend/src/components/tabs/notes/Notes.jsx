@@ -185,7 +185,7 @@ const SavedNotesContent = () => {
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#f6f5f4] hover:bg-black/5 text-[#111111] text-[13px] font-semibold rounded-[8px] border border-black/[0.08] transition-colors cursor-pointer"
             >
-              <RotateCcw className="w-4 h-4 text-[#757575]" />
+              <RotateCcw className="w-16 h-16 text-[#757575]" />
               <span>Clear search & filters</span>
             </button>
           </div>
@@ -208,7 +208,7 @@ const SavedNotesContent = () => {
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors shadow-2xs"
             >
-              <Compass className="w-4 h-4" />
+              <Compass className="w-16 h-16" />
               <span>Explore groups →</span>
             </Link>
           </div>

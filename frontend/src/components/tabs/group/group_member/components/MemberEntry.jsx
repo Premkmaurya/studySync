@@ -83,7 +83,7 @@ const MemberEntry = ({ member, onRemove }) => {
               onClick={() => setShowMenu(!showMenu)}
               className="p-1.5 rounded-[6px] text-[#757575] hover:text-[#000000] hover:bg-black/5"
             >
-              <MoreVertical className="w-4 h-4" />
+              <MoreVertical className="w-16 h-16" />
             </button>
 
             {showMenu && (
@@ -92,7 +92,7 @@ const MemberEntry = ({ member, onRemove }) => {
                   onClick={handleRemove}
                   className="flex items-center gap-2 w-full px-3 py-2 text-[13px] font-medium text-[#e32d14] hover:bg-[#e32d14]/10 rounded-[6px]"
                 >
-                  <UserMinus className="w-4 h-4" />
+                  <UserMinus className="w-16 h-16" />
                   Remove Member
                 </button>
               </div>

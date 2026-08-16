@@ -28,7 +28,7 @@ const StickySearchFilter = ({
         {/* Wide Search Bar */}
         <div className="relative flex-1 max-w-xl">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#757575]">
-            <Search className="w-4 h-4" />
+            <Search className="w-16 h-16" />
           </div>
           <input
             type="text"
@@ -45,7 +45,7 @@ const StickySearchFilter = ({
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#757575] hover:text-[#111111]"
               aria-label="Clear search"
             >
-              <X className="w-4 h-4" />
+              <X className="w-16 h-16" />
             </button>
           )}
         </div>

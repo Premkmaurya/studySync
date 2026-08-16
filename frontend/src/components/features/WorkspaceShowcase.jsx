@@ -67,15 +67,15 @@ const WorkspaceShowcase = () => {
               </div>
               <div className="space-y-1">
                 <div className="px-3 py-2 rounded-[8px] bg-white border border-black/[0.08] text-[#0075de] text-[13px] font-semibold flex items-center gap-2.5 shadow-2xs">
-                  <Folder className="w-4 h-4" />
+                  <Folder className="w-16 h-16" />
                   <span>Groups</span>
                 </div>
                 <div className="px-3 py-2 rounded-[8px] hover:bg-black/5 text-[#615d59] text-[13px] font-medium flex items-center gap-2.5">
-                  <FileText className="w-4 h-4" />
+                  <FileText className="w-16 h-16" />
                   <span>Notes</span>
                 </div>
                 <div className="px-3 py-2 rounded-[8px] hover:bg-black/5 text-[#615d59] text-[13px] font-medium flex items-center gap-2.5">
-                  <MessageSquare className="w-4 h-4" />
+                  <MessageSquare className="w-16 h-16" />
                   <span>Discussions</span>
                 </div>
               </div>
@@ -120,7 +120,7 @@ const WorkspaceShowcase = () => {
                 className="p-4 rounded-[14px] bg-white border border-black/[0.08] space-y-2 shadow-2xs text-[13px] text-[#615d59]"
               >
                 <div className="font-bold text-[#111111] text-[14px] flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#0075de]" />
+                  <FileText className="w-16 h-16 text-[#0075de]" />
                   <span>Self-Attention Mechanism:</span>
                 </div>
                 <p className="leading-relaxed">
@@ -165,7 +165,7 @@ const WorkspaceShowcase = () => {
             >
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-[12px] font-bold text-[#10b981] font-mono border-b border-black/[0.06] pb-2">
-                  <Bot className="w-4 h-4" />
+                  <Bot className="w-16 h-16" />
                   <span>AI Learning Helper</span>
                 </div>
                 <div className="p-3 rounded-[10px] bg-[#10b981]/10 border border-[#10b981]/20 text-[11px] text-[#0f5132] leading-relaxed">

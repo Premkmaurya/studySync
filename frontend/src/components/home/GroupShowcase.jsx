@@ -130,7 +130,7 @@ const GroupShowcase = ({ className = "" }) => {
                       {group.category}
                     </span>
                     <div className="flex items-center gap-1.5 text-[12px] text-[#757575] font-medium">
-                      <Users className="w-4 h-4 text-[#0075de]" />
+                      <Users className="w-16 h-16 text-[#0075de]" />
                       <span>{group.membersCount} members</span>
                     </div>
                   </div>
@@ -147,7 +147,7 @@ const GroupShowcase = ({ className = "" }) => {
                 {/* Card Footer Link with Hover Arrow */}
                 <div className="pt-4 mt-2 border-t border-black/[0.06] flex items-center justify-between text-[12px]">
                   <span className="font-semibold text-[#0075de] inline-flex items-center gap-1">
-                    View group <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                    View group <ArrowRight className="w-16 h-16 transition-transform duration-200 group-hover:translate-x-1" />
                   </span>
                   <span className="text-[11px] font-mono text-[#757575] bg-white/60 px-2 py-0.5 rounded border border-black/5">
                     {group.activity}

@@ -49,7 +49,7 @@ const ContinueLearning = ({ latestGroup }) => {
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-all duration-150 shadow-2xs hover:-translate-y-0.5"
             >
               <span>Explore study groups</span>
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-16 h-16" />
             </Link>
           </div>
         </motion.div>
@@ -136,7 +136,7 @@ const ContinueLearning = ({ latestGroup }) => {
               to={`/group/${latestGroup._id}/chats`}
               className="text-[#615d59] hover:text-[#0075de] flex items-center gap-1.5 transition-colors"
             >
-              <MessageSquare className="w-4 h-4 text-[#0075de]" />
+              <MessageSquare className="w-16 h-16 text-[#0075de]" />
               <span>Group Chat</span>
             </Link>
 
@@ -144,7 +144,7 @@ const ContinueLearning = ({ latestGroup }) => {
               to={`/group/${latestGroup._id}`}
               className="text-[#615d59] hover:text-[#0075de] flex items-center gap-1.5 transition-colors"
             >
-              <FileText className="w-4 h-4 text-[#ffb110]" />
+              <FileText className="w-16 h-16 text-[#ffb110]" />
               <span>Group Notes</span>
             </Link>
           </div>

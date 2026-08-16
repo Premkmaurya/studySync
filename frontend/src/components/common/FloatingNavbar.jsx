@@ -239,7 +239,7 @@ const FloatingNavbar = ({ variant = "public" }) => {
                   <Avatar name={displayName} size="sm" />
                   <span>{displayName} (Profile)</span>
                 </div>
-                <ArrowRight className="w-4 h-4 text-[#757575]" />
+                <ArrowRight className="w-16 h-16 text-[#757575]" />
               </Link>
             )}
           </div>

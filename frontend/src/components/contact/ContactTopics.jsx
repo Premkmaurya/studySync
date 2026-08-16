@@ -45,7 +45,7 @@ const ContactTopics = ({ onSelectTopic }) => {
                   <div className="w-9 h-9 rounded-[8px] bg-white border border-black/[0.08] text-[#0075de] flex items-center justify-center group-hover:bg-[#0075de] group-hover:text-white transition-colors">
                     <Icon className="w-4.5 h-4.5" />
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-[#757575] group-hover:text-[#0075de] transition-colors" />
+                  <ArrowUpRight className="w-16 h-16 text-[#757575] group-hover:text-[#0075de] transition-colors" />
                 </div>
                 <div>
                   <h3 className="text-[15px] font-bold text-[#111111] group-hover:text-[#0075de] transition-colors mb-1">

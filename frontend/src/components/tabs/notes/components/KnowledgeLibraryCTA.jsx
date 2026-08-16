@@ -33,7 +33,7 @@ const KnowledgeLibraryCTA = () => {
           data-cursor-ignore="true"
           className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-all duration-150 shadow-2xs hover:-translate-y-0.5 shrink-0"
         >
-          <Compass className="w-4 h-4" />
+          <Compass className="w-16 h-16" />
           <span>Explore groups →</span>
         </Link>
 

@@ -232,7 +232,7 @@ const CreateGroupForm = () => {
 
             <div className="pt-4 border-t border-black/[0.06] flex items-center justify-between text-[13px] text-[#757575]">
               <div className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
+                <Users className="w-16 h-16" />
                 <span>1 member (you)</span>
               </div>
               <Pill variant="sky" size="sm">

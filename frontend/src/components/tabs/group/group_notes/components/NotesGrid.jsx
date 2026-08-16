@@ -133,10 +133,10 @@ const NotesGrid = () => {
                 title={bookmarks[article._id] ? "Saved" : "Save to library"}
               >
                 {savingNoteIds[article._id] ? (
-                  <Loader2 className="w-4 h-4 animate-spin text-[#0075de]" />
+                  <Loader2 className="w-16 h-16 animate-spin text-[#0075de]" />
                 ) : (
                   <Bookmark
-                    className={`w-4 h-4 ${
+                    className={`w-16 h-16 ${
                       bookmarks[article._id]
                         ? "fill-[#0075de] text-[#0075de]"
                         : ""

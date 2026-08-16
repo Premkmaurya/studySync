@@ -25,7 +25,7 @@ export const Input = forwardRef(
         <div className="relative flex items-center w-full">
           {Icon && (
             <div className="absolute left-3 text-[#757575] pointer-events-none flex items-center justify-center">
-              <Icon className="w-4 h-4" />
+              <Icon className="w-16 h-16" />
             </div>
           )}
           <input
@@ -71,7 +71,7 @@ export const SearchInput = forwardRef(
   ) => {
     return (
       <div className={`relative flex items-center w-full ${className}`}>
-        <Search className="absolute left-3.5 w-4 h-4 text-[#757575] pointer-events-none" />
+        <Search className="absolute left-3.5 w-16 h-16 text-[#757575] pointer-events-none" />
         <input
           ref={ref}
           type="text"

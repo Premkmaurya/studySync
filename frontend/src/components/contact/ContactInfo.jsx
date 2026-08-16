@@ -67,7 +67,7 @@ const ContactInfo = ({ onSelectTopic }) => {
                 className="group flex items-start gap-3.5 p-3 rounded-[12px] hover:bg-white/60 transition-colors cursor-pointer border border-transparent hover:border-black/[0.06]"
               >
                 <div className="w-8 h-8 rounded-[8px] bg-white border border-black/[0.08] text-[#0075de] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs group-hover:bg-[#0075de] group-hover:text-white transition-colors">
-                  <Icon className="w-4 h-4" />
+                  <Icon className="w-16 h-16" />
                 </div>
                 <div className="space-y-0.5">
                   <h3 className="text-[12px] font-bold tracking-wider text-[#111111] font-mono group-hover:text-[#0075de] transition-colors">
@@ -86,7 +86,7 @@ const ContactInfo = ({ onSelectTopic }) => {
       {/* Response Commitment Note */}
       <div className="pt-6 border-t border-black/[0.08] space-y-2">
         <div className="flex items-center gap-2 text-[13px] font-semibold text-[#111111]">
-          <CheckCircle2 className="w-4 h-4 text-[#0075de]" />
+          <CheckCircle2 className="w-16 h-16 text-[#0075de]" />
           <span>Send us a message using the form</span>
         </div>
         <p className="text-[13px] text-[#615d59] pl-6 leading-relaxed">

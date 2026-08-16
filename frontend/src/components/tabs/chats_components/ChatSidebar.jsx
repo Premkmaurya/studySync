@@ -376,7 +376,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
                     repeat: Infinity,
                     ease: "linear",
                   }}
-                  className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full"
+                  className="w-16 h-16 border-2 border-indigo-500 border-t-transparent rounded-full"
                 />
                 <span
                   className={`text-sm font-medium ${theme === "dark" ? "text-white/70" : "text-black/70"}`}

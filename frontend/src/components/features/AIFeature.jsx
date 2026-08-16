@@ -63,7 +63,7 @@ const AIFeature = () => {
                 className="p-4 sm:p-5 rounded-[14px] bg-white border-2 border-[#10b981]/40 shadow-2xs space-y-3"
               >
                 <div className="flex items-center gap-2 text-[12px] font-bold text-[#10b981]">
-                  <Bot className="w-4 h-4" />
+                  <Bot className="w-16 h-16" />
                   <span>StudySync AI</span>
                 </div>
 
@@ -113,7 +113,7 @@ const AIFeature = () => {
 
           <div className="space-y-3 pt-2 text-[14px] text-[#111111]">
             <div className="p-3 rounded-[10px] bg-[#f6f5f4] border border-black/[0.06] flex items-start gap-2.5">
-              <Sparkles className="w-4 h-4 text-[#10b981] shrink-0 mt-0.5" />
+              <Sparkles className="w-16 h-16 text-[#10b981] shrink-0 mt-0.5" />
               <p className="text-[13px] text-[#615d59] leading-snug">
                 <strong className="text-[#111111]">Designed to assist, not replace:</strong> AI helps clarify confusing steps while keeping peer discussion central.
               </p>

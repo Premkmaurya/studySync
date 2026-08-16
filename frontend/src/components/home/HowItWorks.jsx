@@ -120,7 +120,7 @@ const HowItWorks = ({ className = "" }) => {
                   {idx < steps.length - 1 && (
                     <div className="hidden lg:flex items-center gap-1.5 text-[11px] font-mono text-[#0075de] mt-6 pt-4 border-t border-black/[0.04]">
                       <span>Next step</span>
-                      <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
+                      <ArrowRight className="w-16 h-16 transition-transform duration-200 group-hover:translate-x-1" />
                     </div>
                   )}
                 </div>

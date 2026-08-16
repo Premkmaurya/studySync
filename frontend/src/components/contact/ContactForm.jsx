@@ -312,7 +312,7 @@ const ContactForm = ({ selectedSubject, onClearSubject }) => {
                 ) : (
                   <>
                     <span>Send message</span>
-                    <ArrowRight className="w-4 h-4 text-white transition-transform duration-200 group-hover:translate-x-1" />
+                    <ArrowRight className="w-16 h-16 text-white transition-transform duration-200 group-hover:translate-x-1" />
                   </>
                 )}
               </button>

@@ -184,7 +184,7 @@ const LearningCycle = () => {
             </div>
             <div className="p-3 rounded-[12px] bg-[#f6f5f4] border border-black/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Bookmark className="w-4 h-4 text-[#0075de]" />
+                <Bookmark className="w-16 h-16 text-[#0075de]" />
                 <span className="text-[13px] font-bold text-[#111111]">Graph Algorithms Master Reference.md</span>
               </div>
               <span className="px-2 py-0.5 bg-white text-[#757575] border border-black/[0.08] rounded text-[11px] font-mono">

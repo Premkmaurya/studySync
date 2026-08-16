@@ -44,7 +44,7 @@ const Register = () => {
       <div className="hidden md:flex w-1/2 bg-[#02093a] text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
         <Link to="/" className="flex items-center gap-2.5 z-10">
           <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-16 h-16" />
           </div>
           <span className="font-bold text-[20px] tracking-[-0.3px] text-white">
             studySync
@@ -75,7 +75,7 @@ const Register = () => {
           <div className="md:hidden flex items-center gap-2.5 mb-8">
             <Link to="/" className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
-                <BookOpen className="w-4 h-4" />
+                <BookOpen className="w-16 h-16" />
               </div>
               <span className="font-bold text-[18px] text-[#000000]">studySync</span>
             </Link>

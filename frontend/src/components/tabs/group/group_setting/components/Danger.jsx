@@ -71,7 +71,7 @@ const Danger = () => {
 
       {deleteError && (
         <div className="text-[13px] text-[#e32d14] font-medium flex items-center gap-1.5">
-          <AlertCircle className="w-4 h-4" /> {deleteError}
+          <AlertCircle className="w-16 h-16" /> {deleteError}
         </div>
       )}
     </Card>

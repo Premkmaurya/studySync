@@ -49,7 +49,7 @@ const DiscussionFeature = () => {
             {/* Context Header */}
             <div className="flex items-center justify-between border-b border-black/[0.08] pb-3 mb-2">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-[#0075de]" />
+                <MessageSquare className="w-16 h-16 text-[#0075de]" />
                 <span className="text-[13px] font-bold text-[#111111]">
                   Data Structures & Algorithms Thread
                 </span>

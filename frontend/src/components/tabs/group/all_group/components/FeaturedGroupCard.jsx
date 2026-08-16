@@ -124,13 +124,13 @@ const FeaturedGroupCard = ({ group }) => {
             >
               {isJoined ? (
                 <>
-                  <Check className="w-4 h-4 text-[#0075de]" />
+                  <Check className="w-16 h-16 text-[#0075de]" />
                   <span>Joined ✓</span>
                 </>
               ) : (
                 <>
                   <span>Join group</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-16 h-16" />
                 </>
               )}
             </button>
