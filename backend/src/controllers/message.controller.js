@@ -5,8 +5,9 @@ const {
   getCachedData,
   setCachedData,
 } = require("../services/cache.service");
+const asyncHandler = require("../utils/asyncHandler");
 
-const getMessages = async (req, res) => {
+const getMessages = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const user = req.user;
   const cacheKey = buildCacheKey("messages:group", groupId);
@@ -36,9 +37,9 @@ const getMessages = async (req, res) => {
     ...payload,
     userId: user.id,
   });
-};
+});
 
-const getAiChats = async (req, res) => {
+const getAiChats = asyncHandler(async (req, res) => {
   const { groupId, id } = req.params;
 
   const user = req.user;
@@ -67,7 +68,7 @@ const getAiChats = async (req, res) => {
     ...payload,
     userId: user.id,
   });
-};
+});
 
 module.exports = {
   getMessages,

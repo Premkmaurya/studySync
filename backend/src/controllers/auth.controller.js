@@ -2,9 +2,10 @@ const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const uploadImage = require("../services/image.service");
-const config = require("../config/config")
+const config = require("../config/config");
+const asyncHandler = require("../utils/asyncHandler");
 
-async function registerUser(req, res) {
+const registerUser = asyncHandler(async (req, res) => {
   const { firstname, lastname, email, password } = req.body;
 
   const isUserExists = await userModel.findOne({ email });
@@ -47,9 +48,9 @@ async function registerUser(req, res) {
     email: user.email,
     fullname: user.fullname,
   });
-}
+});
 
-async function loginUser(req, res) {
+const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await userModel.findOne({ email });
@@ -90,27 +91,26 @@ async function loginUser(req, res) {
     email: user.email,
     fullname: user.fullname,
   });
-}
+});
 
-async function getMe(req, res) {
+const getMe = asyncHandler(async (req, res) => {
   const user = req.user;
   const userFind = await userModel.findById(user.id).select("-password");
   return res.status(200).json({
     message: "data fetched successfully.",
     user: userFind,
   });
-}
+});
 
-
-async function getUserById(req, res) {
+const getUserById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const user = await userModel.findById(id).select("-password");
   return res.status(200).json({
     user,
   });
-}
+});
 
-async function updateProfilePicture(req, res) {
+const updateProfilePicture = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const file = req.file;
 
@@ -120,26 +120,19 @@ async function updateProfilePicture(req, res) {
     });
   }
 
-  try {
-    const uploadResponse = await uploadImage(file.buffer);
+  const uploadResponse = await uploadImage(file.buffer);
 
-    const updatedUser = await userModel.findByIdAndUpdate(
-      id,
-      { profilePicture: uploadResponse.url },
-      { new: true }
-    );
+  const updatedUser = await userModel.findByIdAndUpdate(
+    id,
+    { profilePicture: uploadResponse.url },
+    { new: true }
+  );
 
-    return res.status(200).json({
-      message: "profile picture updated successfully",
-      user: updatedUser,
-    });
-  } catch (error) {
-    console.error("Error uploading image:", error);
-    return res.status(500).json({
-      message: "Failed to upload image",
-    });
-  }
-}
+  return res.status(200).json({
+    message: "profile picture updated successfully",
+    user: updatedUser,
+  });
+});
 
 module.exports = {
   registerUser,

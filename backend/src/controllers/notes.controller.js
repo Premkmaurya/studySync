@@ -6,10 +6,10 @@ const {
   setCachedData,
   invalidateByPrefix,
 } = require("../services/cache.service");
+const asyncHandler = require("../utils/asyncHandler");
 
-async function createNote(req, res) {
+const createNote = asyncHandler(async (req, res) => {
   const user = req.user;
-
   const { content, title, groupId } = req.body;
 
   await noteModel.create({
@@ -29,9 +29,9 @@ async function createNote(req, res) {
   return res.status(201).json({
     message: "your note created successfully.",
   });
-}
+});
 
-async function getNotes(req, res) {
+const getNotes = asyncHandler(async (req, res) => {
   const { field, page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
@@ -66,9 +66,9 @@ async function getNotes(req, res) {
   await setCachedData(cacheKey, payload, 60);
 
   return res.status(200).json(payload);
-}
+});
 
-async function getNoteById(req, res) {
+const getNoteById = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const cacheKey = buildCacheKey("notes:group", groupId);
   const cached = await getCachedData(cacheKey);
@@ -99,9 +99,9 @@ async function getNoteById(req, res) {
   await setCachedData(cacheKey, payload, 120);
 
   return res.status(200).json(payload);
-}
+});
 
-async function getMyNotes(req, res) {
+const getMyNotes = asyncHandler(async (req, res) => {
   const user = req.user;
   const cacheKey = buildCacheKey("notes:user", user.id);
   const cached = await getCachedData(cacheKey);
@@ -122,10 +122,12 @@ async function getMyNotes(req, res) {
   await setCachedData(cacheKey, payload, 90);
 
   return res.status(200).json(payload);
-}
+});
 
-async function searchNotes(req, res) {
-  const { q, groupId } = req.query;
+const searchNotes = asyncHandler(async (req, res) => {
+  const { q, groupId, field, page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+
   const cacheKey = buildCacheKey(
     "notes:search",
     `${q ? `q:${q}` : ""}${groupId ? `:group:${groupId}` : ""}`,
@@ -144,36 +146,31 @@ async function searchNotes(req, res) {
     filter.groupId = groupId;
   }
 
-  try {
-    if (field) {
-      const groupModel = require("../models/group.model");
-      const groups = await groupModel.find({ field }).select("_id");
-      const groupIds = groups.map((g) => g._id);
-      filter.groupId = { $in: groupIds };
-    }
-
-    const notes = await noteModel
-      .find(filter)
-      .skip(Number(skip))
-      .limit(Number(limit))
-      .populate("userId", "fullname")
-      .populate("groupId")
-      .sort({ createdAt: -1 });
-
-    const payload = { notes };
-    await setCachedData(cacheKey, payload, 45);
-
-    return res.status(200).json(payload);
-  } catch (error) {
-    return res.status(500).json({ message: "Error fetching notes", error });
+  if (field) {
+    const groupModel = require("../models/group.model");
+    const groups = await groupModel.find({ field }).select("_id");
+    const groupIds = groups.map((g) => g._id);
+    filter.groupId = { $in: groupIds };
   }
-}
 
-async function saveNote(req, res) {
+  const notes = await noteModel
+    .find(filter)
+    .skip(Number(skip))
+    .limit(Number(limit))
+    .populate("userId", "fullname")
+    .populate("groupId")
+    .sort({ createdAt: -1 });
+
+  const payload = { notes };
+  await setCachedData(cacheKey, payload, 45);
+
+  return res.status(200).json(payload);
+});
+
+const saveNote = asyncHandler(async (req, res) => {
   const user = req.user;
   const { noteId, groupId } = req.body;
 
-  
   const note = await noteModel.findById(noteId);
 
   if (!note) {
@@ -208,9 +205,9 @@ async function saveNote(req, res) {
   return res.status(200).json({
     message: "Note saved successfully.",
   });
-}
+});
 
-async function getSavedNotes(req, res) {
+const getSavedNotes = asyncHandler(async (req, res) => {
   const user = req.user;
   const cacheKey = buildCacheKey("notes:saved", user.id);
   const cached = await getCachedData(cacheKey);
@@ -234,7 +231,7 @@ async function getSavedNotes(req, res) {
   await setCachedData(cacheKey, payload, 90);
 
   return res.status(200).json(payload);
-}
+});
 
 module.exports = {
   createNote,

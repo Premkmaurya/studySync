@@ -151,7 +151,7 @@ const CreateGroupForm = () => {
                 Group Avatar (Optional)
               </label>
               <div className="flex items-center gap-4">
-                <div className="relative w-16 h-16 rounded-full border border-black/15 bg-[#f6f5f4] flex items-center justify-center overflow-hidden shrink-0">
+                <div className="relative w-32 h-32 rounded-full border border-black/15 bg-[#f6f5f4] flex items-center justify-center overflow-hidden shrink-0">
                   {imagePreview ? (
                     <img
                       src={imagePreview}
@@ -159,7 +159,7 @@ const CreateGroupForm = () => {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <Camera className="w-6 h-6 text-[#757575]" />
+                    <Camera className="w-12 h-12 text-[#757575]" />
                   )}
                 </div>
                 <div className="flex items-center gap-2">

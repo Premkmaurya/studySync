@@ -11,8 +11,9 @@ const {
   setCachedData,
   invalidateByPrefix,
 } = require("../services/cache.service");
+const asyncHandler = require("../utils/asyncHandler");
 
-async function getAllGroups(req, res) {
+const getAllGroups = asyncHandler(async (req, res) => {
   const { page = 1, limit = 9, field } = req.query;
   const skip = (page - 1) * limit;
 
@@ -40,9 +41,9 @@ async function getAllGroups(req, res) {
   await setCachedData(cacheKey, payload, 60);
 
   return res.status(200).json(payload);
-}
+});
 
-async function searchGroup(req, res) {
+const searchGroup = asyncHandler(async (req, res) => {
   const { q = "", field, page = 1, limit = 9 } = req.query;
   const skip = (page - 1) * limit;
 
@@ -64,21 +65,17 @@ async function searchGroup(req, res) {
     filter.field = field;
   }
 
-  try {
-    const groups = await groupModel
-      .find(filter)
-      .skip(Number(skip))
-      .limit(Number(limit));
-    const payload = { groups };
-    await setCachedData(cacheKey, payload, 45);
+  const groups = await groupModel
+    .find(filter)
+    .skip(Number(skip))
+    .limit(Number(limit));
+  const payload = { groups };
+  await setCachedData(cacheKey, payload, 45);
 
-    return res.status(200).json(payload);
-  } catch (error) {
-    return res.status(500).json({ message: "Error searching groups", error });
-  }
-}
+  return res.status(200).json(payload);
+});
 
-async function searchGroupById(req, res) {
+const searchGroupById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const cacheKey = buildCacheKey("groups:single", id);
   const cached = await getCachedData(cacheKey);
@@ -102,9 +99,9 @@ async function searchGroupById(req, res) {
   await setCachedData(cacheKey, payload, 120);
 
   return res.status(200).json(payload);
-}
+});
 
-async function createGroup(req, res) {
+const createGroup = asyncHandler(async (req, res) => {
   const { name, description, field } = req.body;
   const image = req.file;
   const user = req.user;
@@ -136,9 +133,9 @@ async function createGroup(req, res) {
   return res.status(201).json({
     group,
   });
-}
+});
 
-async function getGroups(req, res) {
+const getGroups = asyncHandler(async (req, res) => {
   const user = req.user;
   const cacheKey = buildCacheKey("groups:my", user.id);
   const cached = await getCachedData(cacheKey);
@@ -153,9 +150,9 @@ async function getGroups(req, res) {
   await setCachedData(cacheKey, payload, 120);
 
   return res.status(200).json(payload);
-}
+});
 
-async function deleteGroup(req, res) {
+const deleteGroup = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const user = req.user;
 
@@ -195,9 +192,9 @@ async function deleteGroup(req, res) {
   return res.status(200).json({
     message: "Group and all related data deleted successfully",
   });
-}
+});
 
-async function updateGroup(req, res) {
+const updateGroup = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const { name, description, field } = req.body;
   const user = req.user;
@@ -239,9 +236,9 @@ async function updateGroup(req, res) {
     message: "Group updated successfully",
     group,
   });
-}
+});
 
-async function joinGroup(req, res) {
+const joinGroup = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const user = req.user;
 
@@ -281,9 +278,9 @@ async function joinGroup(req, res) {
     message: "Joined group successfully",
     group,
   });
-}
+});
 
-async function joinedGroup(req, res) {
+const joinedGroup = asyncHandler(async (req, res) => {
   const user = req.user;
   const cacheKey = buildCacheKey("groups:joined", user.id);
   const cached = await getCachedData(cacheKey);
@@ -311,61 +308,51 @@ async function joinedGroup(req, res) {
   await setCachedData(cacheKey, payload, 90);
 
   return res.status(200).json(payload);
-}
+});
 
-async function getGroupMembers(req, res) {
-  try {
-    const { groupId } = req.query;
-    if (
-      !groupId ||
-      groupId === "undefined" ||
-      groupId === "preview-node" ||
-      groupId === "nexus-01"
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Invalid or missing groupId", members: [] });
-    }
-
-    const cacheKey = buildCacheKey("groups:members", groupId);
-    const cached = await getCachedData(cacheKey);
-
-    if (cached) {
-      return res.status(200).json(cached);
-    }
-
-    const members = await userGroupModel
-      .find({ groupId })
-      .populate("userId", "fullname")
-      .sort({ createdAt: -1 });
-
-    if (!members) {
-      return res.status(404).json({
-        message: "no members found.",
-        members: [],
-      });
-    }
-
-    const payload = {
-      message: "members fetch successfully.",
-      members,
-    };
-
-    await setCachedData(cacheKey, payload, 60);
-
-    res.status(200).json(payload);
-  } catch (error) {
-    console.error("Error in getGroupMembers:", error);
-    res
-      .status(500)
-      .json({
-        message: "Internal server error fetching members",
-        error: error.message,
-      });
+const getGroupMembers = asyncHandler(async (req, res) => {
+  const { groupId } = req.query;
+  if (
+    !groupId ||
+    groupId === "undefined" ||
+    groupId === "preview-node" ||
+    groupId === "nexus-01"
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Invalid or missing groupId", members: [] });
   }
-}
 
-async function getSuggestedGroups(req, res) {
+  const cacheKey = buildCacheKey("groups:members", groupId);
+  const cached = await getCachedData(cacheKey);
+
+  if (cached) {
+    return res.status(200).json(cached);
+  }
+
+  const members = await userGroupModel
+    .find({ groupId })
+    .populate("userId", "fullname")
+    .sort({ createdAt: -1 });
+
+  if (!members) {
+    return res.status(404).json({
+      message: "no members found.",
+      members: [],
+    });
+  }
+
+  const payload = {
+    message: "members fetch successfully.",
+    members,
+  };
+
+  await setCachedData(cacheKey, payload, 60);
+
+  res.status(200).json(payload);
+});
+
+const getSuggestedGroups = asyncHandler(async (req, res) => {
   const user = req.user;
   const cacheKey = buildCacheKey("groups:suggested", user.id);
   const cached = await getCachedData(cacheKey);
@@ -374,117 +361,104 @@ async function getSuggestedGroups(req, res) {
     return res.status(200).json(cached);
   }
 
-  try {
-    const joinedGroupsRecords = await userGroupModel.find({ userId: user.id });
+  const joinedGroupsRecords = await userGroupModel.find({ userId: user.id });
 
-    if (joinedGroupsRecords.length === 0) {
-      const allGroups = await groupModel.find().limit(5).sort({ members: -1 });
-      const payload = {
-        message: "No groups joined yet. Here are popular groups",
-        fieldPercentages: {},
-        suggestedGroups: allGroups,
-      };
-
-      await setCachedData(cacheKey, payload, 120);
-
-      return res.status(200).json(payload);
-    }
-
-    const joinedGroupIds = joinedGroupsRecords.map((g) => g.groupId);
-    const joinedGroups = await groupModel.find({
-      _id: { $in: joinedGroupIds },
-    });
-
-    const fieldCount = {};
-    joinedGroups.forEach((group) => {
-      const groupField = group.field || "Engineering";
-      fieldCount[groupField] = (fieldCount[groupField] || 0) + 1;
-    });
-
-    const totalJoinedGroups = joinedGroups.length;
-    const fieldPercentages = {};
-
-    Object.keys(fieldCount).forEach((groupField) => {
-      fieldPercentages[groupField] = Math.round(
-        (fieldCount[groupField] / totalJoinedGroups) * 100,
-      );
-    });
-
-    const suggestedGroups = await groupModel.find({
-      _id: { $nin: joinedGroupIds },
-    });
-
-    const sortedSuggestions = suggestedGroups.sort((a, b) => {
-      const fieldA = a.field || "Engineering";
-      const fieldB = b.field || "Engineering";
-      const percentA = fieldPercentages[fieldA] || 0;
-      const percentB = fieldPercentages[fieldB] || 0;
-      return percentB - percentA;
-    });
-
+  if (joinedGroupsRecords.length === 0) {
+    const allGroups = await groupModel.find().limit(5).sort({ members: -1 });
     const payload = {
-      message: "Suggested groups fetched successfully",
-      fieldPercentages,
-      suggestedGroups: sortedSuggestions,
+      message: "No groups joined yet. Here are popular groups",
+      fieldPercentages: {},
+      suggestedGroups: allGroups,
     };
 
     await setCachedData(cacheKey, payload, 120);
 
     return res.status(200).json(payload);
-  } catch (error) {
-    return res.status(500).json({
-      message: "Error fetching suggested groups",
-      error: error.message,
-    });
   }
-}
 
-async function removeMember(req, res) {
+  const joinedGroupIds = joinedGroupsRecords.map((g) => g.groupId);
+  const joinedGroups = await groupModel.find({
+    _id: { $in: joinedGroupIds },
+  });
+
+  const fieldCount = {};
+  joinedGroups.forEach((group) => {
+    const groupField = group.field || "Engineering";
+    fieldCount[groupField] = (fieldCount[groupField] || 0) + 1;
+  });
+
+  const totalJoinedGroups = joinedGroups.length;
+  const fieldPercentages = {};
+
+  Object.keys(fieldCount).forEach((groupField) => {
+    fieldPercentages[groupField] = Math.round(
+      (fieldCount[groupField] / totalJoinedGroups) * 100,
+    );
+  });
+
+  const suggestedGroups = await groupModel.find({
+    _id: { $nin: joinedGroupIds },
+  });
+
+  const sortedSuggestions = suggestedGroups.sort((a, b) => {
+    const fieldA = a.field || "Engineering";
+    const fieldB = b.field || "Engineering";
+    const percentA = fieldPercentages[fieldA] || 0;
+    const percentB = fieldPercentages[fieldB] || 0;
+    return percentB - percentA;
+  });
+
+  const payload = {
+    message: "Suggested groups fetched successfully",
+    fieldPercentages,
+    suggestedGroups: sortedSuggestions,
+  };
+
+  await setCachedData(cacheKey, payload, 120);
+
+  return res.status(200).json(payload);
+});
+
+const removeMember = asyncHandler(async (req, res) => {
   const { groupId, userId } = req.body;
   const user = req.user;
 
-  try {
-    const group = await groupModel.findById(groupId);
-    if (!group) {
-      return res.status(404).json({ message: "Group not found" });
-    }
-
-    // Check if the requester is the owner of the group
-    if (group.owner.toString() !== user.id) {
-      return res
-        .status(403)
-        .json({ message: "Only group owners can remove members" });
-    }
-
-    // Don't allow removing the owner
-    if (userId === group.owner.toString()) {
-      return res.status(400).json({ message: "Cannot remove the group owner" });
-    }
-
-    const result = await userGroupModel.findOneAndDelete({ groupId, userId });
-    if (!result) {
-      return res
-        .status(404)
-        .json({ message: "Member not found in this group" });
-    }
-
-    await groupModel.findByIdAndUpdate(groupId, {
-      $inc: { members: -1, keyVersion: 1 },
-    });
-
-    await Promise.all([
-      invalidateByPrefix(`groups:members:${groupId}`),
-      invalidateByPrefix(`groups:joined:${userId}`),
-      invalidateByPrefix(`groups:suggested:${userId}`),
-    ]);
-
-    return res.status(200).json({ message: "Member removed successfully" });
-  } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Error removing member", error: error.message });
+  const group = await groupModel.findById(groupId);
+  if (!group) {
+    return res.status(404).json({ message: "Group not found" });
   }
-}
+
+  // Check if the requester is the owner of the group
+  if (group.owner.toString() !== user.id) {
+    return res
+      .status(403)
+      .json({ message: "Only group owners can remove members" });
+  }
+
+  // Don't allow removing the owner
+  if (userId === group.owner.toString()) {
+    return res.status(400).json({ message: "Cannot remove the group owner" });
+  }
+
+  const result = await userGroupModel.findOneAndDelete({ groupId, userId });
+  if (!result) {
+    return res
+      .status(404)
+      .json({ message: "Member not found in this group" });
+  }
+
+  await groupModel.findByIdAndUpdate(groupId, {
+    $inc: { members: -1, keyVersion: 1 },
+  });
+
+  await Promise.all([
+    invalidateByPrefix(`groups:members:${groupId}`),
+    invalidateByPrefix(`groups:joined:${userId}`),
+    invalidateByPrefix(`groups:suggested:${userId}`),
+  ]);
+
+  return res.status(200).json({ message: "Member removed successfully" });
+});
 
 module.exports = {
   createGroup,

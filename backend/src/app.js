@@ -13,6 +13,7 @@ const messageRoutes = require("./routes/messages.routes")
 const cors = require("cors")
 const authMiddleware = require("./middlewares/auth.middleware")
 const compression = require("compression")
+const { notFoundHandler, errorHandler } = require("./middlewares/error.middleware")
 
 const app = express()
 
@@ -30,5 +31,7 @@ app.use("/api/groups",groupRoutes)
 app.use("/api/notes",noteRoutes)
 app.use("/api/messages",messageRoutes)
 
+app.use(notFoundHandler)
+app.use(errorHandler)
 
 module.exports = app;
