@@ -1,5 +1,5 @@
 import React from "react";
-import { Sparkles, BookOpen } from "lucide-react";
+import { Sparkles, Save, LoaderCircle } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { DURATION, EASING } from "../../../motion/motionTokens";
 
@@ -7,7 +7,7 @@ import { DURATION, EASING } from "../../../motion/motionTokens";
  * Knowledge Library Hero Header
  * Editorial knowledge hero with connected note fragment SVG visual accent.
  */
-const Header = () => {
+const Header = ({ handleSave, isSaving = false, isViewOnly = false }) => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
@@ -29,7 +29,7 @@ const Header = () => {
       </div>
 
       {/* Hero Headline & Statement */}
-      <div className="space-y-2 max-w-3xl">
+      <div className="space-y-2 max-w-3xl mt-[3rem]">
         <div className="flex items-center gap-2.5">
           <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] text-[11px] font-mono font-semibold uppercase tracking-wider">
             <Sparkles className="w-3 h-3" /> KNOWLEDGE LIBRARY
@@ -47,6 +47,8 @@ const Header = () => {
           Search, revisit, and build on the knowledge notes you've collected across your study groups.
         </p>
       </div>
+
+      
     </motion.div>
   );
 };

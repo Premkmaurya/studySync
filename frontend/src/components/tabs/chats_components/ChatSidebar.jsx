@@ -61,11 +61,9 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
   // Initialize socket connection once
   useEffect(() => {
-    const socketInstance = io("http://localhost:3000", {
-      withCredentials: true,
-    });
+    const socketInstance = getSocket();
 
-    socketInstance.on("ai-conversation-response", (data) => {
+    const handleAiResponse = (data) => {
       if (!data || !data.text || data.text.trim() === "") return;
 
       const newMsg = {
@@ -75,13 +73,13 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
       };
       dispatch(addMessage(newMsg));
       setIsLoading(false);
-    });
+    };
 
+    socketInstance.on("ai-conversation-response", handleAiResponse);
     setSocket(socketInstance);
 
     return () => {
-      socketInstance.off("ai-conversation-response");
-      socketInstance.disconnect();
+      socketInstance.off("ai-conversation-response", handleAiResponse);
     };
   }, [dispatch]);
 

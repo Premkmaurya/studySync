@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Send, Smile, MessageSquare } from "lucide-react";
-import axios from "axios";
+import api from "../../../../services/api";
 import { useOutletContext } from "react-router-dom";
-import { io } from "socket.io-client";
+import {
+  getSocket,
+  joinGroupRoom,
+  leaveGroupRoom,
+  sendGroupMessage,
+} from "../../../../services/socket";
 import EmojiPicker from "emoji-picker-react";
 import MessageBubble from "./components/MessageBubble";
 import Button from "../../../design-system/Button";
@@ -13,7 +18,6 @@ import { PageHeader } from "../../../design-system/SectionHeader";
 const GroupChat = () => {
   const user = useSelector((state) => state.auth.user);
   const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
   const { group } = useOutletContext();
   const scrollRef = useRef(null);
   const groupId = group?._id;
@@ -23,53 +27,83 @@ const GroupChat = () => {
   useEffect(() => {
     if (!groupId) return;
 
+    let isMounted = true;
+
     const bootstrap = async () => {
       try {
-        const msgResponse = await axios.get(
-          `http://localhost:3000/api/messages/${groupId}`,
-          { withCredentials: true }
-        );
+        const msgResponse = await api.get(`/messages/${groupId}`);
+        const currentUserId = user?._id || user?.id || msgResponse.data?.userId;
 
-        const decoded = (msgResponse.data.chat || []).map((msg) => ({
-          id: msg._id,
-          text: msg.text || msg.content || "",
-          sender: {
-            firstname: msg.user?.fullname?.firstname || "User",
-            lastname: msg.user?.fullname?.lastname || "",
-          },
-          isYou: msg.user?._id === msgResponse.data.userId,
-        }));
+        const decoded = (msgResponse.data.chat || []).map((msg) => {
+          const msgUserId = msg.user?._id || msg.user;
+          const isYou =
+            msgUserId && currentUserId
+              ? msgUserId.toString() === currentUserId.toString()
+              : false;
+          return {
+            id: msg._id,
+            text: msg.message || msg.text || msg.content || "",
+            sender: {
+              firstname: msg.user?.fullname?.firstname || "User",
+              lastname: msg.user?.fullname?.lastname || "",
+            },
+            isYou,
+            createdAt: msg.createdAt,
+          };
+        });
 
-        setMessages(decoded);
-      } catch {
-        setMessages([]);
+        if (isMounted) {
+          setMessages(decoded);
+        }
+      } catch (err) {
+        console.error("Error fetching message history:", err);
+        if (isMounted) setMessages([]);
       }
     };
 
     bootstrap();
 
-    const socketInstance = io("http://localhost:3000", {
-      withCredentials: true,
-    });
-    socketInstance.emit("joinRoom", groupId);
-    socketInstance.on("newMessage", (message) => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: message._id || Date.now(),
-          text: message.text || message.content || "",
-          sender: {
-            firstname: message.user?.fullname?.firstname || "Member",
-            lastname: message.user?.fullname?.lastname || "",
-          },
-          isYou: false,
-        },
-      ]);
-    });
+    // Connect & Join Room
+    const s = getSocket();
+    joinGroupRoom(groupId);
 
-    setSocket(socketInstance);
-    return () => socketInstance.disconnect();
-  }, [groupId, user?.email]);
+    const handleNewMessage = (message) => {
+      if (!message || !isMounted) return;
+
+      const msgUserId = message.user?._id || message.user;
+      const currentUserId = user?._id || user?.id;
+      const isYou =
+        msgUserId && currentUserId
+          ? msgUserId.toString() === currentUserId.toString()
+          : false;
+
+      const formattedMsg = {
+        id: message._id || Date.now(),
+        text: message.message || message.text || message.content || "",
+        sender: {
+          firstname: message.user?.fullname?.firstname || "Member",
+          lastname: message.user?.fullname?.lastname || "",
+        },
+        isYou,
+        createdAt: message.createdAt,
+      };
+
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === formattedMsg.id)) {
+          return prev;
+        }
+        return [...prev, formattedMsg];
+      });
+    };
+
+    s.on("newMessage", handleNewMessage);
+
+    return () => {
+      isMounted = false;
+      s.off("newMessage", handleNewMessage);
+      leaveGroupRoom();
+    };
+  }, [groupId, user?._id, user?.id]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -80,24 +114,12 @@ const GroupChat = () => {
     }
   }, [messages]);
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = () => {
     if (newMessage.trim() === "") return;
 
     const text = newMessage.trim();
 
-    if (socket) {
-      socket.emit("newMessage", { text });
-    }
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: Date.now(),
-        text,
-        sender: { firstname: "You", lastname: "" },
-        isYou: true,
-      },
-    ]);
+    sendGroupMessage({ groupId, message: text });
     setNewMessage("");
   };
 
@@ -113,9 +135,9 @@ const GroupChat = () => {
       {/* Messages Feed */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto my-6 p-4 bg-white border border-black/[0.08] rounded-[12px] flex flex-col justify-end"
+        className="flex-1 overflow-y-auto my-6 p-4 bg-white border border-black/[0.08] rounded-[12px] flex flex-col justify-end min-h-[330px]"
       >
-        <div className="space-y-4">
+        <div className="space-y-4 h-full py-3">
           {messages.length > 0 ? (
             messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
@@ -135,7 +157,7 @@ const GroupChat = () => {
       </div>
 
       {/* Message Composer */}
-      <div className="relative">
+      <div className="mt-auto relative">
         {showEmojiPicker && (
           <div className="absolute bottom-full right-0 mb-3 z-50">
             <EmojiPicker
@@ -148,14 +170,14 @@ const GroupChat = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 p-2 bg-white border border-black/[0.12] rounded-[12px]">
+        <div className="flex items-center gap-2 p-2 bg-white border border-black/[0.12] rounded-[12px] min-h-[64px]">
           <input
             type="text"
             placeholder="Type your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1 bg-transparent px-3 py-2 text-[14px] text-[#000000] placeholder-[#757575] outline-none"
+            className="flex-1 bg-transparent px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px]"
           />
 
           <button
@@ -181,3 +203,4 @@ const GroupChat = () => {
 };
 
 export default GroupChat;
+

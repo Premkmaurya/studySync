@@ -5,6 +5,7 @@ import api from "../../../services/api";
 import AIPopup from "../chats_components/AiPopup";
 import ChatSidebar from "../chats_components/ChatSidebar";
 import Header from "./components/Header";
+import Editor from "./components/Editor";
 export default function NotesEditor() {
   const location = useLocation();
   const { groupId } = useParams();
@@ -63,15 +64,16 @@ export default function NotesEditor() {
         setIsAiPanelOpen={setIsAiPanelOpen}
         isShareOpen={isShareOpen}
         setIsShareOpen={setIsShareOpen}
-        handleSave={handleSave}
-        isSaving={isSaving}
         groupId={groupId}
+        isSaving={isSaving}
       />
 
       {/* Document Workspace */}
       <div className="flex-1 max-w-4xl w-full mx-auto px-6 py-8">
         <Editor
           isViewOnly={isViewOnly}
+          handleSave={handleSave}
+          isSaving={isSaving}
           contentFromState={contentFromState}
           title={title}
           setTitle={setTitle}

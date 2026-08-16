@@ -12,9 +12,16 @@ const groupChatSchema = new mongoose.Schema(
       ref: "group",
       required: true,
     },
+    message: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 2000,
+    },
   },
   { timestamps: true },
 );
 
 const groupChatModel = mongoose.model("groupChat", groupChatSchema);
 module.exports = groupChatModel;
+

@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { motion, AnimatePresence } from "framer-motion";
+import getSocket from "../../../services/socket";
 
 const SparklesIcon = () => (
   <svg
@@ -49,20 +50,19 @@ export default function AIPopup({ isOpen, onClose, setContent }) {
 
   useEffect(() => {
     if (!isOpen) return;
-    const socketInstance = io("http://localhost:3000", {
-      withCredentials: true,
-    });
+    const socketInstance = getSocket();
 
-    socketInstance.on("ai-notes-response", (data) => {
+    const handleAiNotesResponse = (data) => {
       setContent(data.content);
       setLoading(false);
       onClose();
-    });
+    };
 
+    socketInstance.on("ai-notes-response", handleAiNotesResponse);
     setSocket(socketInstance);
 
     return () => {
-      socketInstance.disconnect();
+      socketInstance.off("ai-notes-response", handleAiNotesResponse);
     };
   }, [isOpen, onClose, setContent]);
 

@@ -93,7 +93,7 @@ const SingleGroupPage = () => {
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed md:relative top-0 left-0 z-40 h-screen w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between transition-transform duration-200 ${
+        className={`fixed md:sticky md:top-0 left-0 z-40 h-screen w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
@@ -128,7 +128,7 @@ const SingleGroupPage = () => {
           </div>
 
           {/* Tab Navigation */}
-          <nav className="flex flex-col gap-1">
+          <nav className="flex flex-col gap-1 sticky top-20">
             <SubNavItem
               to={`/group/${groupId}`}
               end

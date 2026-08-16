@@ -8,6 +8,9 @@ import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
 
+
+import { Sparkles, Save, LoaderCircle } from "lucide-react";
+
 import {
   FaBold,
   FaItalic,
@@ -48,6 +51,8 @@ const Editor = ({
   setAiText,
   setEditor,
   content,
+  handleSave,
+  isSaving,
 }) => {
   const editor = useEditor({
     shouldRerenderOnTransaction: true,
@@ -96,12 +101,34 @@ const Editor = ({
           placeholder="Untitled Note"
         />
 
+        <div className="flex items-center justify-end md:pb-2">
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={isSaving || isViewOnly}
+          className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-4 py-2.5 text-[13px] font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+        >
+          {isSaving ? (
+            <>
+              <LoaderCircle className="w-14 h-14 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="w-6 h-6" />
+              Save
+            </>
+          )}
+        </button>
+      </div>
+
         {!isViewOnly && (
           <Button
             variant="ghost"
             size="sm"
             icon={Sparkles}
             onClick={() => setIsAIOpen(!isAIOpen)}
+            className="flex items-center gap-2 tracking-tight whitespace-nowrap text-[#0075de] hover:text-[#005bb5]"
           >
             AI Assistant
           </Button>

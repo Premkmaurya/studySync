@@ -11,7 +11,7 @@ const MessageBubble = ({ message }) => {
         <Avatar
           name={isYou ? "You" : fullName}
           size="sm"
-          borderColor={isYou ? "#0075de" : "#e6f3fe"}
+          borderColor="#e6f3fe"
         />
 
         <div className={`flex flex-col ${isYou ? "items-end" : "items-start"}`}>
@@ -21,10 +21,10 @@ const MessageBubble = ({ message }) => {
             </span>
           )}
           <div
-            className={`px-4 py-2.5 rounded-[12px] text-[14px] leading-relaxed shadow-none border ${
+            className={`px-3 py-1.5 rounded-[12px] text-[14px] leading-relaxed shadow-none ${
               isYou
-                ? "bg-[#0075de] text-white border-[#0075de]"
-                : "bg-white text-[#111111] border-black/[0.08]"
+                ? "bg-transparent text-[#111111] border-none"
+                : "bg-white text-[#111111] max-w-[220px]"
             }`}
           >
             {message.text}
