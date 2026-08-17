@@ -14,8 +14,8 @@ import {
   selectGroupsLoading,
 } from "../../../features/groups/groupsSelectors";
 import { selectUser } from "../../../features/auth/authSelectors";
-import { fetchNotes } from "../../../features/notes/notesSlice";
-import { selectNotes } from "../../../features/notes/notesSelectors";
+import { fetchNotes, getMyNotes } from "../../../features/notes/notesSlice";
+import { selectNotes, selectSavedNotes } from "../../../features/notes/notesSelectors";
 
 import DashboardHeader from "../../dashboard/DashboardHeader";
 import DashboardOverview from "../../dashboard/DashboardOverview";
@@ -39,6 +39,7 @@ const TabHome = () => {
   const loading = useSelector(selectGroupsLoading);
   const user = useSelector(selectUser);
   const notes = useSelector(selectNotes) || [];
+  const savedNotes = useSelector(selectSavedNotes) || [];
 
   const [joinedPage, setJoinedPage] = useState(1);
   const [suggestedPage, setSuggestedPage] = useState(1);
@@ -125,7 +126,7 @@ const TabHome = () => {
           {/* 2. Compact Horizontal Activity & Metrics Strip */}
           <DashboardOverview
             joinedCount={joinedGroups.length}
-            notesCount={notes.length}
+            notesCount={savedNotes.length}
             topicsCount={Object.keys(fieldPercentages).length}
           />
 

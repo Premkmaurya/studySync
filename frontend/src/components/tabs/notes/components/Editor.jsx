@@ -9,7 +9,7 @@ import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
 
 
-import { Sparkles, Save, LoaderCircle } from "lucide-react";
+import {Save, LoaderCircle } from "lucide-react";
 
 import {
   FaBold,
@@ -106,16 +106,16 @@ const Editor = ({
           type="button"
           onClick={handleSave}
           disabled={isSaving || isViewOnly}
-          className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-4 py-2.5 text-[13px] font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-8 py-2 text-md font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
           {isSaving ? (
             <>
-              <LoaderCircle className="w-14 h-14 animate-spin" />
+              <LoaderCircle className="w-4 h-4 animate-spin" />
               Saving...
             </>
           ) : (
             <>
-              <Save className="w-6 h-6" />
+              <Save className="w-8 h-8" />
               Save
             </>
           )}
