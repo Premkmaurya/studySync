@@ -38,7 +38,7 @@ const RecentKnowledge = ({ notes = [] }) => {
           </div>
           {notes.length > 0 && (
             <Link
-              to="/saved-notes"
+              to="/notes"
               className="group text-[12px] font-semibold text-[#0075de] hover:underline flex items-center gap-1"
             >
               <span>Library</span>
@@ -56,7 +56,7 @@ const RecentKnowledge = ({ notes = [] }) => {
               return (
                 <div
                   key={noteId}
-                  onClick={() => navigate(`/saved-notes`)}
+                  onClick={() => navigate(`/notes`)}
                   className="group/note py-3.5 hover:bg-[#eaf4ff]/50 px-2 -mx-2 rounded-[8px] transition-all duration-150 cursor-pointer space-y-1.5"
                 >
                   <div className="flex items-center justify-between gap-2">
@@ -107,7 +107,7 @@ const RecentKnowledge = ({ notes = [] }) => {
           Markdown Knowledge Repository
         </span>
         <Link
-          to="/saved-notes"
+          to="/notes"
           className="text-[12px] font-semibold text-[#0075de] hover:underline flex items-center gap-1"
         >
           <span>Open Notes Library →</span>

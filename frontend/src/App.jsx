@@ -17,7 +17,7 @@ function App() {
     "/home",
     "/find-groups",
     "/create-group",
-    "/saved-notes",
+    "/notes",
     "/profile",
   ];
 

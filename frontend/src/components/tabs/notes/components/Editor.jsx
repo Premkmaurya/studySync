@@ -115,7 +115,6 @@ const Editor = ({
             </>
           ) : (
             <>
-              <Save className="w-8 h-8" />
               Save
             </>
           )}

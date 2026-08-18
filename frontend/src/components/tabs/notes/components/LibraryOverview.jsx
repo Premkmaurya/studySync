@@ -12,7 +12,7 @@ const LibraryOverview = ({ notesCount = 0, subjectsCount = 0 }) => {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 font-bold text-[#111111]">
             <FileText className="w-3.5 h-3.5 text-[#0075de]" />
-            <span>{notesCount} SAVED NOTE{notesCount !== 1 ? "S" : ""}</span>
+            <span>{notesCount} NOTE{notesCount !== 1 ? "S" : ""}</span>
           </span>
 
           <span className="text-black/20">•</span>

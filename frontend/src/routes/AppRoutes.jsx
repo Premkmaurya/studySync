@@ -37,7 +37,7 @@ const AppRoutes = () => {
           <Route path="/home" element={<TabHome />} />
           <Route path="/find-groups" element={<AllGroups />} />
           <Route path="/create-group" element={<CreateGroup />} />
-          <Route path="/saved-notes" element={<SavedNotesContent />} />
+          <Route path="/notes" element={<SavedNotesContent />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/group/:groupId" element={<SingleGroup />}>
             {/* Default tab (Column 3) */}

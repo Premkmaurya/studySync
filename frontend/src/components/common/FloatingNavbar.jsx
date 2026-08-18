@@ -27,7 +27,7 @@ const FloatingNavbar = ({ variant = "public" }) => {
   const authNavItems = [
     { label: "Home", path: "/home" },
     { label: "Explore", path: "/find-groups" },
-    { label: "Notes", path: "/saved-notes" },
+    { label: "Notes", path: "/notes" },
   ];
 
   const navItems = isAuthView ? authNavItems : publicNavItems;
