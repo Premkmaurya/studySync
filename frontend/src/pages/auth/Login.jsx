@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../features/auth/authSlice";
+import { loginUser, clearError } from "../../features/auth/authSlice";
 import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -16,6 +16,10 @@ const Login = () => {
   const reduxLoading = useSelector(selectAuthLoading);
   const reduxError = useSelector(selectAuthError);
 
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
   const {
     register,
     handleSubmit,
@@ -26,7 +30,13 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     setAuthError("");
-    const resultAction = await dispatch(loginUser(data));
+    const resultAction = await dispatch(
+      loginUser({
+        email: data.email,
+        password: data.password,
+        rememberMe: !!data.rememberMe,
+      })
+    );
     if (loginUser.fulfilled.match(resultAction)) {
       navigate("/home");
     } else {
@@ -117,6 +127,7 @@ const Login = () => {
                   <input
                     type="checkbox"
                     className="rounded border-black/20 text-[#0075de] focus:ring-[#0075de]"
+                    {...register("rememberMe")}
                   />
                   <span>Remember me</span>
                 </label>

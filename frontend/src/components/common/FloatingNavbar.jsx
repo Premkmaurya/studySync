@@ -1,8 +1,9 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Sparkles } from "lucide-react";
 import StaggeredMenu from "../ui/StaggeredMenu";
+import { logoutUser } from "../../features/auth/authSlice";
 
 /**
  * FloatingNavbar Component
@@ -12,10 +13,17 @@ import StaggeredMenu from "../ui/StaggeredMenu";
 const FloatingNavbar = ({ variant = "public" }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state?.auth?.user);
 
   // Determine navigation items & routes based on variant / user state
-  const isAuthView = variant === "authenticated" || (user && location.pathname !== "/" && location.pathname !== "/about" && location.pathname !== "/features" && location.pathname !== "/contact");
+  const isAuthView =
+    variant === "authenticated" ||
+    (user &&
+      location.pathname !== "/" &&
+      location.pathname !== "/about" &&
+      location.pathname !== "/features" &&
+      location.pathname !== "/contact");
 
   const publicNavItems = [
     { label: "Home", path: "/" },
@@ -32,7 +40,13 @@ const FloatingNavbar = ({ variant = "public" }) => {
 
   const navItems = isAuthView ? authNavItems : publicNavItems;
 
-  // Prepare staggered menu items for mobile navigation
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    await dispatch(logoutUser());
+    navigate("/login");
+  };
+
+  // Prepare staggered menu items for mobile/desktop menu navigation
   const staggeredItems = navItems.map((item) => ({
     label: item.label,
     link: item.path,
@@ -62,7 +76,29 @@ const FloatingNavbar = ({ variant = "public" }) => {
         navigate("/create-group");
       },
     });
-  } else if (!user) {
+    staggeredItems.push({
+      label: "Logout",
+      link: "#logout",
+      ariaLabel: "Log out of StudySync",
+      onClick: handleLogout,
+    });
+  } else if (user) {
+    staggeredItems.push({
+      label: "Dashboard",
+      link: "/home",
+      ariaLabel: "Go to Dashboard",
+      onClick: (e) => {
+        e.preventDefault();
+        navigate("/home");
+      },
+    });
+    staggeredItems.push({
+      label: "Logout",
+      link: "#logout",
+      ariaLabel: "Log out of StudySync",
+      onClick: handleLogout,
+    });
+  } else {
     staggeredItems.push({
       label: "Get Started",
       link: "/register",

@@ -25,3 +25,8 @@ export const updateProfilePictureApi = async ({ id, profilePicture }) => {
   return response.data;
 };
 
+export const updateUserProfileApi = async (profileData) => {
+  const response = await api.put('/auth/profile', profileData);
+  return response.data;
+};
+

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi, fetchCurrentApi, logoutApi, updateProfilePictureApi } from './authApi';
+import { loginApi, registerApi, fetchCurrentApi, logoutApi, updateProfilePictureApi, updateUserProfileApi } from './authApi';
 
 // Thunks
 export const registerUser = createAsyncThunk(
@@ -9,7 +9,10 @@ export const registerUser = createAsyncThunk(
       const data = await registerApi(userData);
       return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+      if (!error.response) {
+        return thunkAPI.rejectWithValue('Unable to connect to the server. Please try again.');
+      }
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration failed. Please try again.');
     }
   }
 );
@@ -21,7 +24,10 @@ export const loginUser = createAsyncThunk(
       const data = await loginApi(credentials);
       return data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Login failed');
+      if (!error.response) {
+        return thunkAPI.rejectWithValue('Unable to connect to the server. Please try again.');
+      }
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Invalid email or password');
     }
   }
 );
@@ -33,11 +39,7 @@ export const fetchCurrentUser = createAsyncThunk(
       const data = await fetchCurrentApi();
       return data;
     } catch (error) {
-      const status = error.response?.status;
-      if (status === 401 || status === 403 || status === 404) {
-        return thunkAPI.rejectWithValue(null);
-      }
-      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to fetch user');
+      return thunkAPI.rejectWithValue(null);
     }
   }
 );
@@ -66,10 +68,23 @@ export const updateProfilePicture = createAsyncThunk(
   }
 );
 
+export const updateUserProfile = createAsyncThunk(
+  'auth/updateUserProfile',
+  async (profileData, thunkAPI) => {
+    try {
+      const data = await updateUserProfileApi(profileData);
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to update profile');
+    }
+  }
+);
+
 const initialState = {
   user: null,
   loading: false,
   error: null,
+  isInitializing: true,
 };
 
 const authSlice = createSlice({
@@ -93,6 +108,7 @@ const authSlice = createSlice({
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.isInitializing = false;
         state.user = action.payload.user || action.payload; // Handle depending on backend shape
       })
       .addCase(registerUser.rejected, (state, action) => {
@@ -107,6 +123,7 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.isInitializing = false;
         // Assuming backend returns { user, token } or similar
         state.user = action.payload.user || action.payload;
       })
@@ -118,15 +135,19 @@ const authSlice = createSlice({
       // Fetch Current User
       .addCase(fetchCurrentUser.pending, (state) => {
         state.loading = true;
+        state.isInitializing = true;
         state.error = null;
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.loading = false;
+        state.isInitializing = false;
         state.user = action.payload.user || action.payload;
       })
-      .addCase(fetchCurrentUser.rejected, (state, action) => {
+      .addCase(fetchCurrentUser.rejected, (state) => {
         state.loading = false;
-        state.error = action.payload || null;
+        state.isInitializing = false;
+        state.user = null;
+        state.error = null;
       })
 
       // Logout
@@ -135,11 +156,13 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.loading = false;
+        state.isInitializing = false;
         state.user = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
         // Even if the backend fails, we usually want to clear the local state
         state.loading = false;
+        state.isInitializing = false;
         state.user = null;
         state.error = action.payload;
       })
@@ -154,6 +177,20 @@ const authSlice = createSlice({
         state.user = action.payload.user || action.payload;
       })
       .addCase(updateProfilePicture.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update Profile Details (Name)
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user || action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../../features/auth/authSlice";
+import { registerUser, clearError } from "../../features/auth/authSlice";
 import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,10 @@ const Register = () => {
   const dispatch = useDispatch();
   const reduxLoading = useSelector(selectAuthLoading);
   const reduxError = useSelector(selectAuthError);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   const {
     register,

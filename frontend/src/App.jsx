@@ -85,11 +85,11 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    const initialPath = location.pathname;
     const fetchUser = async () => {
+      const initialPath = window.location.pathname;
       const res = await dispatch(fetchCurrentUser());
       if (fetchCurrentUser.fulfilled.match(res) && res.payload?.user) {
-        const loginPaths = ["/", "/login", "/register"];
+        const loginPaths = ["/login", "/register"];
         if (loginPaths.includes(initialPath)) {
           navigate("/home");
         }
@@ -97,7 +97,7 @@ function App() {
     };
 
     fetchUser();
-  }, [dispatch, navigate, location.pathname]);
+  }, [dispatch, navigate]);
 
   const shouldHideNavbar =
     hideNavbarRoutes.includes(location.pathname) ||

@@ -36,11 +36,10 @@ const registerUser = asyncHandler(async (req, res) => {
       expiresIn: "1d",
     },
   );
-  const ONE_YEAR = 31536000;
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
-    maxAge: ONE_YEAR,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
   });
 
   return res.status(201).json({
@@ -51,7 +50,7 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
 
   const user = await userModel.findOne({ email });
 
@@ -67,6 +66,9 @@ const loginUser = asyncHandler(async (req, res) => {
     });
   }
 
+  const isPersistent = Boolean(rememberMe);
+  const tokenExpiresIn = isPersistent ? "7d" : "1d";
+
   const token = jwt.sign(
     {
       id: user._id,
@@ -75,21 +77,39 @@ const loginUser = asyncHandler(async (req, res) => {
     },
     config.JWT_SECRET_KEY,
     {
-      expiresIn: "365d",
+      expiresIn: tokenExpiresIn,
     },
   );
 
-  const ONE_YEAR = 31536000;
-  res.cookie("token", token, {
+  const cookieOptions = {
     httpOnly: true,
-    secure: true,
-    maxAge: ONE_YEAR,
-  });
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  };
+
+  if (isPersistent) {
+    // 7 days in milliseconds
+    cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000;
+  }
+
+  res.cookie("token", token, cookieOptions);
 
   return res.status(200).json({
     message: "user logged in successfully",
     email: user.email,
     fullname: user.fullname,
+    user,
+  });
+});
+
+const logoutUser = asyncHandler(async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+  return res.status(200).json({
+    message: "user logged out successfully",
   });
 });
 
@@ -134,10 +154,46 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
   });
 });
 
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const { firstname, lastname } = req.body;
+
+  if (!firstname && !lastname) {
+    return res.status(400).json({
+      message: "Please provide firstname or lastname to update",
+    });
+  }
+
+  const existingUser = await userModel.findById(userId);
+  if (!existingUser) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  const updateData = {
+    fullname: {
+      firstname: firstname ? firstname.trim() : existingUser.fullname?.firstname,
+      lastname: lastname ? lastname.trim() : existingUser.fullname?.lastname,
+    },
+  };
+
+  const updatedUser = await userModel
+    .findByIdAndUpdate(userId, { $set: updateData }, { new: true, runValidators: true })
+    .select("-password");
+
+  return res.status(200).json({
+    message: "Profile updated successfully",
+    user: updatedUser,
+  });
+});
+
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
   getMe,
   getUserById,
   updateProfilePicture,
+  updateUserProfile,
 };
