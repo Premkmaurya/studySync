@@ -28,9 +28,10 @@ const HeroSection = () => {
         updateProfilePicture({ id: userId, profilePicture: formData })
       );
       if (res.meta.requestStatus === "fulfilled") {
-        dispatch(
-          setUser({ ...user, profilePicture: res.payload.user.profilePicture })
-        );
+        const updatedUser = res.payload?.user || res.payload;
+        if (updatedUser) {
+          dispatch(setUser(updatedUser));
+        }
       }
     }
   };

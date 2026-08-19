@@ -46,6 +46,7 @@ const registerUser = asyncHandler(async (req, res) => {
     message: "user registered successfully",
     email: user.email,
     fullname: user.fullname,
+    user,
   });
 });
 

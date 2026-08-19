@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const Avatar = ({
   src = null,
@@ -7,6 +7,12 @@ const Avatar = ({
   borderColor = "#0075de",
   className = "w-14 h-14",
 }) => {
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [src]);
+
   const getInitials = (n) => {
     if (!n) return "U";
     const parts = n.trim().split(" ");
@@ -21,6 +27,8 @@ const Avatar = ({
     xl: "w-16 h-16 text-[18px]",
   };
 
+  const hasValidSrc = Boolean(src && typeof src === "string" && src.trim() !== "");
+
   return (
     <div
       style={{ borderColor }}
@@ -30,14 +38,12 @@ const Avatar = ({
         ${className}
       `}
     >
-      {src ? (
+      {hasValidSrc && !imageError ? (
         <img
           src={src}
           alt={name || "Avatar"}
           className="w-full h-full object-cover rounded-full"
-          onError={(e) => {
-            e.target.style.display = "none";
-          }}
+          onError={() => setImageError(true)}
         />
       ) : (
         <span>{getInitials(name)}</span>
