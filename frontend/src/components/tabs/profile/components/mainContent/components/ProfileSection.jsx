@@ -73,36 +73,45 @@ const ProfileSection = () => {
         </div>
       </div>
 
-      {/* Compact 3-Column Metric Strip */}
+      {/* Compact 3-Column Metric Strip / Mobile 2+1 Grid */}
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: DURATION.COMPONENT, ease: EASING.SMOOTH }}
-        className="bg-white rounded-[16px] border border-black/[0.08] p-5 shadow-2xs"
       >
-        <div className="grid grid-cols-3 divide-x divide-black/[0.08]">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-0 bg-transparent sm:bg-white sm:rounded-[16px] sm:border sm:border-black/[0.08] sm:p-5 sm:shadow-2xs sm:divide-x sm:divide-black/[0.08]">
           {metrics.map((m, idx) => {
             const Icon = m.icon;
+            const isFullWidthMobile = idx === 2;
             return (
-              <div key={m.label} className={`flex items-center justify-between px-3 sm:px-6 ${idx === 0 ? "pl-1 sm:pl-2" : ""}`}>
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-[#757575]">
-                    <span>{m.index}</span>
-                    <span className="hidden sm:inline-block">• {m.label}</span>
+              <div
+                key={m.label}
+                className={`
+                  bg-white sm:bg-transparent rounded-[14px] sm:rounded-none border sm:border-none border-black/[0.08] p-4 sm:p-0 shadow-2xs sm:shadow-none
+                  ${isFullWidthMobile ? "col-span-2 sm:col-span-1" : "col-span-1"}
+                  ${idx === 0 ? "sm:pl-2 sm:pr-6" : idx === 1 ? "sm:px-6" : "sm:pl-6 sm:pr-2"}
+                `}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-[#757575]">
+                      <span>{m.index}</span>
+                      <span className="hidden sm:inline-block">• {m.label}</span>
+                    </div>
+                    <div className="text-[24px] sm:text-[28px] font-bold text-[#111111] leading-none tracking-tight pt-1">
+                      {m.value}
+                    </div>
+                    <div className="text-[12px] sm:text-[13px] text-[#615d59] font-medium truncate pt-1 sm:hidden">
+                      {m.label}
+                    </div>
                   </div>
-                  <div className="text-[20px] sm:text-[26px] font-bold text-[#111111] leading-none tracking-tight">
-                    {m.value}
-                  </div>
-                  <div className="text-[11px] text-[#615d59] font-medium sm:hidden truncate">
-                    {m.label}
-                  </div>
-                </div>
 
-                <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-[6px] ${m.indicatorBg} flex items-center justify-center shrink-0`}
-                  style={{ color: m.color }}
-                >
-                  <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <div
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] ${m.indicatorBg} flex items-center justify-center shrink-0`}
+                    style={{ color: m.color }}
+                  >
+                    <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                  </div>
                 </div>
               </div>
             );

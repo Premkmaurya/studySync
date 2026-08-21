@@ -61,7 +61,7 @@ const DashboardHeader = ({ user, joinedCount = 0, notesCount = 0 }) => {
           data-cursor-ignore="true"
           className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-semibold text-[13px] rounded-[8px] transition-all duration-150 shadow-2xs hover:-translate-y-0.5"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-16 h-16" />
           <span>Create group</span>
         </Link>
 
@@ -70,7 +70,7 @@ const DashboardHeader = ({ user, joinedCount = 0, notesCount = 0 }) => {
           data-cursor-ignore="true"
           className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-black/[0.03] text-[#111111] font-semibold text-[13px] rounded-[8px] border border-black/15 transition-all duration-150 hover:border-black/30"
         >
-          <Compass className="w-4 h-4 text-[#757575]" />
+          <Compass className="w-16 h-16 text-[#757575]" />
           <span>Explore groups</span>
           <ArrowRight className="w-3.5 h-3.5 text-[#757575] transition-transform duration-150 group-hover:translate-x-0.5" />
         </Link>
