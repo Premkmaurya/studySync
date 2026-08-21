@@ -119,7 +119,7 @@ const AllGroupsContent = () => {
   const directoryGroups = featuredGroup ? filteredGroups.slice(1) : filteredGroups;
 
   return (
-    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-36 sm:pt-44 md:pt-48 pb-16 px-4 sm:px-6 md:px-10 max-w-[1400px] overflow-x-clip">
+    <div className="mx-auto max-w-[1400px] w-full bg-[#f6f5f4] text-[#000000] mt-[5rem] sm:mt-0 min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 px-5 sm:px-8 md:px-10 lg:px-12 overflow-x-clip">
       
       {/* 02 — Directory Hero */}
       <Header />
@@ -251,7 +251,7 @@ const AllGroupsContent = () => {
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors shadow-2xs"
             >
-              <Plus className="w-16 h-16" />
+              <Plus className="w-4 h-4" />
               <span>Create group →</span>
             </Link>
           </div>

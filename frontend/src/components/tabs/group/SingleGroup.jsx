@@ -14,7 +14,7 @@ import {
   Users,
   Settings,
   ArrowLeft,
-  Menu,
+  ChartNoAxesColumnIncreasing,
   X,
 } from "lucide-react";
 import Avatar from "../../design-system/Avatar";
@@ -100,7 +100,7 @@ const SingleGroupPage = () => {
           className="p-2 rounded-[6px] text-[#111111] hover:bg-black/5"
           aria-label="Toggle navigation menu"
         >
-          {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {isSidebarOpen ? <X className="w-5 h-5" /> : <ChartNoAxesColumnIncreasing className="w-5 h-5 -rotate-90" />}
         </button>
       </div>
 

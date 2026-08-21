@@ -20,7 +20,7 @@ const Profile = () => {
   ];
 
   return (
-    <div className="bg-[#f6f5f4] text-[#000000] min-h-screen pt-36 sm:pt-44 md:pt-48 pb-16 px-4 sm:px-6 md:px-10 max-w-[1400px] overflow-x-clip">
+    <div className="mx-auto max-w-[1400px] w-full bg-[#f6f5f4] text-[#000000] min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 px-5 sm:px-8 md:px-10 lg:px-12 overflow-x-clip">
       {/* 01 — Hero Header Statement & Identity Object Card */}
       <HeroSection />
 

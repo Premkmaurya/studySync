@@ -33,8 +33,8 @@ const Header = () => {
 
       {/* Hero Headline & Supporting Statement */}
       <div className="space-y-2 max-w-3xl">
-        <div className="flex items-center gap-2.5">
-          <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] text-[11px] font-mono font-semibold uppercase tracking-wider">
+        <div className="flex items-left flex-col sm:items-center sm:flex-row gap-2.5">
+          <span className="inline-flex items-center gap-1.5 px-3 py-0.5 w-fit rounded-full bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] text-[11px] font-mono font-semibold uppercase tracking-wider">
             <Sparkles className="w-3 h-3" /> GROUP DIRECTORY
           </span>
           <span className="text-[12px] font-mono text-[#757575]">
