@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { Send, Smile, MessageSquare, Lock } from "lucide-react";
+import { Send, Smile, MessageSquare, Lock, Loader2, AlertTriangle } from "lucide-react";
 import api from "../../../../services/api";
 import { useOutletContext } from "react-router-dom";
 import {
@@ -44,7 +44,62 @@ const GroupChat = () => {
   const [activeGroupKey, setActiveGroupKey] = useState(null);
   const [keyVersion, setKeyVersion] = useState(1);
   const [keyFingerprint, setKeyFingerprint] = useState("INITIALIZING");
-  const [isInitializingKeys, setIsInitializingKeys] = useState(true);
+  const [cryptoStatus, setCryptoStatus] = useState("initializing"); // "initializing" | "ready" | "error"
+
+  // Helper to format/decrypt single message document cleanly
+  const formatSingleMessage = async (msgDoc, groupKey, status) => {
+    const msgUserId = msgDoc.user?._id || msgDoc.user;
+    const currentUserId = user?._id || user?.id;
+    const isYou =
+      msgUserId && currentUserId
+        ? msgUserId.toString() === currentUserId.toString()
+        : false;
+
+    let text = "";
+    let dStatus = "pending";
+
+    if (msgDoc.ciphertext && msgDoc.iv) {
+      if (status === "ready" && groupKey) {
+        try {
+          text = await decryptMessage(
+            { ciphertext: msgDoc.ciphertext, iv: msgDoc.iv },
+            groupKey
+          );
+          dStatus = "decrypted";
+        } catch (err) {
+          console.warn("[E2EE] Genuine decryption failure:", msgDoc._id, err);
+          text = "🔒 Unable to decrypt message";
+          dStatus = "failed";
+        }
+      } else if (status === "error") {
+        text = "🔒 Unable to decrypt message";
+        dStatus = "failed";
+      } else {
+        // status === "initializing" -> keep pending!
+        text = "";
+        dStatus = "pending";
+      }
+    } else if (msgDoc.message || msgDoc.text) {
+      text = msgDoc.message || msgDoc.text;
+      dStatus = "decrypted";
+    } else {
+      text = "🔒 Unable to decrypt message";
+      dStatus = "failed";
+    }
+
+    return {
+      id: msgDoc._id || Date.now(),
+      rawDoc: msgDoc,
+      text,
+      decryptionStatus: dStatus,
+      sender: {
+        firstname: msgDoc.user?.fullname?.firstname || "User",
+        lastname: msgDoc.user?.fullname?.lastname || "",
+      },
+      isYou,
+      createdAt: msgDoc.createdAt,
+    };
+  };
 
   // 1. Initialize user keys & resolve group key
   useEffect(() => {
@@ -54,7 +109,7 @@ const GroupChat = () => {
 
     const initE2EE = async () => {
       try {
-        setIsInitializingKeys(true);
+        setCryptoStatus("initializing");
 
         // Step A: Fetch or Generate User Local Key Pair
         let userKeys = await getUserKeyPair(userId);
@@ -131,71 +186,34 @@ const GroupChat = () => {
           setActiveGroupKey(groupKey);
           setKeyVersion(currentVersion);
           setKeyFingerprint(fingerprint);
-          setIsInitializingKeys(false);
+          setCryptoStatus(groupKey ? "ready" : "error");
         }
       } catch (err) {
         console.error("[E2EE] Initialization error:", err);
-        if (isMounted) setIsInitializingKeys(false);
+        if (isMounted) setCryptoStatus("error");
       }
     };
 
     initE2EE();
   }, [groupId, userId]);
 
-  // 2. Fetch & Decrypt Message History and Handle Real-time Socket Messages
+  // 2. Fetch Message History & Real-time Socket Listener
   useEffect(() => {
     if (!groupId) return;
 
     let isMounted = true;
 
-    const decryptSingleMessage = async (msgDoc, key) => {
-      const msgUserId = msgDoc.user?._id || msgDoc.user;
-      const currentUserId = user?._id || user?.id;
-      const isYou =
-        msgUserId && currentUserId
-          ? msgUserId.toString() === currentUserId.toString()
-          : false;
-
-      let plaintextText = "";
-      if (msgDoc.ciphertext && msgDoc.iv && key) {
-        try {
-          plaintextText = await decryptMessage(
-            { ciphertext: msgDoc.ciphertext, iv: msgDoc.iv },
-            key
-          );
-        } catch (err) {
-          console.warn("[E2EE] Failed to decrypt message:", msgDoc._id, err);
-          plaintextText = "🔒 Unable to decrypt message";
-        }
-      } else if (msgDoc.message || msgDoc.text) {
-        plaintextText = msgDoc.message || msgDoc.text;
-      } else {
-        plaintextText = "🔒 Unable to decrypt message";
-      }
-
-      return {
-        id: msgDoc._id || Date.now(),
-        text: plaintextText,
-        sender: {
-          firstname: msgDoc.user?.fullname?.firstname || "User",
-          lastname: msgDoc.user?.fullname?.lastname || "",
-        },
-        isYou,
-        createdAt: msgDoc.createdAt,
-      };
-    };
-
-    const fetchAndDecryptHistory = async () => {
+    const fetchHistory = async () => {
       try {
         const msgResponse = await api.get(`/messages/${groupId}`);
         const chatDocs = msgResponse.data?.chat || [];
 
-        const decryptedMsgs = await Promise.all(
-          chatDocs.map((msg) => decryptSingleMessage(msg, activeGroupKey))
+        const formattedMsgs = await Promise.all(
+          chatDocs.map((msg) => formatSingleMessage(msg, activeGroupKey, cryptoStatus))
         );
 
         if (isMounted) {
-          setMessages(decryptedMsgs);
+          setMessages(formattedMsgs);
         }
       } catch (err) {
         console.error("Error fetching message history:", err);
@@ -203,7 +221,7 @@ const GroupChat = () => {
       }
     };
 
-    fetchAndDecryptHistory();
+    fetchHistory();
 
     // Connect & Join Room
     const s = getSocket();
@@ -212,7 +230,7 @@ const GroupChat = () => {
     const handleNewMessage = async (message) => {
       if (!message || !isMounted) return;
 
-      const formattedMsg = await decryptSingleMessage(message, activeGroupKey);
+      const formattedMsg = await formatSingleMessage(message, activeGroupKey, cryptoStatus);
 
       setMessages((prev) => {
         if (prev.some((m) => m.id === formattedMsg.id)) {
@@ -229,7 +247,40 @@ const GroupChat = () => {
       s.off("newMessage", handleNewMessage);
       leaveGroupRoom();
     };
-  }, [groupId, user?._id, user?.id, activeGroupKey]);
+  }, [groupId, user?._id, user?.id]);
+
+  // 3. Batch Decrypt Pending Messages when cryptoStatus becomes "ready"
+  useEffect(() => {
+    if (cryptoStatus !== "ready" || !activeGroupKey) return;
+
+    let isMounted = true;
+
+    const decryptPendingMessages = async () => {
+      setMessages((prevMessages) => {
+        const hasPending = prevMessages.some((m) => m.decryptionStatus === "pending");
+        if (!hasPending) return prevMessages;
+
+        Promise.all(
+          prevMessages.map(async (msg) => {
+            if (msg.decryptionStatus === "pending" && msg.rawDoc) {
+              return await formatSingleMessage(msg.rawDoc, activeGroupKey, "ready");
+            }
+            return msg;
+          })
+        ).then((updated) => {
+          if (isMounted) setMessages(updated);
+        });
+
+        return prevMessages;
+      });
+    };
+
+    decryptPendingMessages();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [cryptoStatus, activeGroupKey]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -241,7 +292,7 @@ const GroupChat = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "" || !groupId) return;
+    if (newMessage.trim() === "" || !groupId || cryptoStatus !== "ready") return;
 
     const text = newMessage.trim();
 
@@ -274,10 +325,22 @@ const GroupChat = () => {
         title={group?.name ? `${group.name} Chat` : "Group Chat"}
         description="End-to-end encrypted private chat for group members."
         badge={
-          <Pill variant="sky" size="sm" className="flex items-center gap-1 font-mono text-[11px]">
-            <Lock className="w-3 h-3 text-[#0075de]" />
-            <span>E2EE Active • Key v{keyVersion} [{keyFingerprint}]</span>
-          </Pill>
+          cryptoStatus === "initializing" ? (
+            <Pill variant="sky" size="sm" className="flex items-center gap-1.5 font-mono text-[11px]">
+              <Loader2 className="w-3 h-3 text-[#0075de] animate-spin" />
+              <span>E2EE • Securing connection...</span>
+            </Pill>
+          ) : cryptoStatus === "ready" ? (
+            <Pill variant="sky" size="sm" className="flex items-center gap-1 font-mono text-[11px]">
+              <Lock className="w-3 h-3 text-[#0075de]" />
+              <span>E2EE Active • Key v{keyVersion} [{keyFingerprint}]</span>
+            </Pill>
+          ) : (
+            <Pill variant="amber" size="sm" className="flex items-center gap-1 font-mono text-[11px]">
+              <AlertTriangle className="w-3 h-3 text-amber-600" />
+              <span>E2EE Unavailable</span>
+            </Pill>
+          )
         }
       />
 
@@ -322,17 +385,23 @@ const GroupChat = () => {
         <div className="flex items-center gap-2 p-2 bg-white border border-black/[0.12] rounded-[12px] min-h-[64px]">
           <input
             type="text"
-            placeholder="Type your message..."
+            placeholder={
+              cryptoStatus === "initializing"
+                ? "Securing connection..."
+                : "Type your message..."
+            }
+            disabled={cryptoStatus === "initializing"}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1 bg-transparent px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px]"
+            className="flex-1 bg-transparent px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px] disabled:opacity-50"
           />
 
           <button
             type="button"
+            disabled={cryptoStatus === "initializing"}
             onClick={() => setShowEmojiPicker((prev) => !prev)}
-            className="p-2 text-[#757575] hover:text-black rounded-[6px] hover:bg-black/5 transition-colors"
+            className="p-2 text-[#757575] hover:text-black rounded-[6px] hover:bg-black/5 transition-colors disabled:opacity-50"
           >
             <Smile className="w-5 h-5" />
           </button>
@@ -341,6 +410,7 @@ const GroupChat = () => {
             variant="primary"
             size="sm"
             icon={Send}
+            disabled={cryptoStatus !== "ready" || newMessage.trim() === ""}
             onClick={handleSendMessage}
           >
             Send

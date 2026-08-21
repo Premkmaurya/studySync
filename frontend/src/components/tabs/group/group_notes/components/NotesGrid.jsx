@@ -64,18 +64,6 @@ const NotesGrid = () => {
   };
 
   useEffect(() => {
-    const loadSaved = async () => {
-      if (savedNotes.length === 0) {
-        const res = await dispatch(getSavedNotes());
-        if (res.payload?.savedNotes) {
-          dispatch(setSavedNotes(res.payload.savedNotes));
-        }
-      }
-    };
-    loadSaved();
-  }, [dispatch, savedNotes.length]);
-
-  useEffect(() => {
     const savedIds = new Set(
       savedNotes.map((item) => item.noteId?._id || item.noteId)
     );

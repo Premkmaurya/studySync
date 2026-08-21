@@ -13,7 +13,7 @@ import { Users } from "lucide-react";
 
 const GroupMembers = () => {
   const context = useOutletContext();
-  const group = context?.group || { _id: "group-id", name: "Study Group" };
+  const group = context?.group;
 
   const [members, setMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -25,6 +25,7 @@ const GroupMembers = () => {
 
   useEffect(() => {
     async function getMembers() {
+      if (!group?._id) return;
       setLoading(true);
       const res = await dispatch(
         fetchGroupMembers({ groupId: group._id, page: 1, limit: 10 })
@@ -40,7 +41,7 @@ const GroupMembers = () => {
       setLoading(false);
     }
     getMembers();
-  }, [group._id, dispatch]);
+  }, [group?._id, dispatch]);
 
   const onRemoveMember = (userId) => {
     setMembers((prev) =>
@@ -111,7 +112,7 @@ const GroupMembers = () => {
               setLoading(true);
               const res = await dispatch(
                 fetchGroupMembers({
-                  groupId: group._id,
+                  groupId: group?._id,
                   page: nextPage,
                   limit: 10,
                 })

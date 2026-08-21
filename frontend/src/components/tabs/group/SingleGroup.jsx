@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import {
   useParams,
@@ -7,6 +6,12 @@ import {
   Outlet,
   Link,
 } from "react-router-dom";
+import { useSelector } from "react-redux";
+import {
+  selectJoinedGroups,
+  selectGroups,
+  selectSuggestedGroups,
+} from "../../../features/groups/groupsSelectors";
 import api from "../../../services/api";
 import {
   FileText,
@@ -43,12 +48,29 @@ const SubNavItem = ({ to, icon: Icon, label, end = false }) => {
 const SingleGroupPage = () => {
   const { groupId } = useParams();
   const location = useLocation();
-  const [group, setGroup] = useState(location.state?.groupData || null);
+
+  const joinedGroups = useSelector(selectJoinedGroups) || [];
+  const allGroups = useSelector(selectGroups) || [];
+  const suggestedGroups = useSelector(selectSuggestedGroups) || [];
+
+  const reduxGroup =
+    joinedGroups.find((g) => g._id === groupId) ||
+    allGroups.find((g) => g._id === groupId) ||
+    suggestedGroups.find((g) => g._id === groupId);
+
+  const [group, setGroup] = useState(location.state?.groupData || reduxGroup || null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
+
+  // Keep local group state in sync with Redux group updates
+  useEffect(() => {
+    if (reduxGroup) {
+      setGroup(reduxGroup);
+    }
+  }, [reduxGroup]);
 
   // Lock body scroll when mobile sidebar is open
   useEffect(() => {
@@ -72,7 +94,8 @@ const SingleGroupPage = () => {
           }
         } catch {
           setGroup({
-            name: "Study Group",
+            _id: groupId,
+            name: "Group Workspace",
             members: 1,
             field: "General",
             description: "Collaborative study workspace.",
@@ -147,7 +170,7 @@ const SingleGroupPage = () => {
             />
             <div className="flex-1 min-w-0">
               <h2 className="text-[16px] font-bold text-[#000000] tracking-[-0.3px] truncate">
-                {group?.name || "Study Group"}
+                {group?.name || "Group Workspace"}
               </h2>
               <div className="flex items-center gap-2 mt-1">
                 <Pill variant="gray" size="sm">

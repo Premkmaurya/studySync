@@ -1,9 +1,11 @@
 import React from "react";
 import Avatar from "../../../../design-system/Avatar";
+import { Lock } from "lucide-react";
 
 const MessageBubble = ({ message }) => {
   const isYou = message.isYou;
   const fullName = `${message.sender?.firstname || ""} ${message.sender?.lastname || ""}`.trim() || "Member";
+  const isPending = message.decryptionStatus === "pending";
 
   return (
     <div className={`flex w-full mb-4 ${isYou ? "justify-end" : "justify-start"}`}>
@@ -27,10 +29,17 @@ const MessageBubble = ({ message }) => {
                 : "bg-white text-[#111111] max-w-[220px]"
             }`}
           >
-            {message.text}
+            {isPending ? (
+              <span className="inline-flex items-center gap-1.5 text-[13px] text-[#757575] font-medium animate-pulse py-0.5">
+                <Lock className="w-3.5 h-3.5 text-[#0075de]" />
+                <span>Decrypting message...</span>
+              </span>
+            ) : (
+              message.text
+            )}
           </div>
           <span className="text-[11px] text-[#757575] mt-1 px-1">
-            {new Date().toLocaleTimeString([], {
+            {new Date(message.createdAt || Date.now()).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}
