@@ -14,7 +14,7 @@ import {
   selectGroupsLoading,
 } from "../../../features/groups/groupsSelectors";
 import { selectUser } from "../../../features/auth/authSelectors";
-import { fetchNotes, getMyNotes } from "../../../features/notes/notesSlice";
+import { fetchNotes, getSavedNotes } from "../../../features/notes/notesSlice";
 import { selectNotes, selectSavedNotes } from "../../../features/notes/notesSelectors";
 
 import DashboardHeader from "../../dashboard/DashboardHeader";
@@ -78,6 +78,11 @@ const TabHome = () => {
   // 3. Fetch Recent Notes for Knowledge Base
   useEffect(() => {
     dispatch(fetchNotes({ page: 1, limit: 6 }));
+  }, [dispatch]);
+
+  // 4. Fetch saved Notes
+  useEffect(() => {
+    dispatch(getSavedNotes({ page: 1, limit: 6 }));
   }, [dispatch]);
 
   const loadMoreJoinedGroups = async () => {

@@ -2,10 +2,11 @@ import React, { useEffect } from "react";
 import { FileText, Users, Bookmark } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { motion, useReducedMotion } from "framer-motion";
-import { selectJoinedGroups } from "../../../../../../features/groups/groupsSelectors";
+import { selectJoinedGroups, selectGroupsLoading } from "../../../../../../features/groups/groupsSelectors";
 import {
   selectMyNotes,
   selectSavedNotes,
+  selectNotesLoading,
 } from "../../../../../../features/notes/notesSelectors";
 import { getMyNotes, getSavedNotes } from "../../../../../../features/notes/notesSlice";
 import { joinedGroup } from "../../../../../../features/groups/groupsSlice";
@@ -22,6 +23,8 @@ const ProfileSection = () => {
   const joinedGroups = useSelector(selectJoinedGroups) || [];
   const notes = useSelector(selectMyNotes) || [];
   const savedNotes = useSelector(selectSavedNotes) || [];
+  const groupsLoading = useSelector(selectGroupsLoading);
+  const notesLoading = useSelector(selectNotesLoading);
 
   useEffect(() => {
     dispatch(getMyNotes());
@@ -33,7 +36,7 @@ const ProfileSection = () => {
     {
       index: "01",
       label: "Study groups",
-      value: joinedGroups.length,
+      value: groupsLoading && joinedGroups.length === 0 ? "—" : joinedGroups.length,
       icon: Users,
       color: "#0075de",
       indicatorBg: "bg-[#0075de]/10",
@@ -41,7 +44,7 @@ const ProfileSection = () => {
     {
       index: "02",
       label: "Created notes",
-      value: notes.length,
+      value: notesLoading && notes.length === 0 ? "—" : notes.length,
       icon: FileText,
       color: "#ffb110",
       indicatorBg: "bg-[#ffb110]/15",
@@ -49,7 +52,7 @@ const ProfileSection = () => {
     {
       index: "03",
       label: "Saved library",
-      value: savedNotes.length,
+      value: notesLoading && savedNotes.length === 0 ? "—" : savedNotes.length,
       icon: Bookmark,
       color: "#10b981",
       indicatorBg: "bg-[#10b981]/10",

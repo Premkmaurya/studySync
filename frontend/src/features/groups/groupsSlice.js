@@ -255,6 +255,18 @@ const groupsSlice = createSlice({
       .addCase(fetchSuggestedGroups.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(joinedGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(joinedGroup.fulfilled, (state, action) => {
+        state.loading = false;
+        state.joinedGroups = action.payload.groups || action.payload || [];
+      })
+      .addCase(joinedGroup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

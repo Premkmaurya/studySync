@@ -50,6 +50,18 @@ const SingleGroupPage = () => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
 
+  // Lock body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
+
   useEffect(() => {
     if (!group && groupId) {
       const fetchGroupData = async () => {
@@ -77,7 +89,7 @@ const SingleGroupPage = () => {
       <div className="md:hidden flex items-center justify-between px-6 py-3 bg-[#f6f5f4] border-b border-black/[0.08] sticky top-0 z-30">
         <div className="flex items-center gap-2">
           <Link to="/home">
-            <ArrowLeft className="w-16 h-16 text-[#757575]" />
+            <ArrowLeft className="w-5 h-5 text-[#757575]" />
           </Link>
           <span className="font-bold text-[16px] text-[#000000] truncate max-w-[200px]">
             {group?.name || "Workspace"}
@@ -86,26 +98,44 @@ const SingleGroupPage = () => {
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
           className="p-2 rounded-[6px] text-[#111111] hover:bg-black/5"
+          aria-label="Toggle navigation menu"
         >
           {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
-      {/* Sidebar Navigation */}
+      {/* Mobile Backdrop Overlay */}
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden transition-opacity"
+        />
+      )}
+
+      {/* Sidebar Navigation Drawer */}
       <aside
-        className={`fixed md:sticky md:top-0 left-0 z-40 h-screen w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ${
+        className={`fixed md:sticky top-0 left-0 z-50 md:z-auto h-[100dvh] md:h-screen w-[85vw] max-w-[300px] md:w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div className="flex flex-col gap-6">
-          {/* Back link */}
-          <Link
-            to="/home"
-            className="inline-flex items-center gap-2 text-[13px] font-medium text-[#757575] hover:text-[#000000] transition-colors"
-          >
-            <ArrowLeft className="w-16 h-16" />
-            <span>All Groups</span>
-          </Link>
+        <div className="flex flex-col gap-6 flex-1 overflow-y-auto min-h-0 pr-1">
+          {/* Top Bar: Back link & Mobile Close */}
+          <div className="flex items-center justify-between">
+            <Link
+              to="/home"
+              className="inline-flex items-center gap-2 text-[13px] font-medium text-[#757575] hover:text-[#000000] transition-colors"
+            >
+              <ArrowLeft className="w-16 h-16" />
+              <span>All Groups</span>
+            </Link>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="md:hidden p-1.5 rounded-[6px] text-[#757575] hover:text-[#000000] hover:bg-black/5"
+              aria-label="Close menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
           {/* Group Identity */}
           <div className="flex items-start gap-3 pb-4 border-b border-black/[0.08]">
@@ -128,7 +158,7 @@ const SingleGroupPage = () => {
           </div>
 
           {/* Tab Navigation */}
-          <nav className="flex flex-col gap-1 sticky top-20">
+          <nav className="flex flex-col gap-1">
             <SubNavItem
               to={`/group/${groupId}`}
               end
@@ -154,7 +184,7 @@ const SingleGroupPage = () => {
         </div>
 
         {/* Footer info */}
-        <div className="text-[12px] text-[#757575] pt-4 border-t border-black/[0.06]">
+        <div className="text-[12px] text-[#757575] pt-4 border-t border-black/[0.06] shrink-0">
           StudySync Workspace
         </div>
       </aside>

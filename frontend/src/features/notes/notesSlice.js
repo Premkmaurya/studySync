@@ -171,6 +171,30 @@ const notesSlice = createSlice({
       .addCase(searchNotes.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(getMyNotes.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getMyNotes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.myNotes = action.payload.notes || action.payload || [];
+      })
+      .addCase(getMyNotes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getSavedNotes.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getSavedNotes.fulfilled, (state, action) => {
+        state.loading = false;
+        state.savedNotes = action.payload.savedNotes || action.payload || [];
+      })
+      .addCase(getSavedNotes.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
     // Handle other thunks minimally
   },
