@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   profilePicture: {
-    type: String,
+    type: mongoose.Schema.Types.Mixed,
     default: "",
   },
   email: {
@@ -22,7 +22,11 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-  }
+  },
+  publicKey: {
+    type: mongoose.Schema.Types.Mixed,
+    default: null,
+  },
 });
 
 const userModel = mongoose.model("user", userSchema);

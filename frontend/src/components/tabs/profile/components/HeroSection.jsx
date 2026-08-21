@@ -1,10 +1,9 @@
 import React, { useRef } from "react";
-import { Mail, Pencil, Sparkles, User, CheckCircle2 } from "lucide-react";
+import { Mail, Pencil, Sparkles, CheckCircle2, LoaderCircle } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, useReducedMotion } from "framer-motion";
 import { selectUser } from "../../../../features/auth/authSelectors";
 import { updateProfilePicture, setUser } from "../../../../features/auth/authSlice";
-import Avatar from "../../../design-system/Avatar";
 import { DURATION, EASING } from "../../../motion/motionTokens";
 
 /**
@@ -17,24 +16,34 @@ const HeroSection = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const shouldReduceMotion = useReducedMotion();
+  const [isUploading, setIsUploading] = React.useState(false);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      setIsUploading(true);
       const formData = new FormData();
       formData.append("profilePicture", file);
       const userId = user?._id || user?.id;
-      const res = await dispatch(
-        updateProfilePicture({ id: userId, profilePicture: formData })
-      );
-      if (res.meta.requestStatus === "fulfilled") {
-        const updatedUser = res.payload?.user || res.payload;
-        if (updatedUser) {
-          dispatch(setUser(updatedUser));
+      try {
+        const res = await dispatch(
+          updateProfilePicture({ id: userId, profilePicture: formData })
+        );
+        if (res.meta.requestStatus === "fulfilled") {
+          const updatedUser = res.payload?.user || res.payload;
+          if (updatedUser) {
+            dispatch(setUser(updatedUser));
+          }
         }
+      } finally {
+        setIsUploading(false);
       }
     }
   };
+
+  const profilePictureUrl = typeof user?.profilePicture === "string"
+    ? user.profilePicture
+    : user?.profilePicture?.url;
 
   const fullName = user?.fullname
     ? `${user.fullname.firstname || ""} ${user.fullname.lastname || ""}`.trim()
@@ -49,8 +58,8 @@ const HeroSection = () => {
         transition={{ duration: DURATION.STORYTELLING, ease: EASING.SMOOTH }}
         className="space-y-2 max-w-3xl"
       >
-        <div className="flex items-center gap-2.5">
-          <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] text-[11px] font-mono font-semibold uppercase tracking-wider">
+        <div className="flex items-left flex-col sm:items-center sm:flex-row gap-2.5">
+          <span className="inline-flex items-center gap-1.5 w-fit px-3 py-0.5 rounded-full bg-[#0075de]/10 border border-[#0075de]/20 text-[#0075de] text-[11px] font-mono font-semibold uppercase tracking-wider">
             <Sparkles className="w-3 h-3" /> YOUR LEARNING PROFILE
           </span>
           <span className="text-[12px] font-mono text-[#757575]">
@@ -87,12 +96,14 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row items-center gap-6">
             {/* Avatar Container with Upload Badge */}
             <div className="relative group shrink-0">
-              <Avatar
-                src={user?.profilePicture}
-                name={fullName}
-                size="xl"
-                borderColor="#0075de"
-              />
+              <div className="relative w-[5rem] h-[5rem] rounded-full overflow-hidden bg-white">
+                <img src={profilePictureUrl} className="w-full h-full rounded-full object-cover" alt={`${fullName}'s profile`} />
+                {isUploading && (
+                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-white/75">
+                    <LoaderCircle className="w-7 h-7 text-[#0075de] animate-spin" aria-label="Uploading profile picture" />
+                  </div>
+                )}
+              </div>
               <input
                 ref={imageRef}
                 type="file"

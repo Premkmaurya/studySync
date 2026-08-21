@@ -90,18 +90,20 @@ function setSocketServer(httpServer) {
       }
     });
 
-    // // New Message
+    // // New Message (E2EE Ciphertext Opaque Handler)
     socket.on("newMessage", async (payload) => {
       try {
+        const ciphertext = payload?.ciphertext || null;
+        const iv = payload?.iv || null;
+        const keyVersion = payload?.keyVersion || 1;
+        const isEncrypted = Boolean(payload?.isEncrypted || ciphertext);
+
+        // Fallback for legacy / unencrypted messages
         const rawText = typeof payload === "string" ? payload : (payload?.message || payload?.text);
-        const text = rawText ? String(rawText).trim() : "";
+        const legacyMessage = rawText ? String(rawText).trim() : null;
 
-        if (!text) {
+        if (!ciphertext && !legacyMessage) {
           return socket.emit("messageError", { message: "Message content cannot be empty" });
-        }
-
-        if (text.length > 2000) {
-          return socket.emit("messageError", { message: "Message exceeds maximum length of 2000 characters" });
         }
 
         const roomId = socket.currentRoom || (payload?.groupId && mongoose.Types.ObjectId.isValid(payload.groupId) ? payload.groupId : null);
@@ -125,11 +127,15 @@ function setSocketServer(httpServer) {
           return socket.emit("messageError", { message: "Access denied: Not a member of this group" });
         }
 
-        // Persist complete message
+        // Persist opaque ciphertext message
         const createMsg = await messageModel.create({
           user: userId,
           group: roomId,
-          message: text,
+          ciphertext: ciphertext,
+          iv: iv,
+          keyVersion: keyVersion,
+          isEncrypted: isEncrypted,
+          message: legacyMessage || undefined,
         });
 
         const populatedMsg = await messageModel
@@ -138,9 +144,9 @@ function setSocketServer(httpServer) {
 
         await invalidateByPrefix(`messages:group:${roomId}`);
 
-        console.log(`[Socket] Message sent by ${userId} in room ${roomId}: "${text.substring(0, 30)}"`);
+        console.log(`[Socket E2EE] Encrypted message persisted and broadcasted by user ${userId} in room ${roomId}`);
 
-        // Broadcast to everyone in the room (including sender) for server-authoritative state
+        // Broadcast ciphertext to everyone in the room (server never decrypts)
         io.to(roomId).emit("newMessage", populatedMsg);
       } catch (err) {
         console.error("[Socket] newMessage error:", err);

@@ -224,14 +224,25 @@ const groupsSlice = createSlice({
             (g) => g._id === updatedGroup._id,
           );
           if (index !== -1) {
-            state.groups[index] = updatedGroup;
+            state.groups[index] = { ...state.groups[index], ...updatedGroup };
           }
-          // Also update in joinedGroups if present
           const joinedIndex = state.joinedGroups.findIndex(
             (g) => g._id === updatedGroup._id,
           );
           if (joinedIndex !== -1) {
-            state.joinedGroups[joinedIndex] = updatedGroup;
+            state.joinedGroups[joinedIndex] = {
+              ...state.joinedGroups[joinedIndex],
+              ...updatedGroup,
+            };
+          }
+          const suggestedIndex = state.suggestedGroups.findIndex(
+            (g) => g._id === updatedGroup._id,
+          );
+          if (suggestedIndex !== -1) {
+            state.suggestedGroups[suggestedIndex] = {
+              ...state.suggestedGroups[suggestedIndex],
+              ...updatedGroup,
+            };
           }
         }
       })

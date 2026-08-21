@@ -125,7 +125,7 @@ const TabHome = () => {
           <DashboardHeader
             user={user}
             joinedCount={joinedGroups.length}
-            notesCount={notes.length}
+            notesCount={savedNotes.length}
           />
 
           {/* 2. Compact Horizontal Activity & Metrics Strip */}
@@ -148,7 +148,7 @@ const TabHome = () => {
           {/* 5. 60/40 Asymmetric Bottom Section (60% Recent Knowledge / 40% Discovery) */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch mb-14">
             <div className="lg:col-span-7">
-              <RecentKnowledge notes={notes} />
+              <RecentKnowledge notes={savedNotes} />
             </div>
             <div className="lg:col-span-5">
               <RecommendedGroups

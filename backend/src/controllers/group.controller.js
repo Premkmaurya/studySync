@@ -238,6 +238,8 @@ const updateGroup = asyncHandler(async (req, res) => {
     invalidateByPrefix("groups:search"),
     invalidateByPrefix(`groups:single:${groupId}`),
     invalidateByPrefix(`groups:my:${user.id}`),
+    invalidateByPrefix("groups:joined"),
+    invalidateByPrefix("groups:suggested"),
   ]);
 
   return res.status(200).json({

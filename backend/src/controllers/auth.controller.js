@@ -1,7 +1,7 @@
 const userModel = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const uploadImage = require("../services/image.service");
+const { uploadImage, deleteImage } = require("../services/image.service");
 const config = require("../config/config");
 const asyncHandler = require("../utils/asyncHandler");
 
@@ -141,13 +141,76 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
     });
   }
 
-  const uploadResponse = await uploadImage(file.buffer);
+  // 1. Retrieve existing user to identify current ImageKit asset
+  const existingUser = await userModel.findById(id);
+  if (!existingUser) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
 
-  const updatedUser = await userModel.findByIdAndUpdate(
-    id,
-    { profilePicture: uploadResponse.url },
-    { new: true }
-  );
+  let oldFileId = null;
+  if (existingUser.profilePicture) {
+    if (typeof existingUser.profilePicture === "object" && existingUser.profilePicture.fileId) {
+      oldFileId = existingUser.profilePicture.fileId;
+    }
+  }
+
+  // 2. Upload NEW image to ImageKit
+  let uploadResponse;
+  try {
+    uploadResponse = await uploadImage(file.buffer);
+  } catch (uploadError) {
+    console.error("ImageKit upload error:", uploadError);
+    return res.status(500).json({
+      message: "Failed to upload image to storage. Existing profile picture preserved.",
+    });
+  }
+
+  if (!uploadResponse || !uploadResponse.url) {
+    return res.status(500).json({
+      message: "Invalid storage upload response",
+    });
+  }
+
+  const newProfilePicture = {
+    url: uploadResponse.url,
+    fileId: uploadResponse.fileId || null,
+  };
+
+  // 3. Save NEW image URL and fileId to MongoDB
+  let updatedUser;
+  try {
+    updatedUser = await userModel
+      .findByIdAndUpdate(
+        id,
+        { profilePicture: newProfilePicture },
+        { new: true }
+      )
+      .select("-password");
+  } catch (dbError) {
+    console.error("Database update error after ImageKit upload:", dbError);
+    // Cleanup newly uploaded file to prevent orphan accumulation
+    if (uploadResponse.fileId) {
+      try {
+        await deleteImage(uploadResponse.fileId);
+      } catch (cleanupErr) {
+        console.error("Failed to cleanup orphan ImageKit file:", cleanupErr);
+      }
+    }
+    return res.status(500).json({
+      message: "Failed to update user profile picture in database",
+    });
+  }
+
+  // 4. Delete OLD ImageKit asset after successful DB update
+  if (oldFileId && oldFileId !== uploadResponse.fileId) {
+    try {
+      await deleteImage(oldFileId);
+    } catch (oldDeleteErr) {
+      console.error("Failed to delete old profile picture from ImageKit:", oldDeleteErr);
+    }
+  }
 
   return res.status(200).json({
     message: "profile picture updated successfully",

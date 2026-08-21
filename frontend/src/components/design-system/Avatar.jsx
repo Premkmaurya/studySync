@@ -27,7 +27,8 @@ const Avatar = ({
     xl: "w-16 h-16 text-[18px]",
   };
 
-  const hasValidSrc = Boolean(src && typeof src === "string" && src.trim() !== "");
+  const actualSrc = typeof src === "object" && src?.url ? src.url : src;
+  const hasValidSrc = Boolean(actualSrc && typeof actualSrc === "string" && actualSrc.trim() !== "");
 
   return (
     <div
@@ -40,7 +41,7 @@ const Avatar = ({
     >
       {hasValidSrc && !imageError ? (
         <img
-          src={src}
+          src={actualSrc}
           alt={name || "Avatar"}
           className="w-full h-full object-cover rounded-full"
           onError={() => setImageError(true)}

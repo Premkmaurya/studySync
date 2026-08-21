@@ -6,6 +6,7 @@ const authRoutes = require("./routes/auth.routes");
 const groupRoutes = require("./routes/group.routes");
 const noteRoutes = require("./routes/notes.routes");
 const messageRoutes = require("./routes/messages.routes");
+const groupKeyRoutes = require("./routes/groupKey.routes");
 
 const cors = require("cors");
 const authMiddleware = require("./middlewares/auth.middleware");
@@ -33,6 +34,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api", groupKeyRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

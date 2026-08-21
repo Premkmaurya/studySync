@@ -11,12 +11,28 @@ const imagekit = new ImageKit({
 
 async function uploadImage(file) {
   const response = await imagekit.upload({
-      file: file,
-      fileName: uuidv4(),
-      folder:"posts"
-    })
+    file: file,
+    fileName: uuidv4(),
+    folder: "posts",
+  });
 
-    return response;
+  return response;
 }
 
+async function deleteImage(fileId) {
+  if (!fileId || typeof fileId !== "string") return null;
+  try {
+    const response = await imagekit.deleteFile(fileId);
+    return response;
+  } catch (error) {
+    console.error("ImageKit deletion error:", error?.message || error);
+    return null;
+  }
+}
+
+uploadImage.uploadImage = uploadImage;
+uploadImage.deleteImage = deleteImage;
+
 module.exports = uploadImage;
+module.exports.uploadImage = uploadImage;
+module.exports.deleteImage = deleteImage;
