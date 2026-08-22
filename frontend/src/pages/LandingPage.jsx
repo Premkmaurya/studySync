@@ -19,7 +19,7 @@ import FaqSection from "@/components/ui/habit-faq-scroller";
  * Continuous storytelling narrative flow:
  * Hero -> How It Works -> Find Your People -> Build Shared Knowledge -> Get Help From AI -> Complete Product Showcase & Why StudySync -> CTA & Footer
  */
-const Home = () => {
+const LandingPage = () => {
   const user = useSelector((state) => state?.auth?.user);
 
   const faqScrollerData = {
@@ -203,4 +203,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default LandingPage;

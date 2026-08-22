@@ -4,7 +4,7 @@ import { Routes, Route } from "react-router-dom";
 const NotesEditor = lazy(() => import("../components/tabs/notes/NotesEditor"));
 const Login = lazy(() => import("../pages/auth/Login"));
 const Register = lazy(() => import("../pages/auth/Register"));
-const MainLayout = lazy(() => import("../components/tabs/common/MainLayout"));
+const MainLayout = lazy(() => import("../pages/dashboard/MainLayout"));
 const CreateGroup = lazy(() => import("../components/tabs/group/create_group/CreateGroup"));
 const AllGroups = lazy(() => import("../components/tabs/group/all_group/AllGroups"));
 const GroupSettings = lazy(() => import("../components/tabs/group/group_setting/GroupSettings"));
@@ -14,7 +14,7 @@ const GroupNotes = lazy(() => import("../components/tabs/group/group_notes/Group
 const Profile = lazy(() => import("../components/tabs/profile/Profile"));
 const TabHome = lazy(() => import("../components/tabs/home/TabHome"));
 const SavedNotesContent = lazy(() => import("../components/tabs/notes/Notes"));
-const Home = lazy(() => import("../pages/Home"));
+const LandingPage = lazy(() => import("../pages/LandingPage"));
 const About = lazy(() => import("../pages/About"));
 const Contact = lazy(() => import("../pages/Contact"));
 const Features = lazy(() => import("../pages/Features"));
@@ -31,11 +31,11 @@ const AppRoutes = () => {
       </div>
     }>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/features" element={<Features />} />
-        
+
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
