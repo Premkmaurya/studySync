@@ -22,46 +22,84 @@ const NotFound = lazy(() => import("../pages/NotFound"));
 const GroupMembers = lazy(() => import("../components/tabs/group/group_member/GroupMembers"));
 
 import ProtectedRoute from "../components/common/ProtectedRoute";
+import PageLoader from "../components/common/PageLoader";
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-      </div>
-    }>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/features" element={<Features />} />
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/features" element={<Features />} />
 
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<MainLayout />}>
-            <Route path="/home" element={<TabHome />} />
-            <Route path="/find-groups" element={<AllGroups />} />
-            <Route path="/create-group" element={<CreateGroup />} />
-            <Route path="/notes" element={<SavedNotesContent />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/group/:groupId" element={<SingleGroup />}>
-              {/* Default tab (Column 3) */}
-              <Route index element={<GroupNotes />} />
+      {/* Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<MainLayout />}>
+          <Route path="/home" element={<TabHome />} />
+          <Route path="/find-groups" element={<AllGroups />} />
+          <Route path="/create-group" element={<CreateGroup />} />
+          <Route path="/notes" element={<SavedNotesContent />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/group/:groupId"
+            element={
+              <Suspense fallback={<PageLoader />}>
+                <SingleGroup />
+              </Suspense>
+            }
+          >
+            <Route
+              index
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <GroupNotes />
+                </Suspense>
+              }
+            />
 
-              {/* Other tabs (Column 3) */}
-              <Route path="chats" element={<GroupChat />} />
-              <Route path="members" element={<GroupMembers />} />
-              <Route path="settings" element={<GroupSettings />} />
-              <Route path="note" element={<NotesEditor />} />
-            </Route>
+            <Route
+              path="chats"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <GroupChat />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="members"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <GroupMembers />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="settings"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <GroupSettings />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="note"
+              element={
+                <Suspense fallback={<PageLoader />}>
+                  <NotesEditor />
+                </Suspense>
+              }
+            />
           </Route>
         </Route>
+      </Route>
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Suspense>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

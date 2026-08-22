@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   useParams,
   useLocation,
@@ -25,17 +25,19 @@ import {
 import Avatar from "../../design-system/Avatar";
 import Pill from "../../design-system/Pill";
 
-const SubNavItem = ({ to, icon: Icon, label, end = false }) => {
+import PageLoader from "../../common/PageLoader";
+
+const SubNavItem = ({ to, icon: Icon, label, end = false, onNavigate }) => {
   return (
     <NavLink
       to={to}
       end={end}
+      onClick={onNavigate}
       className={({ isActive }) => `
         flex items-center gap-3 px-3.5 py-2.5 rounded-[8px] text-[14px] font-medium transition-all
-        ${
-          isActive
-            ? "bg-[#e6f3fe] text-[#0075de]"
-            : "text-[#615d59] hover:text-[#000000] hover:bg-black/[0.04]"
+        ${isActive
+          ? "bg-[#e6f3fe] text-[#0075de]"
+          : "text-[#615d59] hover:text-[#000000] hover:bg-black/[0.04]"
         }
       `}
     >
@@ -61,6 +63,7 @@ const SingleGroupPage = () => {
   const [group, setGroup] = useState(location.state?.groupData || reduxGroup || null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [location.pathname]);
@@ -85,26 +88,25 @@ const SingleGroupPage = () => {
   }, [isSidebarOpen]);
 
   useEffect(() => {
-    if (!group && groupId) {
-      const fetchGroupData = async () => {
-        try {
-          const response = await api.get(`/groups/search/${groupId}`);
-          if (response.data?.group) {
-            setGroup(response.data.group);
-          }
-        } catch {
-          setGroup({
-            _id: groupId,
-            name: "Group Workspace",
-            members: 1,
-            field: "General",
-            description: "Collaborative study workspace.",
-          });
+    if (!groupId) return;
+
+    const fetchGroupData = async () => {
+      try {
+        const response = await api.get(`/groups/search/${groupId}`);
+
+        if (response.data?.group) {
+          setGroup(response.data.group);
         }
-      };
+      } catch (error) {
+        console.error("Failed to fetch group:", error);
+      }
+    };
+
+    // Only fetch if we don't already have the correct group
+    if (!group || group._id !== groupId) {
       fetchGroupData();
     }
-  }, [groupId, group]);
+  }, [groupId]);
 
   return (
     <div className="min-h-screen w-full bg-[#f6f5f4] text-[#000000] flex flex-col md:flex-row antialiased">
@@ -137,9 +139,8 @@ const SingleGroupPage = () => {
 
       {/* Sidebar Navigation Drawer */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-50 md:z-auto h-[100dvh] md:h-screen w-[85vw] max-w-[300px] md:w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-        }`}
+        className={`fixed md:sticky top-0 left-0 z-50 md:z-auto h-[100dvh] md:h-screen w-[85vw] max-w-[300px] md:w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          }`}
       >
         <div className="flex flex-col gap-6 flex-1 overflow-y-auto min-h-0 pr-1">
           {/* Top Bar: Back link & Mobile Close */}
@@ -187,21 +188,28 @@ const SingleGroupPage = () => {
               end
               icon={FileText}
               label="Knowledge"
+              onNavigate={() => setIsSidebarOpen(false)}
             />
             <SubNavItem
               to={`/group/${groupId}/chats`}
-              icon={MessageSquare}
-              label="Chat"
+              end
+              icon={FileText}
+              label="Chats"
+              onNavigate={() => setIsSidebarOpen(false)}
             />
             <SubNavItem
               to={`/group/${groupId}/members`}
-              icon={Users}
+              end
+              icon={FileText}
               label="Members"
+              onNavigate={() => setIsSidebarOpen(false)}
             />
             <SubNavItem
               to={`/group/${groupId}/settings`}
-              icon={Settings}
+              end
+              icon={FileText}
               label="Settings"
+              onNavigate={() => setIsSidebarOpen(false)}
             />
           </nav>
         </div>
@@ -214,7 +222,9 @@ const SingleGroupPage = () => {
 
       {/* Main Workspace Stage */}
       <main className="flex-1 min-h-screen overflow-y-auto">
-        <Outlet context={{ group, setGroup }} />
+        <Suspense fallback={<PageLoader />}>
+          <Outlet context={{ group, setGroup }} />
+        </Suspense>
       </main>
     </div>
   );
