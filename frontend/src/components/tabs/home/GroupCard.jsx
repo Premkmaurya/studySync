@@ -2,11 +2,11 @@ import React from "react";
 import { MessageSquare, FileText, Plus, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { joinGroup } from "../../../../features/groups/groupsSlice";
-import Card from "../../../design-system/Card";
-import Button from "../../../design-system/Button";
-import Pill from "../../../design-system/Pill";
-import Avatar from "../../../design-system/Avatar";
+import { joinGroup } from "../../../features/groups/groupsSlice";
+import Card from "../../design-system/Card";
+import Button from "../../design-system/Button";
+import Pill from "../../design-system/Pill";
+import Avatar from "../../design-system/Avatar";
 
 const GroupCard = ({ group, isSuggested = false }) => {
   const navigate = useNavigate();

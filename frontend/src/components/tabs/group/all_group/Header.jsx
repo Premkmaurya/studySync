@@ -1,7 +1,7 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import { DURATION, EASING } from "../../../../motion/motionTokens";
+import { DURATION, EASING } from "../../../motion/motionTokens";
 
 /**
  * Directory Hero Header

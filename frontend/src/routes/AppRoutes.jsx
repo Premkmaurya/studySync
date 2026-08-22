@@ -6,13 +6,13 @@ const Login = lazy(() => import("../pages/auth/Login"));
 const Register = lazy(() => import("../pages/auth/Register"));
 const MainLayout = lazy(() => import("../pages/dashboard/MainLayout"));
 const CreateGroup = lazy(() => import("../components/tabs/group/create_group/CreateGroup"));
-const AllGroups = lazy(() => import("../components/tabs/group/all_group/AllGroups"));
+const FindGroup = lazy(() => import("../pages/dashboard/FindGroup"));
 const GroupSettings = lazy(() => import("../components/tabs/group/group_setting/GroupSettings"));
 const GroupChat = lazy(() => import("../components/tabs/group/group_chat/GroupChat"));
 const SingleGroup = lazy(() => import("../components/tabs/group/SingleGroup"));
 const GroupNotes = lazy(() => import("../components/tabs/group/group_notes/GroupNotes"));
 const Profile = lazy(() => import("../components/tabs/profile/Profile"));
-const TabHome = lazy(() => import("../components/tabs/home/TabHome"));
+const Home = lazy(() => import("../pages/dashboard/Home"));
 const SavedNotesContent = lazy(() => import("../components/tabs/notes/Notes"));
 const LandingPage = lazy(() => import("../pages/LandingPage"));
 const About = lazy(() => import("../pages/About"));
@@ -35,8 +35,8 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
-          <Route path="/home" element={<TabHome />} />
-          <Route path="/find-groups" element={<AllGroups />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/find-groups" element={<FindGroup />} />
           <Route path="/create-group" element={<CreateGroup />} />
           <Route path="/notes" element={<SavedNotesContent />} />
           <Route path="/profile" element={<Profile />} />

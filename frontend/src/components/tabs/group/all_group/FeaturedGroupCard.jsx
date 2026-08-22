@@ -2,8 +2,8 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Users, ArrowRight, Check, Sparkles, Shield, Cpu, Palette, BookOpen } from "lucide-react";
-import { selectJoinedGroups } from "../../../../../features/groups/groupsSelectors";
-import { joinGroup, setJoinedGroups } from "../../../../../features/groups/groupsSlice";
+import { selectJoinedGroups } from "../../../../features/groups/groupsSelectors";
+import { joinGroup, setJoinedGroups } from "../../../../features/groups/groupsSlice";
 
 /**
  * FeaturedGroupCard

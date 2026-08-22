@@ -4,31 +4,31 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Users, Compass, Search, Plus, RotateCcw } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-import Header from "./components/Header";
-import StickySearchFilter from "./components/StickySearchFilter";
-import FeaturedGroupCard from "./components/FeaturedGroupCard";
-import DiscoveryCard from "./components/DiscoveryCard";
-import CreateGroupCTA from "./components/CreateGroupCTA";
+import Header from "../../components/tabs/group/all_group/Header";
+import StickySearchFilter from "../../components/tabs/group/all_group/StickySearchFilter";
+import FeaturedGroupCard from "../../components/tabs/group/all_group/FeaturedGroupCard";
+import DiscoveryCard from "../../components/tabs/group/all_group/DiscoveryCard";
+import CreateGroupCTA from "../../components/tabs/group/all_group/CreateGroupCTA";
 
 import {
   selectGroupsLoading,
   selectJoinedGroups,
-} from "../../../../features/groups/groupsSelectors";
+} from "../../features/groups/groupsSelectors";
 import {
   fetchGroups,
   searchGroups,
   setJoinedGroups,
   joinedGroup,
-} from "../../../../features/groups/groupsSlice";
-import { DURATION, EASING } from "../../../motion/motionTokens";
+} from "../../features/groups/groupsSlice";
+import { DURATION, EASING } from "../../components/motion/motionTokens";
 
 /**
- * AllGroupsContent — Redesigned Group Directory Discovery Platform
+ * FindGroup — Redesigned Group Directory Discovery Platform
  * Interactive group discovery experience featuring editorial hero, sticky search/filter control,
  * featured community surface, responsive 3-column group directory, clear search/no-data empty states,
  * and create group invitation CTA.
  */
-const AllGroupsContent = () => {
+const FindGroup = () => {
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -265,4 +265,4 @@ const AllGroupsContent = () => {
   );
 };
 
-export default AllGroupsContent;
+export default FindGroup;
