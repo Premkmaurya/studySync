@@ -5,14 +5,15 @@ import {
   Outlet,
   Link,
 } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectJoinedGroups,
   selectGroups,
   selectSuggestedGroups,
 } from "../../../features/groups/groupsSelectors";
+import { joinGroup, setJoinedGroups } from "../../../features/groups/groupsSlice";
 import api from "../../../services/api";
-import { ArrowLeft, ChartNoAxesColumnIncreasing, X } from "lucide-react";
+import { ArrowLeft, ChartNoAxesColumnIncreasing, UserPlus, X } from "lucide-react";
 
 import PageLoader from "../../common/PageLoader";
 import Sidebar from "./Sidebar";
@@ -20,6 +21,7 @@ import Sidebar from "./Sidebar";
 const SingleGroupPage = () => {
   const { groupId } = useParams();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const joinedGroups = useSelector(selectJoinedGroups) || [];
   const allGroups = useSelector(selectGroups) || [];
@@ -32,6 +34,24 @@ const SingleGroupPage = () => {
 
   const [group, setGroup] = useState(location.state?.groupData || reduxGroup || null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+
+  const isJoined = joinedGroups.some((joinedGroup) => joinedGroup._id === groupId);
+
+  const handleJoinGroup = async () => {
+    if (!groupId || isJoining || isJoined) return;
+
+    setIsJoining(true);
+    const result = await dispatch(joinGroup(groupId));
+
+    if (result.meta.requestStatus === "fulfilled") {
+      const joinedGroup = result.payload?.group || group;
+      dispatch(setJoinedGroups([...joinedGroups, joinedGroup]));
+      setGroup(joinedGroup);
+    }
+
+    setIsJoining(false);
+  };
 
 
   useEffect(() => {
@@ -112,10 +132,19 @@ const SingleGroupPage = () => {
       </div>
 
       {/* Main Workspace Stage */}
-      <main className="flex-1 min-h-screen overflow-y-auto">
-        <Suspense fallback={<PageLoader />}>
-          <Outlet context={{ group, setGroup }} />
-        </Suspense>
+      <main className="relative flex-1 min-h-screen overflow-y-auto">
+        {!isJoined && group && (
+          <button
+            type="button"
+            onClick={handleJoinGroup}
+            disabled={isJoining}
+            className="absolute top-4 right-6 md:right-10 z-10 inline-flex items-center gap-2 rounded-[8px] bg-[#0075de] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#096fca] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <UserPlus className="h-4 w-4" />
+            {isJoining ? "Joining..." : "Join group"}
+          </button>
+        )}
+        <Outlet context={{ group, setGroup }} />
       </main>
     </div>
   );

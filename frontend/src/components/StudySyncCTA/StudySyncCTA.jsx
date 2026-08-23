@@ -13,7 +13,7 @@ import ParticleNetwork from "./ParticleNetwork";
 const StudySyncCTA = ({
   primaryTo,
   primaryText,
-  secondaryTo = "/find-groups",
+  secondaryTo = "/dashboard/find-groups",
   secondaryText = "Explore groups",
   headline,
   description,
@@ -22,7 +22,7 @@ const StudySyncCTA = ({
   // Access auth state if available in Redux, fallback gracefully
   const user = useSelector((state) => state?.auth?.user);
 
-  const resolvedPrimaryTo = primaryTo || (user ? "/home" : "/register");
+  const resolvedPrimaryTo = primaryTo || (user ? "/dashboard/home" : "/register");
   const resolvedPrimaryText = primaryText || (user ? "Go to Dashboard" : "Get started");
 
   return (

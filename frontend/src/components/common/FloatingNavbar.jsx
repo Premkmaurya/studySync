@@ -85,11 +85,11 @@ const FloatingNavbar = ({ variant = "public" }) => {
   } else if (user) {
     staggeredItems.push({
       label: "Dashboard",
-      link: "/home",
+      link: "/dashboard/home",
       ariaLabel: "Go to Dashboard",
       onClick: (e) => {
         e.preventDefault();
-        navigate("/home");
+        navigate("/dashboard/home");
       },
     });
     staggeredItems.push({

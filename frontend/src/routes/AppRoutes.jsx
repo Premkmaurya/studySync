@@ -40,59 +40,13 @@ const AppRoutes = () => {
           <Route path="/dashboard/create-group" element={<CreateGroup />} />
           <Route path="/dashboard/notes" element={<SavedNotesContent />} />
           <Route path="/dashboard/profile" element={<Profile />} />
-          <Route
-            path="/group/:groupId"
-            element={
-              <Suspense fallback={<PageLoader />}>
-                <SingleGroup />
-              </Suspense>
-            }
-          >
-            <Route
-              index
-              element={
-                <Suspense fallback={<PageLoader />}>
-                  <GroupNotes />
-                </Suspense>
-              }
-            />
-
-            <Route
-              path="chats"
-              element={
-                <Suspense fallback={<PageLoader />}>
-                  <GroupChat />
-                </Suspense>
-              }
-            />
-
-            <Route
-              path="members"
-              element={
-                <Suspense fallback={<PageLoader />}>
-                  <GroupMembers />
-                </Suspense>
-              }
-            />
-
-            <Route
-              path="settings"
-              element={
-                <Suspense fallback={<PageLoader />}>
-                  <GroupSettings />
-                </Suspense>
-              }
-            />
-
-            <Route
-              path="note"
-              element={
-                <Suspense fallback={<PageLoader />}>
-                  <NotesEditor />
-                </Suspense>
-              }
-            />
-          </Route>
+        </Route>
+        <Route path="/group/:groupId" element={<SingleGroup />} >
+          <Route index element={<GroupNotes />} />
+          <Route path="chats" element={<GroupChat />} />
+          <Route path="members" element={<GroupMembers />} />
+          <Route path="notes" element={<NotesEditor />} />
+          <Route path="settings" element={<GroupSettings />} />
         </Route>
       </Route>
 
