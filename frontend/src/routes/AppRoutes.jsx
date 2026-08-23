@@ -35,11 +35,11 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route element={<ProtectedRoute />}>
         <Route element={<MainLayout />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/find-groups" element={<FindGroup />} />
-          <Route path="/create-group" element={<CreateGroup />} />
-          <Route path="/notes" element={<SavedNotesContent />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard/home" element={<Home />} />
+          <Route path="/dashboard/find-groups" element={<FindGroup />} />
+          <Route path="/dashboard/create-group" element={<CreateGroup />} />
+          <Route path="/dashboard/notes" element={<SavedNotesContent />} />
+          <Route path="/dashboard/profile" element={<Profile />} />
           <Route
             path="/group/:groupId"
             element={

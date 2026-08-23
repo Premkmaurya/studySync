@@ -27,7 +27,7 @@ const Sidebar = ({ group, groupId, onClose }) => (
     <div className="flex flex-col gap-6 flex-1 overflow-y-auto min-h-0 pr-1">
       <div className="flex items-center justify-between">
         <Link
-          to="/home"
+          to="/dashboard/home"
           className="inline-flex items-center gap-2 text-[13px] font-medium text-[#757575] hover:text-[#000000] transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />

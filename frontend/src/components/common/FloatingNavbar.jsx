@@ -33,9 +33,9 @@ const FloatingNavbar = ({ variant = "public" }) => {
   ];
 
   const authNavItems = [
-    { label: "Home", path: "/home" },
-    { label: "Explore", path: "/find-groups" },
-    { label: "Notes", path: "/notes" },
+    { label: "Home", path: "/dashboard/home" },
+    { label: "Explore", path: "/dashboard/find-groups" },
+    { label: "Notes", path: "/dashboard/notes" },
   ];
 
   const navItems = isAuthView ? authNavItems : publicNavItems;
@@ -60,20 +60,20 @@ const FloatingNavbar = ({ variant = "public" }) => {
   if (isAuthView) {
     staggeredItems.push({
       label: "Profile",
-      link: "/profile",
+      link: "/dashboard/profile",
       ariaLabel: "View profile",
       onClick: (e) => {
         e.preventDefault();
-        navigate("/profile");
+        navigate("/dashboard/profile");
       },
     });
     staggeredItems.push({
       label: "Create Group",
-      link: "/create-group",
+      link: "/dashboard/create-group",
       ariaLabel: "Create a new group",
       onClick: (e) => {
         e.preventDefault();
-        navigate("/create-group");
+        navigate("/dashboard/create-group");
       },
     });
     staggeredItems.push({
