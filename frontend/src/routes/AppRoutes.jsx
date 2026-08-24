@@ -45,7 +45,7 @@ const AppRoutes = () => {
           <Route index element={<GroupNotes />} />
           <Route path="chats" element={<GroupChat />} />
           <Route path="members" element={<GroupMembers />} />
-          <Route path="notes" element={<NotesEditor />} />
+          <Route path="note" element={<NotesEditor />} />
           <Route path="settings" element={<GroupSettings />} />
         </Route>
       </Route>

@@ -120,18 +120,6 @@ const Editor = ({
           )}
         </button>
       </div>
-
-        {!isViewOnly && (
-          <Button
-            variant="ghost"
-            size="sm"
-            icon={Sparkles}
-            onClick={() => setIsAIOpen(!isAIOpen)}
-            className="flex items-center gap-2 tracking-tight whitespace-nowrap text-[#0075de] hover:text-[#005bb5]"
-          >
-            AI Assistant
-          </Button>
-        )}
       </div>
 
       {/* TipTap Rich Text Editor Container */}
