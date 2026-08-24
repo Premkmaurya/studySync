@@ -28,7 +28,7 @@ const Danger = () => {
     setIsDeleting(true);
     const res = await dispatch(deleteGroup(group._id));
     if (deleteGroup.fulfilled.match(res)) {
-      navigate("/home");
+      navigate("/dashboard/home");
     } else {
       setDeleteError(res.payload || "Failed to delete group");
       setIsDeleting(false);

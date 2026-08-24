@@ -1,4 +1,10 @@
 const { GoogleGenAI } = require("@google/genai");
+const config = require("../config/config");
+
+if (!config.GEMINI_API_KEY) {
+  console.log(GEMINI_API_KEY)
+  throw new Error("GEMINI_API_KEY is not configured");
+}
 
 const ai = new GoogleGenAI({});
 
@@ -256,12 +262,16 @@ easy-to-read responses.
 
 async function generateResponse(prompt, mode, noteContent) {
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash-lite",
+    model: "gemini-3.6-flash",
     contents: prompt,
     config: {
-      systemInstruction: mode === "notes" ? persona : persona_2(noteContent),
+      systemInstruction:
+        mode === "notes"
+          ? persona
+          : persona_2(noteContent),
     },
   });
+
   return response.text;
 }
 

@@ -9,7 +9,7 @@ const _config = {
   IMAGEKIT_PUBLIC_KEY: process.env.IMAGEKIT_PUBLIC_KEY || "",
   IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY || "",
   IMAGEKIT_URL_ENDPOINT: process.env.IMAGEKIT_URL_ENDPOINT || "",
-  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY || "",
+  GEMINI_API_KEY: process.env.GEMINI_API_KEY || "",
 };
 
 module.exports = _config;

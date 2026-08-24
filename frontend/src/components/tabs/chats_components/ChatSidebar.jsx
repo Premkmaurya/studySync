@@ -17,8 +17,10 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
+import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { useParams } from "react-router-dom";
+import { getSocket } from "../../../services/socket";
 import {
   addMessage,
   clearMessages,
@@ -49,7 +51,6 @@ class ErrorBoundary extends React.Component {
 }
 
 const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) => {
-  const theme = useSelector((state) => state.theme.mode);
   const messages = useSelector((state) => state.messages.messages);
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
@@ -192,11 +193,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
       }}
       whileInView={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className={`fixed p-6 shadow-3xl z-60 flex flex-col transition-all duration-300 ${
-        theme === "light"
-          ? "bg-white text-black border-black/10"
-          : "bg-zinc-950/80 text-white border-white/10"
-      }"rounded-0"`}
+      className={`fixed p-6 shadow-3xl z-60 flex flex-col transition-all duration-300 bg-white text-black border-black/10 rounded-0"`}
       style={{
         top: 0,
         right: 0,
@@ -211,7 +208,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
           </div>
           <div className="flex flex-col">
             <h3
-              className={`font-black text-xs uppercase tracking-widest ${theme === "light" ? "text-black" : "text-white"}`}
+              className="font-black text-xs uppercase tracking-widest text-black"
             >
               AI Pulse
             </h3>
@@ -235,15 +232,15 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
         <div className="flex-1 flex flex-col items-center justify-center gap-4">
           <MessageSquare
             size={48}
-            className={theme === "dark" ? "text-zinc-700" : "text-zinc-400"}
+            className="text-zinc-400"
           />
           <h3
-            className={`text-sm font-bold uppercase tracking-widest ${theme === "dark" ? "text-zinc-500" : "text-zinc-500"}`}
+            className="text-sm font-bold uppercase tracking-widest text-zinc-500"
           >
             No messages yet
           </h3>
           <p
-            className={`text-xs ${theme === "dark" ? "text-zinc-600" : "text-zinc-500"}`}
+            className="text-xs text-zinc-500"
           >
             Start the conversation by sending a message to the AI.
           </p>
@@ -269,10 +266,10 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
                   layout
-                  className={`split px-8 py-7 text-base leading-9 w-full max-w-4xl rounded-3xl backdrop-blur-xl border border-white/10 ${theme === "dark" ? "text-white" : "text-black"} rounded-2xl ${
+                  className={`split px-8 text-base w-fit leading-9 max-w-4xl backdrop-blur-xl rounded-2xl ${
                     msg.role === "user" || msg.isYou
-                      ? `bg-white/10 self-end text-right`
-                      : `bg-white/20 self-start text-left`
+                      ? `bg-blue-500 text-white self-end text-center **:text-white`
+                      : `bg-white/20 text-black self-start text-left`
                   }`}
                 >
                   <ErrorBoundary>
@@ -281,7 +278,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
                       components={{
                       h1: ({ children }) => (
                         <h1
-                          className={`text-3xl font-black mt-8 mb-5 ${theme === "dark" ? "text-indigo-400" : "text-indigo-600"}`}
+                          className="text-3xl font-black mt-8 mb-5 text-indigo-600"
                         >
                           {children}
                         </h1>
@@ -289,7 +286,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
                       h2: ({ children }) => (
                         <h2
-                          className={`text-2xl font-bold mt-7 mb-4 ${theme === "dark" ? "text-white" : "text-black"}`}
+                          className="text-2xl font-bold mt-7 mb-4 text-black"
                         >
                           {children}
                         </h2>
@@ -297,7 +294,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
                       h3: ({ children }) => (
                         <h3
-                          className={`text-xl font-semibold mt-6 mb-3 ${theme === "dark" ? "text-zinc-200" : "text-zinc-800"}`}
+                          className="text-xl font-semibold mt-6 mb-3 text-zinc-800"
                         >
                           {children}
                         </h3>
@@ -305,7 +302,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
                       p: ({ children }) => (
                         <p
-                          className={`leading-9 text-[17px] mb-5 ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}
+                          className="leading-9 text-[17px] text-zinc-700"
                         >
                           {children}
                         </p>
@@ -313,7 +310,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
                       ul: ({ children }) => (
                         <ul
-                          className={`space-y-3 ml-5 mb-5 list-disc ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}
+                          className="space-y-3 ml-5 mb-5 list-disc text-zinc-700"
                         >
                           {children}
                         </ul>
@@ -321,7 +318,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
                       ol: ({ children }) => (
                         <ol
-                          className={`space-y-3 ml-5 mb-5 list-decimal ${theme === "dark" ? "text-zinc-300" : "text-zinc-700"}`}
+                          className="space-y-3 ml-5 mb-5 list-decimal text-zinc-700"
                         >
                           {children}
                         </ol>
@@ -333,7 +330,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
                       strong: ({ children }) => (
                         <strong
-                          className={`font-bold ${theme === "dark" ? "text-white" : "text-black"}`}
+                          className="font-bold text-black"
                         >
                           {children}
                         </strong>
@@ -342,7 +339,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
                       code({ inline, className, children }) {
                         return inline ? (
                           <code
-                            className={`px-2 py-1 rounded ${theme === "dark" ? "bg-zinc-800 text-indigo-300" : "bg-zinc-200 text-indigo-700"}`}
+                            className="px-2 py-1 rounded bg-zinc-200 text-indigo-700"
                           >
                             {children}
                           </code>
@@ -377,7 +374,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
                   className="w-16 h-16 border-2 border-indigo-500 border-t-transparent rounded-full"
                 />
                 <span
-                  className={`text-sm font-medium ${theme === "dark" ? "text-white/70" : "text-black/70"}`}
+                  className="text-sm font-medium text-black/70"
                 >
                   AI is thinking...
                 </span>
@@ -389,19 +386,22 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
 
       <form
         onSubmit={handleSendMessage}
-        className="mt-8 absolute bottom-3 left-3 right-3"
+        className="absolute bottom-6 left-6 right-6 z-10"
       >
-        <div className="relative group">
+        <div className="relative flex items-center gap-3 rounded-2xl border border-black/30 bg-white p-2 shadow-[0_10px_30px_rgba(24,24,27,0.12)] transition-all focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-500/10">
           <input
             type="text"
             placeholder="Prompt AI..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className={`w-full border border-white/10 rounded-2xl py-4 px-6 text-xs ${theme === "dark" ? "bg-black/5 text-white placeholder:text-white/20" : "bg-white/5 text-black placeholder:text-black"} outline-none focus:border-indigo-500/50 focus:bg-white/8 transition-all pr-14 font-medium`}
+            aria-label="Message AI"
+            className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm font-medium text-zinc-900 placeholder:text-zinc-400 outline-none"
           />
           <button
             type="submit"
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-indigo-600 rounded-xl cursor-pointer"
+            disabled={!newMessage.trim()}
+            aria-label="Send message"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400 disabled:shadow-none"
           >
             <Sparkles size={16} className="text-white" />
           </button>

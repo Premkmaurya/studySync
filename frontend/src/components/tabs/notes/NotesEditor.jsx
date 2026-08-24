@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import api from "../../../services/api";
-import AIPopup from "../chats_components/AiPopup";
 import ChatSidebar from "../chats_components/ChatSidebar";
 import Header from "./components/Header";
 import Editor from "./components/Editor";
@@ -13,7 +12,6 @@ export default function NotesEditor() {
   const contentFromState = location.state?.content;
   const [isViewOnly] = useState(location.state?.isViewOnly || false);
   const [isAisummarize, setIsAisummarize] = useState(false);
-  const [isAIOpen, setIsAIOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const [title, setTitle] = useState(location.state?.title || "Untitled Note");
@@ -49,11 +47,6 @@ export default function NotesEditor() {
 
   return (
     <div className="bg-[#f6f5f4] text-[#000000] min-h-screen flex flex-col">
-      <AIPopup
-        isOpen={isAIOpen}
-        onClose={() => setIsAIOpen(false)}
-        setContent={setContent}
-      />
 
       {/* Editor Header Bar */}
       <Header
@@ -77,8 +70,7 @@ export default function NotesEditor() {
           contentFromState={contentFromState}
           title={title}
           setTitle={setTitle}
-          isAIOpen={isAIOpen}
-          setIsAIOpen={setIsAIOpen}
+          setIsAiPanelOpen={setIsAiPanelOpen}
           isAisummarize={isAisummarize}
           setIsAisummarize={setIsAisummarize}
           aiText={aiText}

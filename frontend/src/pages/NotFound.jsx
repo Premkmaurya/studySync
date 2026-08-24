@@ -26,7 +26,7 @@ const NotFound = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <Link to="/home" className="w-full">
+            <Link to="/dashboard/home" className="w-full">
               <Button variant="primary" fullWidth icon={Home}>
                 Back to Dashboard
               </Button>

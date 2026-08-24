@@ -43,7 +43,6 @@ function setSocketServer(httpServer) {
 
   // 🚀 Connection
   io.on("connection", (socket) => {
-    console.log("⚡ Socket connected:", socket.id, "| User ID:", socket.user?.id);
 
     socket.on("disconnect", (reason) => {
       console.log("🔌 Socket disconnected:", socket.id, "| Reason:", reason);

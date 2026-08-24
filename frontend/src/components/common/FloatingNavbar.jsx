@@ -131,7 +131,7 @@ const FloatingNavbar = ({ variant = "public" }) => {
         accentColor="#0075de"
         colors={["#eaf4ff", "#0075de"]}
         logoUrl={
-          <Link to={user ? "/home" : "/"} className="flex items-center gap-2 group">
+          <Link to={user ? "/dashboard/home" : "/"} className="flex items-center gap-2 group">
             <div className="w-7 h-7 rounded-[8px] bg-notion-blue text-white flex items-center justify-center shadow-2xs">
               <Sparkles className="w-16 h-16 text-white" aria-hidden="true" />
             </div>

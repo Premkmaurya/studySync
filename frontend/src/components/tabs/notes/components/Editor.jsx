@@ -9,7 +9,7 @@ import SubScript from "@tiptap/extension-subscript";
 import Placeholder from "@tiptap/extension-placeholder";
 
 
-import {Save, LoaderCircle } from "lucide-react";
+import { Save, LoaderCircle } from "lucide-react";
 
 import {
   FaBold,
@@ -46,8 +46,8 @@ const Editor = ({
   contentFromState,
   title,
   setTitle,
-  isAIOpen,
-  setIsAIOpen,
+  setIsAiPanelOpen,
+  setIsAisummarize,
   setAiText,
   setEditor,
   content,
@@ -101,25 +101,37 @@ const Editor = ({
           placeholder="Untitled Note"
         />
 
-        <div className="flex items-center justify-end md:pb-2">
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={isSaving || isViewOnly}
-          className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-8 py-2 text-md font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-        >
-          {isSaving ? (
-            <>
-              <LoaderCircle className="w-4 h-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              Save
-            </>
-          )}
-        </button>
-      </div>
+        <div className="flex items-center justify-end gap-5 md:pb-2">
+          <button
+            type="button"
+            onClick={() => {
+              setIsAisummarize(true);
+              setIsAiPanelOpen(true);
+            }}
+            disabled={!isViewOnly}
+            className="inline-flex items-center gap-2 whitespace-nowrap rounded-[10px] border border-[#0075de] text-[#0075de] px-2 py-2 text-md font-semibold hover:bg-[#0075de]/10 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          >
+            <Sparkles className="w-16 h-16" />
+            Summarize with AI
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={isSaving || isViewOnly}
+            className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-8 py-2 text-md font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          >
+            {isSaving ? (
+              <>
+                <LoaderCircle className="w-4 h-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                Save
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* TipTap Rich Text Editor Container */}

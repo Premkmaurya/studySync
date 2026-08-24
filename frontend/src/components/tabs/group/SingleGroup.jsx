@@ -103,7 +103,7 @@ const SingleGroupPage = () => {
       {/* Mobile Top Header */}
       <div className="md:hidden flex items-center justify-between px-6 py-3 bg-[#f6f5f4] border-b border-black/[0.08] sticky top-0 z-30">
         <div className="flex items-center gap-2">
-          <Link to="/home">
+          <Link to="/dashboard/home">
             <ArrowLeft className="w-5 h-5 text-[#757575]" />
           </Link>
           <span className="font-bold text-[16px] text-[#000000] truncate max-w-[200px]">

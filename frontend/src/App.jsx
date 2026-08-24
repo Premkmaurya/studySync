@@ -14,11 +14,11 @@ function App() {
   const hideNavbarRoutes = [
     "/login",
     "/register",
-    "/home",
-    "/find-groups",
-    "/create-group",
-    "/notes",
-    "/profile",
+    "/dashboard/home",
+    "/dashboard/find-groups",
+    "/dashboard/create-group",
+    "/dashboard/notes",
+    "/dashboard/profile",
   ];
 
   const lerp = (a, b, n) => (1 - n) * a + n * b;
@@ -91,7 +91,7 @@ function App() {
       if (fetchCurrentUser.fulfilled.match(res) && res.payload?.user) {
         const loginPaths = ["/login", "/register"];
         if (loginPaths.includes(initialPath)) {
-          navigate("/home");
+          navigate("/dashboard/home");
         }
       }
     };

@@ -38,7 +38,7 @@ const Login = () => {
       })
     );
     if (loginUser.fulfilled.match(resultAction)) {
-      navigate("/home");
+      navigate("/dashboard/home");
     } else {
       setAuthError(
         resultAction.payload || "Authentication failed. Please check your credentials."
