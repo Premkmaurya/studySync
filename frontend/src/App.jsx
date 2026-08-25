@@ -1,15 +1,93 @@
 import AppRoutes from "./routes/AppRoutes";
 import Navbar from "./components/common/Navbar";
+import Sidebar from "./components/tabs/group/Sidebar";
+import api from "./services/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser } from "./features/auth/authSlice";
+import {
+  selectGroups,
+  selectJoinedGroups,
+  selectSuggestedGroups,
+} from "./features/groups/groupsSelectors";
+import { useState } from "react";
+
+const GroupNavigation = ({ groupId }) => {
+  const joinedGroups = useSelector(selectJoinedGroups) || [];
+  const allGroups = useSelector(selectGroups) || [];
+  const suggestedGroups = useSelector(selectSuggestedGroups) || [];
+  const reduxGroup =
+    joinedGroups.find((group) => group._id === groupId) ||
+    allGroups.find((group) => group._id === groupId) ||
+    suggestedGroups.find((group) => group._id === groupId);
+  const [group, setGroup] = useState(reduxGroup || null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (reduxGroup) setGroup(reduxGroup);
+  }, [reduxGroup]);
+
+  useEffect(() => {
+    let isCurrent = true;
+
+    api.get(`/groups/search/${groupId}`).then((response) => {
+      if (isCurrent && response.data?.group) {
+        setGroup({
+          ...response.data.group,
+          isMember: response.data.isMember === true,
+        });
+      }
+    }).catch((error) => {
+      console.error("Failed to fetch group navigation data:", error);
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [groupId]);
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [groupId]);
+
+  return (
+    <>
+      <div className="md:hidden flex items-center justify-between px-6 py-3 bg-[#f6f5f4] border-b border-black/[0.08] sticky top-0 z-30">
+        <span className="font-bold text-[16px] text-[#000000] truncate max-w-[200px]">
+          {group?.name || "Workspace"}
+        </span>
+        <button
+          onClick={() => setIsSidebarOpen((open) => !open)}
+          className="p-2 rounded-[6px] text-[#111111] hover:bg-black/5"
+          aria-label="Toggle navigation menu"
+        >
+          {isSidebarOpen ? "Close" : "Menu"}
+        </button>
+      </div>
+      {isSidebarOpen && (
+        <div
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
+        />
+      )}
+      <div className={`fixed md:static inset-y-0 left-0 z-50 transition-transform duration-200 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+        <Sidebar
+          group={group}
+          groupId={groupId}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+      </div>
+    </>
+  );
+};
 
 function App() {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useSelector((state) => state.theme.mode);
+  const groupMatch = location.pathname.match(/^\/group\/([^/]+)/);
 
   const hideNavbarRoutes = [
     "/login",
@@ -99,7 +177,12 @@ function App() {
   return (
     <>
       {!shouldHideNavbar && <Navbar />}
-      <AppRoutes />
+      <div className={groupMatch ? "min-h-screen flex flex-col md:flex-row bg-[#f6f5f4]" : ""}>
+        {groupMatch && <GroupNavigation groupId={groupMatch[1]} />}
+        <div className={groupMatch ? "flex-1 min-w-0" : "w-full"}>
+          <AppRoutes />
+        </div>
+      </div>
     </>
   );
 }
