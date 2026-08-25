@@ -16,7 +16,6 @@ const getSocketUrl = () => {
 export const getSocket = () => {
   if (!socket) {
     const SOCKET_URL = getSocketUrl();
-    console.log("[Socket Service] Initializing singleton Socket.IO connection to:", SOCKET_URL);
 
     socket = io(SOCKET_URL, {
       withCredentials: true,
@@ -27,10 +26,8 @@ export const getSocket = () => {
     });
 
     socket.on("connect", () => {
-      console.log("⚡ [Socket Service] Connected with ID:", socket.id);
       // Rejoin active room on reconnect if applicable
       if (currentRoomId) {
-        console.log("🔄 [Socket Service] Re-joining active room after connect/reconnect:", currentRoomId);
         socket.emit("joinRoom", currentRoomId);
       }
     });
@@ -55,7 +52,6 @@ export const joinGroupRoom = (roomId) => {
   const s = getSocket();
   currentRoomId = roomId;
   if (s.connected && roomId) {
-    console.log("[Socket Service] Emitting joinRoom for room:", roomId);
     s.emit("joinRoom", roomId);
   }
 };
