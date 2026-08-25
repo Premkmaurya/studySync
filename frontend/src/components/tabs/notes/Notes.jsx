@@ -11,7 +11,7 @@ import NoteCard from "./components/NoteCard";
 import KnowledgeLibraryCTA from "./components/KnowledgeLibraryCTA";
 
 import { selectNotesLoading } from "../../../features/notes/notesSelectors";
-import { fetchNotes, searchNotes } from "../../../features/notes/notesSlice";
+import { getSavedNotes } from "../../../features/notes/notesSlice";
 import { DURATION, EASING } from "../../motion/motionTokens";
 
 /**
@@ -42,23 +42,22 @@ const SavedNotesContent = () => {
       const fetchAndSet = async () => {
         const query = searchTerm.trim();
         const categoryField = selectedCategory !== "All" ? selectedCategory : null;
-        let res;
-
-        if (query) {
-          res = await dispatch(
-            searchNotes({
-              query: query.toLowerCase(),
-              groupId: null,
-              page,
-              limit: 9,
-              field: categoryField,
-            })
-          );
-        } else {
-          res = await dispatch(fetchNotes({ page, limit: 9, field: categoryField }));
-        }
-
-        const notesResponse = res.payload?.notes || res.payload || [];
+        const res = await dispatch(getSavedNotes({ page, limit: 100 }));
+        const savedResponse = res.payload?.savedNotes || res.payload || [];
+        const notesResponse = savedResponse
+          .map((savedNote) => ({
+            ...savedNote.noteId,
+            groupId: savedNote.noteId?.groupId || savedNote.groupId,
+          }))
+          .filter((note) => {
+            const matchesQuery = !query ||
+              `${note.title || ""} ${note.content || ""}`
+                .toLowerCase()
+                .includes(query.toLowerCase());
+            const matchesCategory = !categoryField ||
+              note.groupId?.field === categoryField || note.field === categoryField;
+            return matchesQuery && matchesCategory;
+          });
         if (page === 1) {
           setFilteredNotes(notesResponse);
         } else {

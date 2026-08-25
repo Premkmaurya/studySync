@@ -269,7 +269,7 @@ const ChatSidebar = ({ aiText: _aiText, isAiPanelOpen, setIsAiPanelOpen, id }) =
                   className={`split px-8 text-base w-fit leading-9 max-w-4xl backdrop-blur-xl rounded-2xl ${
                     msg.role === "user" || msg.isYou
                       ? `bg-blue-500 text-white self-end text-center **:text-white`
-                      : `bg-white/20 text-black self-start text-left`
+                      : `bg-white/20 text-black self-start text-left mb-4`
                   }`}
                 >
                   <ErrorBoundary>

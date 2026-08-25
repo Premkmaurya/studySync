@@ -36,7 +36,10 @@ const SingleGroupPage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
 
-  const isJoined = joinedGroups.some((joinedGroup) => joinedGroup._id === groupId);
+  const isJoined =
+    group?.isMember === true ||
+    joinedGroups.some((joinedGroup) => joinedGroup._id === groupId);
+  const membershipResolved = typeof group?.isMember === "boolean" || isJoined;
 
   const handleJoinGroup = async () => {
     if (!groupId || isJoining || isJoined) return;
@@ -47,7 +50,7 @@ const SingleGroupPage = () => {
     if (result.meta.requestStatus === "fulfilled") {
       const joinedGroup = result.payload?.group || group;
       dispatch(setJoinedGroups([...joinedGroups, joinedGroup]));
-      setGroup(joinedGroup);
+      setGroup({ ...joinedGroup, isMember: true });
     }
 
     setIsJoining(false);
@@ -85,18 +88,21 @@ const SingleGroupPage = () => {
         const response = await api.get(`/groups/search/${groupId}`);
 
         if (response.data?.group) {
-          setGroup(response.data.group);
+          setGroup({
+            ...response.data.group,
+            isMember: response.data.isMember === true,
+          });
         }
       } catch (error) {
         console.error("Failed to fetch group:", error);
       }
     };
 
-    // Only fetch if we don't already have the correct group
-    if (!group || group._id !== groupId) {
+    // Fetch membership even when the group itself came from navigation state.
+    if (!group || group._id !== groupId || typeof group.isMember !== "boolean") {
       fetchGroupData();
     }
-  }, [groupId]);
+  }, [groupId, group]);
 
   return (
     <div className="min-h-screen w-full bg-[#f6f5f4] text-[#000000] flex flex-col md:flex-row antialiased">
@@ -133,14 +139,14 @@ const SingleGroupPage = () => {
 
       {/* Main Workspace Stage */}
       <main className="relative flex-1 min-h-screen overflow-y-auto">
-        {!isJoined && group && (
+        {membershipResolved && !isJoined && group && (
           <button
             type="button"
             onClick={handleJoinGroup}
             disabled={isJoining}
             className="absolute top-4 right-6 md:right-10 z-10 inline-flex items-center gap-2 rounded-[8px] bg-[#0075de] px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-colors hover:bg-[#096fca] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            <UserPlus className="h-4 w-4" />
+            <UserPlus className="h-16 w-16" />
             {isJoining ? "Joining..." : "Join group"}
           </button>
         )}

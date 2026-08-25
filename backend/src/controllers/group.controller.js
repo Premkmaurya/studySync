@@ -77,7 +77,7 @@ const searchGroup = asyncHandler(async (req, res) => {
 
 const searchGroupById = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const cacheKey = buildCacheKey("groups:single", id);
+  const cacheKey = buildCacheKey("groups:single", `${id}:${req.user.id}`);
   const cached = await getCachedData(cacheKey);
 
   if (cached) {
@@ -91,9 +91,14 @@ const searchGroupById = asyncHandler(async (req, res) => {
     });
   }
 
+  const isMember = Boolean(
+    await userGroupModel.findOne({ userId: req.user.id, groupId: id }),
+  );
+
   const payload = {
     message: "group found successfully.",
     group,
+    isMember,
   };
 
   await setCachedData(cacheKey, payload, 120);
@@ -342,7 +347,7 @@ const getGroupMembers = asyncHandler(async (req, res) => {
 
   const members = await userGroupModel
     .find({ groupId })
-    .populate("userId", "fullname")
+    .populate("userId", "fullname profilePicture")
     .sort({ createdAt: -1 });
 
   if (!members) {

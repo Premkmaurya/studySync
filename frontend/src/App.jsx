@@ -13,12 +13,7 @@ function App() {
 
   const hideNavbarRoutes = [
     "/login",
-    "/register",
-    "/dashboard/home",
-    "/dashboard/find-groups",
-    "/dashboard/create-group",
-    "/dashboard/notes",
-    "/dashboard/profile",
+    "/register"
   ];
 
   const lerp = (a, b, n) => (1 - n) * a + n * b;
@@ -99,7 +94,7 @@ function App() {
     fetchUser();
   }, [dispatch, navigate]);
 
-  const shouldHideNavbar =location.pathname.startsWith("/group")
+  const shouldHideNavbar = location.pathname.startsWith("/group") || hideNavbarRoutes.includes(location.pathname);
 
   return (
     <>

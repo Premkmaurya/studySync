@@ -64,6 +64,10 @@ const NotesGrid = () => {
   };
 
   useEffect(() => {
+    dispatch(getSavedNotes());
+  }, [dispatch]);
+
+  useEffect(() => {
     const savedIds = new Set(
       savedNotes.map((item) => item.noteId?._id || item.noteId)
     );
