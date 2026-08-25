@@ -99,9 +99,7 @@ function App() {
     fetchUser();
   }, [dispatch, navigate]);
 
-  const shouldHideNavbar =
-    hideNavbarRoutes.includes(location.pathname) ||
-    location.pathname.startsWith("/group");
+  const shouldHideNavbar =location.pathname.startsWith("/group")
 
   return (
     <>
