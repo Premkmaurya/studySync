@@ -34,7 +34,7 @@ const FeaturePhilosophy = () => {
   ];
 
   return (
-    <section id="philosophy" className="py-24 sm:py-32 bg-white px-4 sm:px-6 md:px-12 border-b border-black/[0.08]">
+    <section id="philosophy" className="py-24 sm:py-32 bg-white px-6 sm:px-6 md:px-12 border-b border-black/[0.08]">
       <div className="max-w-[1280px] mx-auto space-y-16">
         
         {/* Section Header */}

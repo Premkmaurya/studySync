@@ -21,7 +21,7 @@ const ProblemSection = () => {
   ];
 
   return (
-    <section className="py-20 sm:py-28 bg-white border-y border-black/[0.08] px-4 sm:px-6 md:px-12">
+    <section className="py-20 sm:py-28 bg-white border-y border-black/[0.08] px-5 sm:px-6 md:px-12">
       <div className="max-w-[1280px] mx-auto">
         
         {/* Section Header */}

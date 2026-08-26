@@ -35,7 +35,7 @@ const GroupsFeature = () => {
   ];
 
   return (
-    <section id="groups" className="py-20 sm:py-28 bg-[#f6f5f4] px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto border-b border-black/[0.08]">
+    <section id="groups" className="py-20 sm:py-28 bg-[#f6f5f4] px-6 sm:px-6 md:px-12 max-w-[1440px] mx-auto border-b border-black/[0.08]">
       <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
         {/* Left Column: Large Editorial Typography & Narrative */}

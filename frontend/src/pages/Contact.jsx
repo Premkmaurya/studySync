@@ -99,7 +99,7 @@ const Contact = () => {
         aria-label="Contact form and information"
         className="pb-20 sm:pb-28 px-4 sm:px-6 md:px-12 max-w-[1280px] mx-auto scroll-mt-28"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 px-8 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
 
           {/* Left Column: Context & Verified Contact Info (Plain Canvas) */}
           <div className="lg:col-span-5">

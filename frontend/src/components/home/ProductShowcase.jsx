@@ -21,7 +21,7 @@ import HoverArrow from "../motion/HoverArrow";
 const ProductShowcase = ({ className = "" }) => {
   return (
     <section 
-      className={`py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto ${className}`}
+      className={`py-20 sm:py-28 px-5 sm:px-6 lg:px-8 max-w-[1440px] mx-auto ${className}`}
       aria-labelledby="product-showcase-heading"
     >
       {/* SECTION 5: COMPLETE PRODUCT ECOSYSTEM SHOWCASE */}

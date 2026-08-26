@@ -101,9 +101,9 @@ const AboutHero = () => {
           }}
           className="w-full max-w-4xl bg-white border border-black/[0.08] rounded-[20px] p-6 sm:p-8 shadow-[0px_4px_24px_rgba(0,0,0,0.04)] relative"
         >
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#757575] font-mono mb-6 flex items-center justify-between border-b border-black/[0.06] pb-3">
+          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#757575] font-mono mb-6 flex items-center justify-between flex-col sm:flex-row border-b border-black/[0.06] pb-3">
             <span>Abstract Connected Ecosystem</span>
-            <span className="text-[#0075de] font-sans">students → ideas → discussion → knowledge → growth</span>
+            <span className="text-[#0075de] font-sans pt-4 sm:pt-0">students → ideas → discussion → knowledge → growth</span>
           </div>
 
           {/* Node Flow Diagram */}

@@ -213,7 +213,7 @@ const LearningCycle = () => {
   };
 
   return (
-    <section className="py-20 sm:py-28 bg-[#f6f5f4] mb-18 px-4 sm:px-6 md:px-12 max-w-[1440px] mx-auto">
+    <section className="py-20 sm:py-28 bg-[#f6f5f4] mb-18 px-5 sm:px-6 md:px-12 max-w-[1440px] mx-auto">
       
       {/* Section Header */}
       <div className="max-w-3xl mx-auto text-center mb-16">

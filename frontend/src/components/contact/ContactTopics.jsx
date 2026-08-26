@@ -15,7 +15,7 @@ const ContactTopics = ({ onSelectTopic }) => {
   ];
 
   return (
-    <section className="py-16 sm:py-20 bg-white border-y border-black/[0.08] px-4 sm:px-6 md:px-12">
+    <section className="py-16 px-16 sm:py-20 bg-white border-y border-black/[0.08] px-4 sm:px-6 md:px-12">
       <div className="max-w-[1280px] mx-auto space-y-10">
         
         {/* Section Header */}

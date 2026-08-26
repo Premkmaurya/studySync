@@ -12,7 +12,7 @@ const AIFeature = () => {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section id="ai" className="py-20 sm:py-28 bg-white px-4 sm:px-6 md:px-12 border-b border-black/[0.08]">
+    <section id="ai" className="py-20 sm:py-28 bg-white px-6 sm:px-6 md:px-12 border-b border-black/[0.08]">
       <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
         {/* Left Column: AI Assistant Product Interaction Visual */}

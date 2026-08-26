@@ -19,7 +19,7 @@ const FeatureSummary = () => {
   ];
 
   return (
-    <section className="py-16 sm:py-24 bg-[#f6f5f4] px-4 my-[6rem] sm:px-6 md:px-12 border-b border-black/[0.08]">
+    <section className="py-16 sm:py-24 bg-[#f6f5f4] px-6 my-[6rem] sm:px-6 md:px-12 border-b border-black/[0.08]">
       <div className="max-w-[1280px] mx-auto space-y-10">
         
         {/* Section Header */}

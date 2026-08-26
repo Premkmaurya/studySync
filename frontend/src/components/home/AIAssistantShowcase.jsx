@@ -36,7 +36,7 @@ const AIAssistantShowcase = ({ className = "" }) => {
 
   return (
     <section 
-      className={`py-20 sm:py-24 px-4 sm:px-6 lg:px-8 max-w-[1440px] mx-auto ${className}`}
+      className={`py-20 sm:py-24 px-5 sm:px-6 lg:px-8 max-w-[1440px] mx-auto ${className}`}
       aria-labelledby="ai-showcase-heading"
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 px-6 items-center">
