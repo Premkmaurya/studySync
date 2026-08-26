@@ -37,7 +37,7 @@ const Contact = () => {
     rows: [
       {
         id: "row1",
-        speed: "55s",
+        speed: "30s",
         direction: "left",
         faqItems: [
           {

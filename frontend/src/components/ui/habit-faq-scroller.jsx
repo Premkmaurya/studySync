@@ -6,9 +6,9 @@ import React from 'react';
  */
 export const FaqCard = ({ question, answer }) => {
   return (
-    <div className="flex flex-col items-start gap-4 p-6 bg-white rounded-xl shadow-md border border-black/5 hover:shadow-lg transition-shadow w-80 sm:w-96 shrink-0 faq-card">
-      <h3 className="text-xl font-bold text-black faq-title">{question}</h3>
-      <p className="text-base text-gray-600 leading-relaxed faq-answer">{answer}</p>
+    <div className="flex flex-col items-start gap-3 p-4 sm:gap-4 sm:p-6 bg-white rounded-xl shadow-md border border-black/5 hover:shadow-lg transition-shadow w-72 sm:w-96 shrink-0 faq-card">
+      <h3 className="text-lg font-bold text-black sm:text-xl faq-title">{question}</h3>
+      <p className="text-sm leading-relaxed text-gray-600 sm:text-base faq-answer">{answer}</p>
     </div>
   );
 };
@@ -17,7 +17,7 @@ export const FaqCard = ({ question, answer }) => {
  * HorizontalScroller
  * Wraps children and creates a seamless horizontal looping animation.
  */
-export const HorizontalScroller = ({ children, speed = '40s', direction = 'left' }) => {
+export const HorizontalScroller = ({ children, speed = '30s', direction = 'left' }) => {
   const animationClass =
     direction === 'right' ? 'animate-scroll-horizontal-reverse' : 'animate-scroll-horizontal';
 
@@ -48,13 +48,13 @@ const FaqSection = ({ data }) => {
     <div className="relative flex flex-col items-center gap-10 p-6 sm:p-10 w-full max-w-7xl mx-auto">
       <div className="flex flex-col items-center gap-4 text-center z-10 max-w-2xl">
         <h2
-          className="text-3xl sm:text-5xl font-bold text-black leading-tight tracking-tight"
+          className="text-2xl font-bold text-black leading-tight tracking-tight sm:text-5xl"
           style={{ opacity: 0, animation: 'fadeInUp 0.7s ease-out 0.2s forwards' }}
         >
           {data.mainTitle}
         </h2>
         <p
-          className="text-base sm:text-lg text-gray-600"
+          className="text-sm text-gray-600 sm:text-lg"
           style={{ opacity: 0, animation: 'fadeInUp 0.7s ease-out 0.4s forwards' }}
         >
           {data.mainSubtitle}
