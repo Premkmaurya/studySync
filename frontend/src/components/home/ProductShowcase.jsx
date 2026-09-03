@@ -191,7 +191,7 @@ const ProductShowcase = ({ className = "" }) => {
               Connect the people, knowledge, and tools around your learning.
             </span>
             <Link
-              to="/register"
+              to="/login"
               className="group shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-medium text-[14px] rounded-[8px] transition-all duration-200 shadow-xs hover:-translate-y-0.5 hover:shadow"
             >
               <span>Get started</span>

@@ -64,8 +64,13 @@ const NotesGrid = () => {
   };
 
   useEffect(() => {
-    dispatch(getSavedNotes());
-  }, [dispatch]);
+    // Only fetch when Redux has no saved notes yet. If data is already present
+    // from a prior fetch (e.g. ProfileSection, Notes page, or a prior mount of
+    // this component), reuse it to avoid a redundant network request.
+    if (savedNotes.length === 0) {
+      dispatch(getSavedNotes());
+    }
+  }, [dispatch, savedNotes.length]);
 
   useEffect(() => {
     const savedIds = new Set(

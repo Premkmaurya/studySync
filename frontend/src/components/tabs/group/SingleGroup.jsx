@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   useParams,
   Outlet,
@@ -58,14 +58,28 @@ const SingleGroupPage = () => {
     }
   }, [reduxGroup]);
 
+  const fetchedGroupIdRef = useRef(null);
+
   useEffect(() => {
     if (!groupId) return;
+    // Only fetch from the API when we switch to a new groupId or we don't
+    // have isMember resolved yet. Using a ref prevents group (an object)
+    // from being a dependency, which would re-trigger on every setGroup call.
+    if (
+      fetchedGroupIdRef.current === groupId &&
+      typeof group?.isMember === "boolean"
+    ) {
+      return;
+    }
+
+    let isCurrent = true;
 
     const fetchGroupData = async () => {
       try {
         const response = await api.get(`/groups/search/${groupId}`);
 
-        if (response.data?.group) {
+        if (isCurrent && response.data?.group) {
+          fetchedGroupIdRef.current = groupId;
           setGroup({
             ...response.data.group,
             isMember: response.data.isMember === true,
@@ -76,11 +90,12 @@ const SingleGroupPage = () => {
       }
     };
 
-    // Fetch membership even when the group itself came from navigation state.
-    if (!group || group._id !== groupId || typeof group.isMember !== "boolean") {
-      fetchGroupData();
-    }
-  }, [groupId, group]);
+    fetchGroupData();
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [groupId]);
 
   return (
       <main className="relative min-h-screen overflow-y-auto bg-[#f6f5f4] text-[#000000]">

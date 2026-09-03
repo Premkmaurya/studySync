@@ -122,6 +122,7 @@ const initialState = {
   savedNotes: [],
   myNotes: [],
   loading: false,
+  savedNotesLoading: false,
   error: null,
 };
 
@@ -185,15 +186,15 @@ const notesSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(getSavedNotes.pending, (state) => {
-        state.loading = true;
+        state.savedNotesLoading = true;
         state.error = null;
       })
       .addCase(getSavedNotes.fulfilled, (state, action) => {
-        state.loading = false;
+        state.savedNotesLoading = false;
         state.savedNotes = action.payload.savedNotes || action.payload || [];
       })
       .addCase(getSavedNotes.rejected, (state, action) => {
-        state.loading = false;
+        state.savedNotesLoading = false;
         state.error = action.payload;
       });
     // Handle other thunks minimally

@@ -101,7 +101,7 @@ const LandingPage = () => {
 
         {/* CTA Buttons Row */}
         <div className="flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto mb-12 sm:mb-16 px-4 sm:px-0">
-          <Link to={user ? "/dashboard/home" : "/register"} className="w-full sm:w-auto">
+          <Link to={user ? "/dashboard/home" : "/login"} className="w-full sm:w-auto">
             <Button variant="primary" size="lg" icon={ArrowRight} iconPosition="right" className="w-full justify-center">
               {user ? "Go to Dashboard" : "Get started free"}
             </Button>

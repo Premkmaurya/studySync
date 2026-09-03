@@ -65,7 +65,7 @@ const FeaturesHero = () => {
         className="flex flex-wrap justify-center items-center gap-4 mb-16"
       >
         <Link
-          to="/register"
+          to="/login"
           className="group inline-flex items-center justify-center gap-2 px-7 py-3 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-semibold text-[15px] rounded-[8px] transition-all duration-200 shadow-sm hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
         >
           <span>Get started</span>

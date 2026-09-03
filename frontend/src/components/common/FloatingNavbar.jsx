@@ -101,11 +101,11 @@ const FloatingNavbar = ({ variant = "public" }) => {
   } else {
     staggeredItems.push({
       label: "Get Started",
-      link: "/register",
+      link: "/login",
       ariaLabel: "Get started with StudySync",
       onClick: (e) => {
         e.preventDefault();
-        navigate("/register");
+        navigate("/login");
       },
     });
   }

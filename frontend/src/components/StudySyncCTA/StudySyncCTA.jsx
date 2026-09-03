@@ -22,7 +22,7 @@ const StudySyncCTA = ({
   // Access auth state if available in Redux, fallback gracefully
   const user = useSelector((state) => state?.auth?.user);
 
-  const resolvedPrimaryTo = primaryTo || (user ? "/dashboard/home" : "/register");
+  const resolvedPrimaryTo = primaryTo || (user ? "/dashboard/home" : "/login");
   const resolvedPrimaryText = primaryText || (user ? "Go to Dashboard" : "Get started");
 
   return (
