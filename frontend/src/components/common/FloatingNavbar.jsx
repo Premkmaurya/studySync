@@ -111,9 +111,9 @@ const FloatingNavbar = ({ variant = "public" }) => {
   }
 
   const socialItems = [
-    { label: "GitHub", link: "https://github.com" },
-    { label: "Twitter", link: "https://twitter.com" },
-    { label: "LinkedIn", link: "https://linkedin.com" },
+    { label: "GitHub", link: "https://github.com/Premkmaurya" },
+    { label: "Twitter", link: "https://x.com/PremMaurya723" },
+    { label: "LinkedIn", link: "https://www.linkedin.com/in/prem-maurya-8640b5319/" },
   ];
 
   return (

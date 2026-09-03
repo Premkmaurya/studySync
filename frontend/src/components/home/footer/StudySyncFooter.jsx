@@ -181,10 +181,10 @@ const StudySyncFooter = ({ className = "" }) => {
                 </h4>
                 <div className="flex items-center gap-2.5">
                   {[
-                    { icon: Github, label: "GitHub", href: "https://github.com" },
-                    { icon: Twitter, label: "Twitter", href: "https://twitter.com" },
+                    { icon: Github, label: "GitHub", href: "https://github.com/Premkmaurya" },
+                    { icon: Twitter, label: "Twitter", href: "https://x.com/PremMaurya723" },
                     { icon: Instagram, label: "Instagram", href: "https://instagram.com" },
-                    { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com" },
+                    { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/prem-maurya-8640b5319/" },
                     { icon: MessageCircle, label: "Discord", href: "https://discord.com" },
                   ].map((social, i) => (
                     <a

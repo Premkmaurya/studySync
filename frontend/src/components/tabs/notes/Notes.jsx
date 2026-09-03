@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { motion, useReducedMotion } from "framer-motion";
 import { FileText, Search, RotateCcw, Compass } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import Header from "./components/Header";
 import LibraryOverview from "./components/LibraryOverview";
@@ -11,7 +11,7 @@ import NoteCard from "./components/NoteCard";
 import KnowledgeLibraryCTA from "./components/KnowledgeLibraryCTA";
 
 import { selectNotesLoading } from "../../../features/notes/notesSelectors";
-import { getSavedNotes } from "../../../features/notes/notesSlice";
+import { fetchNotes } from "../../../features/notes/notesSlice";
 import { DURATION, EASING } from "../../motion/motionTokens";
 
 /**
@@ -28,7 +28,6 @@ const SavedNotesContent = () => {
   const [visibleNotes, setVisibleNotes] = useState(9);
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const loading = useSelector(selectNotesLoading);
   const shouldReduceMotion = useReducedMotion();
 
@@ -42,12 +41,12 @@ const SavedNotesContent = () => {
       const fetchAndSet = async () => {
         const query = searchTerm.trim();
         const categoryField = selectedCategory !== "All" ? selectedCategory : null;
-        const res = await dispatch(getSavedNotes({ page, limit: 100 }));
-        const savedResponse = res.payload?.savedNotes || res.payload || [];
-        const notesResponse = savedResponse
-          .map((savedNote) => ({
-            ...savedNote.noteId,
-            groupId: savedNote.noteId?.groupId || savedNote.groupId,
+        const res = await dispatch(fetchNotes({ page, limit: 10 }));
+        const response = res.payload?.notes || res.payload || [];
+        const notesResponse = response
+          .map((note) => ({
+            ...note,
+            groupId: note.groupId,
           }))
           .filter((note) => {
             const matchesQuery = !query ||
@@ -79,7 +78,7 @@ const SavedNotesContent = () => {
 
   return (
     <div className="mx-auto max-w-[1400px] w-full bg-[#f6f5f4] text-[#000000] min-h-screen mt-[2rem] sm:mt-0 pt-28 sm:pt-36 md:pt-40 pb-16 px-5 sm:px-8 md:px-10 lg:px-12 overflow-x-clip">
-      
+
       {/* 02 — Knowledge Library Hero */}
       <Header />
 
