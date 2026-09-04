@@ -71,10 +71,11 @@ const GroupNavigation = ({ groupId }) => {
           className="fixed inset-0 z-40 bg-black/50 backdrop-blur-xs md:hidden"
         />
       )}
-      <div className={`fixed md:static inset-y-0 left-0 z-50 transition-transform duration-200 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+      <div className="fixed md:static inset-y-0 left-0 z-50">
         <Sidebar
           group={group}
           groupId={groupId}
+          isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
       </div>

@@ -22,8 +22,8 @@ const SubNavItem = ({ to, icon: Icon, label, end = false, onNavigate }) => (
   </NavLink>
 );
 
-const Sidebar = ({ group, groupId, onClose }) => (
-  <aside className="fixed md:sticky top-0 left-0 z-50 md:z-auto h-[100dvh] md:h-screen w-[85vw] max-w-[300px] md:w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ease-in-out translate-x-0">
+const Sidebar = ({ group, groupId, isOpen, onClose }) => (
+  <aside className={`fixed md:sticky top-0 left-0 z-50 md:z-auto h-[100dvh] md:h-screen w-[85vw] max-w-[300px] md:w-64 lg:w-72 bg-[#f6f5f4] border-r border-black/[0.08] p-6 flex flex-col justify-between self-start transition-transform duration-200 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
     <div className="flex flex-col gap-6 flex-1 overflow-y-auto min-h-0 pr-1">
       <div className="flex items-center justify-between">
         <Link
