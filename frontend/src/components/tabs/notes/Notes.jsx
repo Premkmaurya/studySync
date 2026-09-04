@@ -30,6 +30,7 @@ const SavedNotesContent = () => {
   const dispatch = useDispatch();
   const loading = useSelector(selectNotesLoading);
   const shouldReduceMotion = useReducedMotion();
+  const MotionDiv = motion.div;
 
   useEffect(() => {
     setPage(1);
@@ -97,7 +98,7 @@ const SavedNotesContent = () => {
       />
 
       {/* 05 — Notes Collection Header */}
-      <div className="flex items-center justify-between mb-5 pb-3 border-b border-black/[0.06]">
+      <div className="flex items-center justify-between mb-5 pb-3 sm:px-5 border-b border-black/[0.06]">
         <div>
           <span className="text-[11px] font-mono font-bold text-[#0075de] uppercase tracking-wider block">
             SAVED KNOWLEDGE REPOSITORY
@@ -118,7 +119,7 @@ const SavedNotesContent = () => {
 
       {/* 06 — Notes Grid / Skeleton / Empty States */}
       {loading && filteredNotes.length === 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 sm:px-5 gap-6 animate-pulse">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="h-52 bg-white rounded-[18px] border border-black/[0.08] p-6 space-y-3">
               <div className="w-20 h-4 bg-black/10 rounded-full" />
@@ -129,9 +130,9 @@ const SavedNotesContent = () => {
         </div>
       ) : filteredNotes.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:px-5 sm:gap-6">
             {filteredNotes.slice(0, visibleNotes).map((note, index) => (
-              <motion.div
+              <MotionDiv
                 key={note._id || note.id || index}
                 initial={shouldReduceMotion ? {} : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -146,7 +147,7 @@ const SavedNotesContent = () => {
                   note={note}
                   isDominant={index === 0 && filteredNotes.length >= 2 && !isSearchOrFilterActive}
                 />
-              </motion.div>
+              </MotionDiv>
             ))}
           </div>
 

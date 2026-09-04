@@ -51,7 +51,7 @@ const FeaturedGroupCard = ({ group }) => {
   const CategoryIcon = theme.icon;
 
   return (
-    <section className="mb-12">
+    <section className="mb-12 px-5">
       <div className="flex items-center justify-between mb-3">
         <span className="text-[11px] font-mono font-bold text-[#0075de] uppercase tracking-wider block">
           FEATURED COMMUNITY

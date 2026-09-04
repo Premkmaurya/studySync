@@ -50,7 +50,7 @@ const HeroSection = () => {
     : user?.username || "Student";
 
   return (
-    <div className="space-y-8 mb-8">
+    <div className="space-y-8 mb-8 sm:px-5">
       {/* 01 — Hero Header Statement */}
       <motion.div
         initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}

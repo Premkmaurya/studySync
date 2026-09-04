@@ -6,7 +6,7 @@ import React from "react";
  */
 const TabSwitch = ({ tabs, activeTab, setActiveTab }) => {
   return (
-    <div className="w-full border-b border-black/[0.08] mb-6">
+    <div className="w-full border-b border-black/[0.08] mb-6 sm:px-5">
       <div
         className="w-full flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"
         aria-label="Profile navigation tabs"

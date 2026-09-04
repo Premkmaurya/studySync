@@ -119,7 +119,7 @@ const FindGroup = () => {
   const directoryGroups = featuredGroup ? filteredGroups.slice(1) : filteredGroups;
 
   return (
-    <div className="mx-auto max-w-[1400px] w-full bg-[#f6f5f4] text-[#000000] mt-[5rem] sm:mt-0 min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 px-5 sm:px-8 md:px-10 lg:px-12 overflow-x-clip">
+    <div className="mx-auto max-w-[1400px] w-full bg-[#f6f5f4] text-[#000000] mt-[5rem] sm:mt-0 min-h-screen pt-28 sm:pt-36 md:pt-40 pb-16 px-1 sm:px-5 sm:px-8 md:px-10 lg:px-12 overflow-x-clip">
       
       {/* 02 — Directory Hero */}
       <Header />
@@ -138,7 +138,7 @@ const FindGroup = () => {
       )}
 
       {/* 05 — Group Directory Section Header & Result Count */}
-      <div className="flex items-center justify-between mb-5 pb-3 border-b border-black/[0.06]">
+      <div className="flex items-center justify-between mb-5 pb-3 px-1 sm:px-5 border-b border-black/[0.06]">
         <div>
           <span className="text-[11px] font-mono font-bold text-[#0075de] uppercase tracking-wider block">
             DIRECTORY LISTINGS
@@ -159,7 +159,7 @@ const FindGroup = () => {
 
       {/* 06 — Directory Grid / Skeletons / Empty States */}
       {loading && filteredGroups.length === 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-1 sm:px-5 animate-pulse">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="h-48 bg-white rounded-[18px] border border-black/[0.08] p-6 space-y-3">
               <div className="w-24 h-4 bg-black/10 rounded-full" />
@@ -170,7 +170,7 @@ const FindGroup = () => {
         </div>
       ) : filteredGroups.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1 sm:px-5 gap-5 sm:gap-6">
             {directoryGroups.map((group, index) => (
               <motion.div
                 key={group._id || index}
@@ -218,7 +218,7 @@ const FindGroup = () => {
                 setSelectedCategory("All");
               }}
               data-cursor-ignore="true"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#f6f5f4] hover:bg-black/5 text-[#111111] text-[13px] font-semibold rounded-[8px] border border-black/[0.08] transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 px-1 sm:px-5 py-2.5 bg-[#f6f5f4] hover:bg-black/5 text-[#111111] text-[13px] font-semibold rounded-[8px] border border-black/[0.08] transition-colors cursor-pointer"
             >
               <RotateCcw className="w-16 h-16 text-[#757575]" />
               <span>Clear filters</span>

@@ -15,7 +15,7 @@ const Header = () => {
       initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: DURATION.STORYTELLING, ease: EASING.SMOOTH }}
-      className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-black/[0.08] mb-8 overflow-hidden"
+      className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 px-5 border-b border-black/[0.08] mb-8 overflow-hidden"
     >
       {/* Background Connected Topic Node Visual Accent */}
       <div className="absolute right-0 top-0 -z-10 opacity-30 pointer-events-none hidden md:block">

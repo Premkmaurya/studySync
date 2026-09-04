@@ -15,7 +15,7 @@ const Header = ({ handleSave, isSaving = false, isViewOnly = false }) => {
       initial={shouldReduceMotion ? {} : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: DURATION.STORYTELLING, ease: EASING.SMOOTH }}
-      className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-black/[0.08] mb-6 overflow-hidden"
+      className="relative flex flex-col md:flex-row md:items-end justify-between gap-6 px-1 sm:px-5 pb-8 border-b border-black/[0.08] mb-6 overflow-hidden"
     >
       {/* Background Connected Note Fragments SVG Accent */}
       <div className="absolute right-0 top-0 -z-10 opacity-30 pointer-events-none hidden md:block">

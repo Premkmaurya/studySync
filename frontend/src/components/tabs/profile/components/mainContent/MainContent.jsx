@@ -10,7 +10,7 @@ dayjs.extend(relativeTime);
 
 const MainContent = ({ activeTab }) => {
   return (
-    <div>
+    <div className="px-3 sm:px-10">
       {activeTab === "profile" && <ProfileSection activeTab={activeTab} />}
       {activeTab === "groups" && <GroupSection />}
       {activeTab === "notes" && <NoteSection />}

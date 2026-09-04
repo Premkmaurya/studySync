@@ -20,7 +20,7 @@ const RecentKnowledge = ({ notes = [] }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-30px" }}
       transition={{ duration: DURATION.STORYTELLING, ease: EASING.SMOOTH }}
-      className="bg-white rounded-[20px] border border-black/[0.08] p-6 sm:p-7 shadow-2xs h-full flex flex-col justify-between"
+      className="bg-white rounded-[20px] border border-black/[0.08] p-4 sm:p-7 shadow-2xs h-full flex flex-col justify-between"
     >
       <div>
         {/* Section Header */}

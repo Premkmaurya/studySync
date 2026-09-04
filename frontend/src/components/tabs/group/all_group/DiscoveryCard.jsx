@@ -52,7 +52,7 @@ const DiscoveryCard = ({ group }) => {
   return (
     <div
       onClick={() => navigate(`/group/${group._id}`)}
-      className={`group bg-white rounded-[18px] border border-black/[0.08] p-5 sm:p-6 flex flex-col justify-between shadow-2xs ${theme.border} hover:-translate-y-0.5 transition-all duration-200 cursor-pointer h-full`}
+      className={`group bg-white rounded-[18px] border border-black/[0.08] p-7 sm:p-6 flex flex-col justify-between shadow-2xs ${theme.border} hover:-translate-y-0.5 transition-all duration-200 cursor-pointer h-full`}
     >
       <div className="space-y-4">
         {/* Top Header Category Badge & Join Indicator */}

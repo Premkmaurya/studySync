@@ -58,7 +58,7 @@ const ContinueLearning = ({ latestGroup }) => {
   }
 
   return (
-    <section className="mb-14">
+    <section className="mb-14 px-1 sm:px-5">
       {/* Section Header */}
       <div className="flex items-center justify-between mb-4">
         <div>

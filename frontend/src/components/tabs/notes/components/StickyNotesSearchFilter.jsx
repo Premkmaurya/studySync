@@ -22,7 +22,7 @@ const StickyNotesSearchFilter = ({
   setSelectedCategory,
 }) => {
   return (
-    <div className="sticky top-18 sm:top-20 z-30 bg-[#f6f5f4]/95 backdrop-blur-md py-3.5 border-b border-black/[0.08] mb-8 transition-all">
+    <div className="sticky top-18 sm:top-20 z-30 bg-[#f6f5f4]/95 backdrop-blur-md py-3.5 px-1 sm:px-5 border-b border-black/[0.08] mb-8 transition-all">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         
         {/* Wide Search Bar */}

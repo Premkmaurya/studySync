@@ -8,7 +8,7 @@ import { Plus, Users } from "lucide-react";
  */
 const CreateGroupCTA = () => {
   return (
-    <section className="mt-16 pt-10 border-t border-black/[0.08]">
+    <section className="mt-16 pt-10 px-5 border-t border-black/[0.08]">
       <div className="bg-white rounded-[20px] border border-black/[0.08] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6 shadow-2xs">
         
         <div className="space-y-1 max-w-xl">

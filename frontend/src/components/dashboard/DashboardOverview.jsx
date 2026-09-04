@@ -46,7 +46,7 @@ const DashboardOverview = ({ joinedCount = 0, notesCount = 0, topicsCount = 0 })
       transition={{ duration: DURATION.COMPONENT, delay: 0.1, ease: EASING.SMOOTH }}
       className="mb-10"
     >
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-0 sm:bg-white/80 sm:backdrop-blur-xs sm:rounded-[16px] sm:border sm:border-black/[0.08] sm:p-5 sm:shadow-2xs sm:divide-x sm:divide-black/[0.08]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 px-1 sm:px-5 sm:gap-0 sm:bg-white/80 sm:backdrop-blur-xs sm:rounded-[16px] sm:border sm:border-black/[0.08] sm:p-5 sm:shadow-2xs sm:divide-x sm:divide-black/[0.08]">
         {metrics.map((m, idx) => {
           const Icon = m.icon;
           const isFullWidthMobile = idx === 2;
