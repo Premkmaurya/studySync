@@ -9,7 +9,7 @@ import {
   selectGroups,
   selectSuggestedGroups,
 } from "../../../features/groups/groupsSelectors";
-import { joinGroup, setJoinedGroups } from "../../../features/groups/groupsSlice";
+import { joinGroup, setJoinedGroups, upsertFetchedGroup } from "../../../features/groups/groupsSlice";
 import api from "../../../services/api";
 import { UserPlus } from "lucide-react";
 
@@ -80,10 +80,14 @@ const SingleGroupPage = () => {
 
         if (isCurrent && response.data?.group) {
           fetchedGroupIdRef.current = groupId;
-          setGroup({
+          const fetchedGroup = {
             ...response.data.group,
             isMember: response.data.isMember === true,
-          });
+          };
+          setGroup(fetchedGroup);
+          // Update Redux so that GroupNavigation in App.jsx can read the group
+          // from the store instead of making its own duplicate API call.
+          dispatch(upsertFetchedGroup(fetchedGroup));
         }
       } catch (error) {
         console.error("Failed to fetch group:", error);
@@ -95,7 +99,7 @@ const SingleGroupPage = () => {
     return () => {
       isCurrent = false;
     };
-  }, [groupId]);
+  }, [groupId, dispatch]);
 
   return (
       <main className="relative min-h-screen overflow-y-auto bg-[#f6f5f4] text-[#000000]">

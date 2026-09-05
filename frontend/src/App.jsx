@@ -1,7 +1,6 @@
 import AppRoutes from "./routes/AppRoutes";
 import Navbar from "./components/common/Navbar";
 import Sidebar from "./components/tabs/group/Sidebar";
-import api from "./services/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,31 +20,12 @@ const GroupNavigation = ({ groupId }) => {
     joinedGroups.find((group) => group._id === groupId) ||
     allGroups.find((group) => group._id === groupId) ||
     suggestedGroups.find((group) => group._id === groupId);
-  const [group, setGroup] = useState(reduxGroup || null);
+
+  // Use Redux group data directly. SingleGroup.jsx fetches the group from the
+  // API and calls dispatch(upsertFetchedGroup(...)) which populates the store,
+  // so this component does NOT need to make its own duplicate API call.
+  const group = reduxGroup || null;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    if (reduxGroup) setGroup(reduxGroup);
-  }, [reduxGroup]);
-
-  useEffect(() => {
-    let isCurrent = true;
-
-    api.get(`/groups/search/${groupId}`).then((response) => {
-      if (isCurrent && response.data?.group) {
-        setGroup({
-          ...response.data.group,
-          isMember: response.data.isMember === true,
-        });
-      }
-    }).catch((error) => {
-      console.error("Failed to fetch group navigation data:", error);
-    });
-
-    return () => {
-      isCurrent = false;
-    };
-  }, [groupId]);
 
   useEffect(() => {
     setIsSidebarOpen(false);

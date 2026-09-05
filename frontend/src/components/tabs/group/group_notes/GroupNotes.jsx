@@ -27,6 +27,16 @@ const GroupNotes = () => {
     notesRef.current = notes;
   }, [notes]);
 
+  // Preload the NotesEditor chunk while the user is on the Knowledge Base page.
+  // This way the large TipTap / Mantine bundle is already in the browser cache
+  // by the time they click "Create Note" or open an existing note, dramatically
+  // reducing the /note route's chunk-download wait time.
+  useEffect(() => {
+    // Dynamic import with no await — fire and forget. The browser will fetch
+    // and cache the chunk in the background without blocking anything.
+    import("../../../tabs/notes/NotesEditor");
+  }, []); // runs once on mount
+
   useEffect(() => {
     if (!groupId) return;
     let isCancelled = false;
@@ -47,10 +57,9 @@ const GroupNotes = () => {
       dispatch(setLoading(false));
     };
 
-    const timer = setTimeout(loadNotes, 200);
+    loadNotes();
     return () => {
       isCancelled = true;
-      clearTimeout(timer);
     };
   }, [groupId, page, dispatch]);
 

@@ -177,6 +177,28 @@ const groupsSlice = createSlice({
     clearGroupsError: (state) => {
       state.error = null;
     },
+    // Merge a freshly API-fetched group into Redux without a separate thunk.
+    // Called by SingleGroup after its own fetch so GroupNavigation (App.jsx sidebar)
+    // can read the group from Redux instead of making a duplicate API call.
+    upsertFetchedGroup: (state, action) => {
+      const group = action.payload;
+      if (!group || !group._id) return;
+
+      const upsertInto = (list) => {
+        const idx = list.findIndex((g) => g._id === group._id);
+        if (idx !== -1) {
+          list[idx] = { ...list[idx], ...group };
+        } else {
+          list.push(group);
+        }
+      };
+
+      upsertInto(state.groups);
+      if (group.isMember) {
+        upsertInto(state.joinedGroups);
+      }
+      upsertInto(state.suggestedGroups);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -288,6 +310,7 @@ export const {
   setGroups,
   setSuggestedGroups,
   setFieldPercentages,
+  upsertFetchedGroup,
 } = groupsSlice.actions;
 
 export default groupsSlice.reducer;

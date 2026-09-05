@@ -24,37 +24,91 @@ const GroupMembers = lazy(() => import("../components/tabs/group/group_member/Gr
 import ProtectedRoute from "../components/common/ProtectedRoute";
 import PageLoader from "../components/common/PageLoader";
 
+// Route-level skeleton fallbacks (eagerly imported — tiny, no network cost)
+import GroupContentSkeleton from "../components/tabs/group/GroupContentSkeleton";
+import NotesEditorSkeleton from "../components/tabs/notes/NotesEditorSkeleton";
+import GroupNotesSkeleton from "../components/tabs/group/group_notes/GroupNotesSkeleton";
+import GroupChatSkeleton from "../components/tabs/group/group_chat/GroupChatSkeleton";
+import GroupMembersSkeleton from "../components/tabs/group/group_member/GroupMembersSkeleton";
+import GroupSettingsSkeleton from "../components/tabs/group/group_setting/GroupSettingsSkeleton";
+
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/features" element={<Features />} />
+    // Top-level Suspense catches any lazy boundary that is not caught by a
+    // narrower boundary further down (e.g. Login, Register, LandingPage).
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/features" element={<Features />} />
 
-      {/* Protected Routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
-          <Route path="/dashboard/home" element={<Home />} />
-          <Route path="/dashboard/find-groups" element={<FindGroup />} />
-          <Route path="/dashboard/create-group" element={<CreateGroup />} />
-          <Route path="/dashboard/notes" element={<SavedNotesContent />} />
-          <Route path="/dashboard/profile" element={<Profile />} />
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard/home" element={<Home />} />
+            <Route path="/dashboard/find-groups" element={<FindGroup />} />
+            <Route path="/dashboard/create-group" element={<CreateGroup />} />
+            <Route path="/dashboard/notes" element={<SavedNotesContent />} />
+            <Route path="/dashboard/profile" element={<Profile />} />
+          </Route>
+          {/*
+            Group routes: SingleGroup owns the persistent layout (join button,
+            outlet context). A per-tab Suspense boundary lives *inside*
+            SingleGroup around <Outlet /> so the sidebar in App.jsx never
+            disappears while child chunks load — only the main content area
+            shows the skeleton.
+          */}
+          <Route path="/group/:groupId" element={<SingleGroup />}>
+            <Route
+              index
+              element={
+                <Suspense fallback={<GroupNotesSkeleton />}>
+                  <GroupNotes />
+                </Suspense>
+              }
+            />
+            <Route
+              path="chats"
+              element={
+                <Suspense fallback={<GroupChatSkeleton />}>
+                  <GroupChat />
+                </Suspense>
+              }
+            />
+            <Route
+              path="members"
+              element={
+                <Suspense fallback={<GroupMembersSkeleton />}>
+                  <GroupMembers />
+                </Suspense>
+              }
+            />
+            <Route
+              path="note"
+              element={
+                <Suspense fallback={<NotesEditorSkeleton />}>
+                  <NotesEditor />
+                </Suspense>
+              }
+            />
+            <Route
+              path="settings"
+              element={
+                <Suspense fallback={<GroupSettingsSkeleton />}>
+                  <GroupSettings />
+                </Suspense>
+              }
+            />
+          </Route>
         </Route>
-        <Route path="/group/:groupId" element={<SingleGroup />} >
-          <Route index element={<GroupNotes />} />
-          <Route path="chats" element={<GroupChat />} />
-          <Route path="members" element={<GroupMembers />} />
-          <Route path="note" element={<NotesEditor />} />
-          <Route path="settings" element={<GroupSettings />} />
-        </Route>
-      </Route>
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 
-export default AppRoutes;
+export default AppRoutes;
