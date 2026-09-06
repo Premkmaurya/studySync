@@ -5,10 +5,13 @@ import { selectAuthLoading, selectAuthError } from "../../features/auth/authSele
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { BookOpen } from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import Button from "../../components/design-system/Button";
 import Input from "../../components/design-system/Input";
 import Card from "../../components/design-system/Card";
 import Pill from "../../components/design-system/Pill";
+
+const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/google`;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -146,6 +149,17 @@ const Register = () => {
                 Sign up
               </Button>
             </form>
+
+            <div className="mt-10 w-full h-[3rem] rounded-[8px] border border-black/[0.12] bg-white text-[14px] font-semibold text-[#000000] transition-colors hover:bg-[#f6f5f4] focus:outline-none focus:ring-2 focus:ring-[#0075de]/30"
+            >
+              <button
+                type="button"
+                onClick={() => window.location.assign(GOOGLE_AUTH_URL)}
+                className="w-full h-full flex items-center justify-center"
+              >
+                Continue with Google <FcGoogle className="ml-2 w-[1.5rem] h-[1.5rem]" />
+              </button>
+            </div>
 
             <div className="mt-8 pt-6 border-t border-black/[0.08] text-center text-[14px] text-[#615d59]">
               Already have an account?{" "}

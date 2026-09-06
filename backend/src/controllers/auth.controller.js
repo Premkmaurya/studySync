@@ -252,6 +252,59 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
+const googleCallback = asyncHandler(async (req, res) => {
+  const googleUser = req.user;
+  const email = googleUser?.emails?.[0]?.value;
+  const googleId = googleUser?.id;
+
+  if (!googleId || !email) {
+    return res.status(400).json({
+      message: "Google account did not provide the required user details",
+    });
+  }
+
+  const firstname = googleUser.name?.givenName || googleUser.displayName?.split(" ")[0] || "Google";
+  const lastname = googleUser.name?.familyName || googleUser.displayName?.split(" ").slice(1).join(" ") || "User";
+  const profilePicture = googleUser.photos?.[0]?.value || "";
+
+  let user = await userModel.findOne({
+    $or: [{ googleId }, { email }],
+  });
+
+  if (!user) {
+    user = await userModel.create({
+      googleId,
+      email,
+      fullname: { firstname, lastname },
+      profilePicture,
+    });
+  } else if (!user.googleId) {
+    user.googleId = googleId;
+    await user.save();
+  }
+
+  const token = jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      fullname: user.fullname,
+    },
+    config.JWT_SECRET_KEY,
+    { expiresIn: "1d" },
+  );
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
+
+  return res.redirect(
+    `${process.env.FRONTEND_URL || "http://localhost:5173"}/dashboard/home`,
+  );
+});
+
+
 module.exports = {
   registerUser,
   loginUser,
@@ -260,4 +313,5 @@ module.exports = {
   getUserById,
   updateProfilePicture,
   updateUserProfile,
+  googleCallback,
 };
