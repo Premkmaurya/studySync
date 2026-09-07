@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import api from "../../../services/api";
 import ChatSidebar from "../chats_components/ChatSidebar";
 import Header from "./components/Header";
-import Editor from "./components/Editor";
+import EditorAreaSkeleton from "./components/EditorAreaSkeleton";
+
+// Lazy-load the TipTap editor sub-component so the NotesEditor shell
+// (header bar, title field, save button) paints immediately from this module,
+// while ProseMirror initialises asynchronously in the background.
+const Editor = lazy(() => import("./components/Editor"));
 export default function NotesEditor() {
   const location = useLocation();
   const { groupId } = useParams();
@@ -61,23 +66,27 @@ export default function NotesEditor() {
         isSaving={isSaving}
       />
 
-      {/* Document Workspace */}
+      {/* Document Workspace — shell paints immediately.
+          The TipTap Editor sub-component loads asynchronously behind a skeleton
+          so the user never sees a blank editor area during chunk initialization. */}
       <div className="flex-1 max-w-4xl w-full mx-auto px-6 py-8">
-        <Editor
-          isViewOnly={isViewOnly}
-          handleSave={handleSave}
-          isSaving={isSaving}
-          contentFromState={contentFromState}
-          title={title}
-          setTitle={setTitle}
-          setIsAiPanelOpen={setIsAiPanelOpen}
-          isAisummarize={isAisummarize}
-          setIsAisummarize={setIsAisummarize}
-          aiText={aiText}
-          setAiText={setAiText}
-          setEditor={setEditor}
-          content={content}
-        />
+        <Suspense fallback={<EditorAreaSkeleton />}>
+          <Editor
+            isViewOnly={isViewOnly}
+            handleSave={handleSave}
+            isSaving={isSaving}
+            contentFromState={contentFromState}
+            title={title}
+            setTitle={setTitle}
+            setIsAiPanelOpen={setIsAiPanelOpen}
+            isAisummarize={isAisummarize}
+            setIsAisummarize={setIsAisummarize}
+            aiText={aiText}
+            setAiText={setAiText}
+            setEditor={setEditor}
+            content={content}
+          />
+        </Suspense>
       </div>
 
       {/* AI Summary Sidebar */}

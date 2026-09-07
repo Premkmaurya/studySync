@@ -48,6 +48,7 @@ const Sidebar = ({ group, groupId, isOpen, onClose }) => (
           name={group?.name || "Group"}
           size="md"
           borderColor="#0075de"
+          loading="eager"
         />
         <div className="flex-1 min-w-0">
           <h2 className="text-[16px] font-bold text-[#000000] tracking-[-0.3px] truncate">

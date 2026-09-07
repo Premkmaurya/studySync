@@ -102,18 +102,19 @@ const Editor = ({
         />
 
         <div className="flex items-center justify-end gap-5 md:pb-2">
-          <button
-            type="button"
-            onClick={() => {
-              setIsAisummarize(true);
-              setIsAiPanelOpen(true);
-            }}
-            disabled={!isViewOnly}
-            className="inline-flex items-center gap-2 whitespace-nowrap rounded-[10px] border border-[#0075de] text-[#0075de] px-2 py-2 text-md font-semibold hover:bg-[#0075de]/10 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-          >
-            <Sparkles className="w-16 h-16" />
-            Summarize with AI
-          </button>
+          {isViewOnly && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsAisummarize(true);
+                setIsAiPanelOpen(true);
+              }}
+              className="inline-flex items-center gap-2 whitespace-nowrap rounded-[10px] border border-[#0075de] text-[#0075de] px-2 py-2 text-md font-semibold hover:bg-[#0075de]/10 transition-colors"
+            >
+              <Sparkles className="w-16 h-16" />
+              Summarize with AI
+            </button>
+          )}
           <button
             type="button"
             onClick={handleSave}

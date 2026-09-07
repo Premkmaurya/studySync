@@ -9,7 +9,7 @@ const CreateGroup = lazy(() => import("../components/tabs/group/create_group/Cre
 const FindGroup = lazy(() => import("../pages/dashboard/FindGroup"));
 const GroupSettings = lazy(() => import("../components/tabs/group/group_setting/GroupSettings"));
 const GroupChat = lazy(() => import("../components/tabs/group/group_chat/GroupChat"));
-const SingleGroup = lazy(() => import("../components/tabs/group/SingleGroup"));
+import SingleGroup from "../components/tabs/group/SingleGroup";
 const GroupNotes = lazy(() => import("../components/tabs/group/group_notes/GroupNotes"));
 const Profile = lazy(() => import("../components/tabs/profile/Profile"));
 const Home = lazy(() => import("../pages/dashboard/Home"));

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FileText, Clock, ArrowRight, Bookmark, Loader2 } from "lucide-react";
@@ -63,14 +63,17 @@ const NotesGrid = () => {
     }
   };
 
+  const hasFetchedSavedNotes = useRef(false);
+
   useEffect(() => {
-    // Only fetch when Redux has no saved notes yet. If data is already present
-    // from a prior fetch (e.g. ProfileSection, Notes page, or a prior mount of
-    // this component), reuse it to avoid a redundant network request.
-    if (savedNotes.length === 0) {
+    // Fetch once on mount only if Redux has no saved notes yet.
+    // Using a ref prevents re-fetching when savedNotes.length changes
+    // after a save action (which previously caused a request loop).
+    if (savedNotes.length === 0 && !hasFetchedSavedNotes.current) {
+      hasFetchedSavedNotes.current = true;
       dispatch(getSavedNotes());
     }
-  }, [dispatch, savedNotes.length]);
+  }, [dispatch]);
 
   useEffect(() => {
     const savedIds = new Set(

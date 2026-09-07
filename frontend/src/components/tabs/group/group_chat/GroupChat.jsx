@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
 import { Send, Smile, MessageSquare, Lock, Loader2, AlertTriangle } from "lucide-react";
 import api from "../../../../services/api";
@@ -24,7 +24,11 @@ import {
   decryptMessage,
   getGroupKeyFingerprint,
 } from "../../../../services/crypto/cryptoService";
-import EmojiPicker from "emoji-picker-react";
+
+// Lazy-load EmojiPicker — only downloads when the user first opens the picker.
+// This removes it from the initial GroupChat chunk, reducing parse/exec time.
+const EmojiPicker = lazy(() => import("emoji-picker-react"));
+
 import MessageBubble from "./components/MessageBubble";
 import Button from "../../../design-system/Button";
 import Pill from "../../../design-system/Pill";
@@ -372,13 +376,19 @@ const GroupChat = () => {
       <div className="mt-auto relative">
         {showEmojiPicker && (
           <div className="absolute bottom-full right-0 mb-3 z-50">
-            <EmojiPicker
-              theme="light"
-              onEmojiClick={(emojiObject) => {
-                setNewMessage((prev) => prev + emojiObject.emoji);
-                setShowEmojiPicker(false);
-              }}
-            />
+            <Suspense fallback={
+              <div className="w-[350px] h-[400px] bg-white border border-black/[0.08] rounded-[12px] flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-[#0075de]" />
+              </div>
+            }>
+              <EmojiPicker
+                theme="light"
+                onEmojiClick={(emojiObject) => {
+                  setNewMessage((prev) => prev + emojiObject.emoji);
+                  setShowEmojiPicker(false);
+                }}
+              />
+            </Suspense>
           </div>
         )}
 

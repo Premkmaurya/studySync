@@ -6,6 +6,7 @@ const Avatar = ({
   size = "md", // 'sm' | 'md' | 'lg' | 'xl'
   borderColor = "#0075de",
   className = "w-14 h-14",
+  loading = "lazy", // 'eager' for above-the-fold (LCP candidate), 'lazy' otherwise
 }) => {
   const [imageError, setImageError] = useState(false);
 
@@ -43,6 +44,7 @@ const Avatar = ({
         <img
           src={actualSrc}
           alt={name || "Avatar"}
+          loading={loading}
           className="w-full h-full object-cover rounded-full"
           onError={() => setImageError(true)}
         />
