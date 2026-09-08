@@ -11,7 +11,7 @@ import Input from "../../components/design-system/Input";
 import Card from "../../components/design-system/Card";
 import Pill from "../../components/design-system/Pill";
 
-const GOOGLE_AUTH_URL = `${import.meta.env.VITE_API_URL || "http://localhost:3000/api"}/auth/google`;
+const GOOGLE_AUTH_URL = `${import.meta.env.API_URL || "http://localhost:3000/api"}/auth/google`;
 
 const Register = () => {
   const navigate = useNavigate();
