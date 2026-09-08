@@ -69,6 +69,8 @@ function App() {
   const navigate = useNavigate();
   const theme = useSelector((state) => state.theme.mode);
   const groupMatch = location.pathname.match(/^\/group\/([^/]+)/);
+  const publicPaths = ["/", "/about", "/contact", "/features"];
+  const isPublicPage = publicPaths.includes(location.pathname);
 
   const hideNavbarRoutes = [
     "/login",
@@ -157,6 +159,7 @@ function App() {
 
   return (
     <>
+      {isPublicPage && <div className="cursor" />}
       {!shouldHideNavbar && <Navbar />}
       <div className={groupMatch ? "min-h-screen flex flex-col md:flex-row bg-[#f6f5f4]" : ""}>
         {groupMatch && <GroupNavigation groupId={groupMatch[1]} />}

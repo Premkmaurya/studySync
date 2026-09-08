@@ -10,7 +10,6 @@ createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
       <MantineProvider withGlobalStyles withNormalizeCSS>
-        <div className="cursor"></div>
         <App className="hide-scrollbar" />
       </MantineProvider>
     </Provider>
