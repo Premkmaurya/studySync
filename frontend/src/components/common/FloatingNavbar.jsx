@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Sparkles } from "lucide-react";
 import StaggeredMenu from "../ui/StaggeredMenu";
 import { logoutUser } from "../../features/auth/authSlice";
 
@@ -132,12 +131,12 @@ const FloatingNavbar = ({ variant = "public" }) => {
         colors={["#eaf4ff", "#0075de"]}
         logoUrl={
           <Link to={user ? "/dashboard/home" : "/"} className="flex items-center gap-2 group">
-            <div className="w-7 h-7 rounded-[8px] bg-notion-blue text-white flex items-center justify-center shadow-2xs">
-              <Sparkles className="w-16 h-16 text-white" aria-hidden="true" />
-            </div>
-            <span className="font-bold text-[16px] tracking-[-0.4px] text-[#111827]">
-              study<span className="text-notion-blue">Sync</span>
-            </span>
+            <img
+              src="/img/icon.png"
+              alt="StudySync"
+              className="h-9 w-28 object-contain object-center"
+            />
+            <p className="text-lg font-bold tracking-tight text-[#0075de]">StudySync</p>
           </Link>
         }
       />

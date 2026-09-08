@@ -7,7 +7,7 @@ const Nav = () => {
     <div className="absolute z-999 text-white top-0 w-full h-14 flex justify-between px-8 bg-transparent ">
       <div className="bg-black/80 z-12 w-[40vw] h-full flex items-center justify-around hero-clip">
         <ul className="flex list-none gap-7 justify-center items-center">
-        <img className="w-20 h-20 bg-white border-b mb-1 border-black/80" src="/img/logo.png" alt="" />
+        <img className="w-28 h-12 object-contain object-center" src="/img/icon.png" alt="StudySync" />
           <Link to="/">home</Link>
           <Link to="/about">about</Link>
           <Link to="/contact">contact</Link>
