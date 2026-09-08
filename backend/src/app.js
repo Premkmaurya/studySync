@@ -25,7 +25,7 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173"],
     credentials: true,
   }),
 );
@@ -49,6 +49,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(compression());
 app.use(morgan("dev"));
+
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/groups", groupRoutes);
