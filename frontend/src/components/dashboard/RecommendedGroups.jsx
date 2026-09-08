@@ -53,16 +53,18 @@ const RecommendedGroups = ({
         </div>
 
         {/* Connected Topic Node Visual Accent */}
-        <div className="p-3 mb-4 rounded-[12px] bg-[#f6f5f4] border border-black/[0.06] flex items-center justify-between text-[11px] font-mono text-[#615d59]">
-          <span className="text-[#0075de] font-semibold">Security</span>
-          <span>──────</span>
-          <span className="w-2 h-2 rounded-full bg-[#0075de] inline-block" />
-          <span>──────</span>
-          <span className="text-[#6366f1] font-semibold">AI & ML</span>
-          <span>──────</span>
-          <span className="w-2 h-2 rounded-full bg-[#f59e0b] inline-block" />
-          <span>──────</span>
-          <span className="text-[#d97706] font-semibold">Design</span>
+        <div className="p-3 mb-4 rounded-[12px] bg-[#f6f5f4] border border-black/[0.06] text-[11px] font-mono text-[#615d59]">
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-between">
+            <span className="text-[#0075de] font-semibold">Security</span>
+            <span className="hidden sm:inline text-[#757575]">──────</span>
+            <span className="w-2 h-2 rounded-full bg-[#0075de] inline-block" />
+            <span className="hidden sm:inline text-[#757575]">──────</span>
+            <span className="text-[#6366f1] font-semibold">AI & ML</span>
+            <span className="hidden sm:inline text-[#757575]">──────</span>
+            <span className="w-2 h-2 rounded-full bg-[#f59e0b] inline-block" />
+            <span className="hidden sm:inline text-[#757575]">──────</span>
+            <span className="text-[#d97706] font-semibold">Design</span>
+          </div>
         </div>
 
         {/* Recommended Cards or Discovery Empty State */}

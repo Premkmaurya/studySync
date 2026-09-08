@@ -110,17 +110,17 @@ const ContinueLearning = ({ latestGroup }) => {
         </div>
 
         {/* Subtle Active Session Indicator / Timeline */}
-        <div className="p-3.5 rounded-[12px] bg-[#f6f5f4] border border-black/[0.06] flex flex-wrap items-center justify-between gap-3 text-[12px]">
-          <div className="flex items-center gap-2 font-mono text-[#615d59]">
+        <div className="p-3.5 rounded-[12px] bg-[#f6f5f4] border border-black/[0.06] flex flex-col gap-2 text-[11px] sm:text-[12px] sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-1.5 font-mono text-[#615d59] min-w-0">
             <span className="text-[#111111] font-bold">SESSION TIMELINE:</span>
             <span className="flex items-center gap-1 text-[#0075de] font-semibold">
               ● Discussion
             </span>
-            <span>──</span>
+            <span className="text-[#757575]">──</span>
             <span className="flex items-center gap-1 text-[#ffb110] font-semibold">
               ● Shared note
             </span>
-            <span>──</span>
+            <span className="text-[#757575]">──</span>
             <span className="flex items-center gap-1 text-[#10b981] font-semibold">
               ● Active workspace
             </span>

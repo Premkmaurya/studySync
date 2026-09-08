@@ -4,7 +4,7 @@ import { loginUser, clearError } from "../../features/auth/authSlice";
 import { selectAuthLoading, selectAuthError } from "../../features/auth/authSelectors";
 import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Eye, EyeOff } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 
 import Button from "../../components/design-system/Button";
@@ -31,6 +31,7 @@ const Login = () => {
   } = useForm();
 
   const [authError, setAuthError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data) => {
     setAuthError("");
@@ -118,13 +119,39 @@ const Login = () => {
                 {...register("email", { required: "Email is required" })}
               />
 
-              <Input
-                label="Password"
-                type="password"
-                placeholder="••••••••"
-                error={errors.password?.message}
-                {...register("password", { required: "Password is required" })}
-              />
+              <div className="flex flex-col gap-1.5 w-full">
+                <label className="text-[13px] font-medium text-[#111111] select-none">
+                  Password
+                </label>
+                <div className="relative flex items-center w-full">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    className={`
+                      w-full bg-white text-[#111111] placeholder-[#757575] text-[14px]
+                      px-3.5 py-2 pr-10 rounded-[8px] border border-black/[0.12]
+                      transition-all duration-150 outline-none
+                      focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20
+                      disabled:bg-black/[0.03] disabled:cursor-not-allowed
+                      ${errors.password ? "border-[#e32d14] focus:border-[#e32d14] focus:ring-[#e32d14]/20" : ""}
+                    `}
+                    {...register("password", { required: "Password is required" })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute right-3 text-[#757575] hover:text-[#111111] transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <span className="text-[12px] text-[#e32d14] font-medium">
+                    {errors.password.message}
+                  </span>
+                )}
+              </div>
 
               <div className="flex items-center justify-between text-[13px]">
                 <label className="flex items-center gap-2 text-[#615d59] cursor-pointer">

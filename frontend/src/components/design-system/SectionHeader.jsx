@@ -41,7 +41,7 @@ export const PageHeader = ({
   className = "",
 }) => {
   return (
-    <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-black/[0.08] ${className}`}>
+    <div className={`flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 pt-[5rem] sm:pt-0 border-b border-black/[0.08] ${className}`}>
       <div className="flex flex-col gap-1 max-w-2xl">
         {badge && <div className="mb-1">{badge}</div>}
         <h1 className="text-[28px] sm:text-[36px] font-bold text-[#000000] tracking-[-0.8px] leading-tight">
