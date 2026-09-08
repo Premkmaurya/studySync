@@ -57,7 +57,7 @@ const DashboardHeader = ({ user, joinedCount = 0, notesCount = 0 }) => {
       {/* Right: Primary Workspace Actions */}
       <div className="flex flex-wrap items-center gap-3 shrink-0">
         <Link
-          to="/create-group"
+          to="/dashboard/create-group"
           data-cursor-ignore="true"
           className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-semibold text-[13px] rounded-[8px] transition-all duration-150 shadow-2xs hover:-translate-y-0.5"
         >
@@ -66,7 +66,7 @@ const DashboardHeader = ({ user, joinedCount = 0, notesCount = 0 }) => {
         </Link>
 
         <Link
-          to="/find-groups"
+          to="/dashboard/find-groups"
           data-cursor-ignore="true"
           className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white hover:bg-black/[0.03] text-[#111111] font-semibold text-[13px] rounded-[8px] border border-black/15 transition-all duration-150 hover:border-black/30"
         >

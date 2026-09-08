@@ -43,7 +43,7 @@ const RecommendedGroups = ({
           </div>
           {groups.length > 0 && (
             <Link
-              to="/find-groups"
+              to="/dashboard/find-groups"
               className="group text-[12px] font-semibold text-[#0075de] hover:underline flex items-center gap-1"
             >
               <span>Directory</span>
@@ -104,7 +104,7 @@ const RecommendedGroups = ({
             </p>
             <div className="pt-2">
               <button
-                onClick={() => navigate("/find-groups")}
+                onClick={() => navigate("/dashboard/find-groups")}
                 data-cursor-ignore="true"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors cursor-pointer shadow-2xs"
               >
@@ -120,7 +120,7 @@ const RecommendedGroups = ({
       <div className="pt-4 border-t border-black/[0.06] mt-4 flex items-center justify-between text-[11px] font-mono text-[#757575]">
         <span>Subject Directory</span>
         <Link
-          to="/find-groups"
+          to="/dashboard/find-groups"
           className="text-[12px] font-semibold text-[#0075de] hover:underline flex items-center gap-1"
         >
           <span>Explore All Groups →</span>

@@ -82,7 +82,7 @@ const AboutHero = () => {
             <ArrowRight className="w-16 h-16 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
           <Link
-            to="/find-groups"
+            to="/dashboard/find-groups"
             className="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white hover:bg-black/[0.03] text-[#111111] font-medium text-[15px] rounded-[8px] border border-black/15 transition-all duration-200 hover:border-black/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
           >
             <Compass className="w-16 h-16 text-[#757575]" />

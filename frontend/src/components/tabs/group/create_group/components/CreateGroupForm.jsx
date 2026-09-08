@@ -53,7 +53,7 @@ const CreateGroupForm = () => {
     const res = await dispatch(createGroup(formData));
     console.log(res)
     if (res.meta.requestStatus === "fulfilled") {
-      navigate(`/find-groups`);
+      navigate(`/dashboard/find-groups`);
     }
   };
 

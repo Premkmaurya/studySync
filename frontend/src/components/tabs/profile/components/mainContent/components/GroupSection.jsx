@@ -51,7 +51,7 @@ const GroupSection = () => {
         </p>
         <div className="pt-2">
           <button
-            onClick={() => navigate("/find-groups")}
+            onClick={() => navigate("/dashboard/find-groups")}
             data-cursor-ignore="true"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors shadow-2xs cursor-pointer"
           >

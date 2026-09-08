@@ -31,7 +31,7 @@ const NotFound = () => {
                 Back to Dashboard
               </Button>
             </Link>
-            <Link to="/find-groups" className="w-full">
+            <Link to="/dashboard/find-groups" className="w-full">
               <Button variant="ghost" fullWidth icon={Compass}>
                 Explore Groups
               </Button>

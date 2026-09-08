@@ -30,7 +30,7 @@ const StudyGroupGrid = ({ groups = [], hasMore = false, onLoadMore }) => {
         </div>
         {groups.length > 0 && (
           <Link
-            to="/find-groups"
+            to="/dashboard/find-groups"
             className="group text-[13px] font-semibold text-[#0075de] hover:underline flex items-center gap-1"
           >
             <span>View directory</span>
@@ -89,7 +89,7 @@ const StudyGroupGrid = ({ groups = [], hasMore = false, onLoadMore }) => {
           </p>
           <div className="pt-1">
             <button
-              onClick={() => navigate("/find-groups")}
+              onClick={() => navigate("/dashboard/find-groups")}
               data-cursor-ignore="true"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0075de] hover:bg-[#097fe8] text-white text-[13px] font-semibold rounded-[8px] transition-colors cursor-pointer"
             >

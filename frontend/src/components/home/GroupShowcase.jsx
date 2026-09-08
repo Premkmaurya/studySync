@@ -107,7 +107,7 @@ const GroupShowcase = ({ className = "" }) => {
           {/* Primary CTA */}
           <div className="pt-2">
             <Link
-              to="/find-groups"
+              to="/dashboard/find-groups"
               className="group inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] active:bg-[#0060b8] text-white font-medium text-[15px] rounded-[8px] transition-all duration-200 shadow-xs hover:-translate-y-0.5 hover:shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0075de]"
             >
               <span>Explore groups</span>

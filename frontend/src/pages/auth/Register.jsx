@@ -36,7 +36,7 @@ const Register = () => {
       setAuthError("");
       const response = await dispatch(registerUser({ ...data }));
       if (response.payload?.user) {
-        navigate("/find-groups");
+        navigate("/dashboard/find-groups");
       } else {
         setAuthError(response.payload || "Registration failed. Please try again.");
       }

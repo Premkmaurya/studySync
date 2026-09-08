@@ -60,7 +60,7 @@ const GroupsFeature = () => {
 
           <div className="pt-2">
             <Link
-              to="/find-groups"
+              to="/dashboard/find-groups"
               className="group inline-flex items-center gap-2 px-6 py-3 bg-[#0075de] hover:bg-[#097fe8] text-white text-[14px] font-semibold rounded-[8px] transition-all duration-200 shadow-2xs hover:-translate-y-0.5"
             >
               <span>Explore study groups</span>
@@ -110,7 +110,7 @@ const GroupsFeature = () => {
             <div className="pt-2 border-t border-black/[0.06] flex items-center justify-between">
               <span className="text-[12px] font-mono text-[#757575]">Group ID: #ml-cohort-4</span>
               <Link
-                to="/find-groups"
+                to="/dashboard/find-groups"
                 className="group/link inline-flex items-center gap-1 text-[13px] font-semibold text-[#0075de] hover:underline"
               >
                 <span>View group</span>

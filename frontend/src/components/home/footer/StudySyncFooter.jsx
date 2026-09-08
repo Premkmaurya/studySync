@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { 
-  ArrowRight, 
-  Check, 
-  Github, 
-  Twitter, 
-  Instagram, 
+import {
+  ArrowRight,
+  Check,
+  Github,
+  Twitter,
+  Instagram,
   Linkedin,
   MessageCircle
 } from "lucide-react";
@@ -40,19 +40,19 @@ const StudySyncFooter = ({ className = "" }) => {
         Refined curves & padding to prevent any text clipping while preserving signature arch visual identity.
       */}
       <div className="relative w-full max-w-[1440px] mx-auto bg-[#02093a] text-white rounded-t-[40px] sm:rounded-t-[60px] md:rounded-tl-[100px] lg:rounded-tl-[120px] md:rounded-tr-[28px] overflow-hidden shadow-[0_20px_50px_rgba(2,9,58,0.22)] border border-white/10">
-        
+
         {/* Subtle background ambient tint */}
-        <div 
-          className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_25%,rgba(0,117,222,0.22),transparent_65%)]" 
-          aria-hidden="true" 
+        <div
+          className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_25%_25%,rgba(0,117,222,0.22),transparent_65%)]"
+          aria-hidden="true"
         />
 
         {/* Content Container with safe inset padding */}
         <div className="relative z-10 pt-12 sm:pt-14 md:pt-14 pb-4 px-5 sm:px-8 md:pl-16 md:pr-10 lg:pl-20 lg:pr-12 flex flex-col justify-between">
-          
+
           {/* TOP GRID / COLUMNS */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-10 pb-10 border-b border-white/10">
-            
+
             {/* 1. EDITORIAL STATEMENT & BRAND MISSION (Col 1-5) */}
             <div className="md:col-span-5 lg:col-span-4 flex flex-col justify-between items-start space-y-4">
               <div className="space-y-2.5">
@@ -85,7 +85,7 @@ const StudySyncFooter = ({ className = "" }) => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/find-groups" className="text-slate-200 hover:text-white transition-colors duration-150">
+                  <Link to="/dashboard/find-groups" className="text-slate-200 hover:text-white transition-colors duration-150">
                     Explore Groups
                   </Link>
                 </li>
@@ -133,7 +133,7 @@ const StudySyncFooter = ({ className = "" }) => {
 
             {/* 4. NEWSLETTER & SOCIAL CONNECT (Col 10-12) */}
             <div className="md:col-span-12 lg:col-span-4 space-y-5 flex flex-col justify-between">
-              
+
               {/* Newsletter Pill Input */}
               <div className="space-y-2.5">
                 <h4 className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#62aef0] font-mono">
@@ -207,11 +207,11 @@ const StudySyncFooter = ({ className = "" }) => {
 
           {/* BOTTOM MASSIVE BRAND WORDMARK WITH REVEAL */}
           <div className="relative pt-4 overflow-hidden select-none">
-              <div className="w-full flex items-center justify-center leading-none">
-                <span className="text-[12vw] sm:text-[13vw] md:text-[100px] lg:text-[140px] xl:text-[170px] font-black tracking-[-0.04em] text-white/90 uppercase text-center block transform translate-y-[12%] pointer-events-none font-sans">
-                  study<span className="text-[#0075de]">sync</span>
-                </span>
-              </div>
+            <div className="w-full flex items-center justify-center leading-none">
+              <span className="text-[12vw] sm:text-[13vw] md:text-[100px] lg:text-[140px] xl:text-[170px] font-black tracking-[-0.04em] text-white/90 uppercase text-center block transform translate-y-[12%] pointer-events-none font-sans">
+                study<span className="text-[#0075de]">sync</span>
+              </span>
+            </div>
           </div>
 
         </div>
