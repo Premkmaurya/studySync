@@ -12,7 +12,7 @@ const { generateResponse } = require("../services/ai.service");
 const { invalidateByPrefix } = require("../services/cache.service");
 
 function setSocketServer(httpServer) {
-  const clientOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+  const clientOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 
   // Socket init
   const io = new Server(httpServer, {
