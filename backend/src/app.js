@@ -25,7 +25,7 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173","https://study-sync-ten-lake.vercel.app"],
     credentials: true,
   }),
 );
@@ -37,7 +37,7 @@ passport.use(
     {
       clientID: config.GOOGLE_CLIENT_ID,
       clientSecret: config.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/google/callback",
+      callbackURL: "https://studysync-zgwh.onrender.com/api/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       return done(null, profile);
