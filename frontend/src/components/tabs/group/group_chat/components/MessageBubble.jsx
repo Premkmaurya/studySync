@@ -1,11 +1,11 @@
 import React from "react";
 import Avatar from "../../../../design-system/Avatar";
-import { Lock } from "lucide-react";
+import { Lock, Loader2, AlertCircle } from "lucide-react";
 
 const MessageBubble = ({ message }) => {
   const isYou = message.isYou;
   const fullName = `${message.sender?.firstname || ""} ${message.sender?.lastname || ""}`.trim() || "Member";
-  const isPending = message.decryptionStatus === "pending";
+  const status = message.decryptionStatus || "success";
 
   return (
     <div className={`flex w-full mb-4 ${isYou ? "justify-end" : "justify-start"}`}>
@@ -26,16 +26,21 @@ const MessageBubble = ({ message }) => {
             className={`px-3 py-1.5 rounded-[12px] text-[14px] leading-relaxed shadow-none ${
               isYou
                 ? "bg-transparent text-[#111111] border-none"
-                : "bg-white text-[#111111] max-w-[220px]"
+                : "bg-white text-[#111111] max-w-[280px] sm:max-w-md"
             }`}
           >
-            {isPending ? (
-              <span className="inline-flex items-center gap-1.5 text-[13px] text-[#757575] font-medium animate-pulse py-0.5">
-                <Lock className="w-3.5 h-3.5 text-[#0075de]" />
+            {status === "loading" ? (
+              <span className="inline-flex items-center gap-1.5 text-[13px] text-[#757575] font-medium py-0.5">
+                <Loader2 className="w-3.5 h-3.5 text-[#0075de] animate-spin flex-shrink-0" />
                 <span>Decrypting message...</span>
               </span>
+            ) : status === "failed" ? (
+              <span className="inline-flex items-center gap-1.5 text-[12px] text-amber-700 bg-amber-50/80 px-2.5 py-1 rounded-[8px] border border-amber-200/70 font-medium">
+                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                <span>{message.errorMessage || "Unable to decrypt message"}</span>
+              </span>
             ) : (
-              message.text
+              <span className="whitespace-pre-wrap break-words">{message.text}</span>
             )}
           </div>
           <span className="text-[11px] text-[#757575] mt-1 px-1">

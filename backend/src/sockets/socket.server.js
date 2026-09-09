@@ -12,12 +12,16 @@ const { generateResponse } = require("../services/ai.service");
 const { invalidateByPrefix } = require("../services/cache.service");
 
 function setSocketServer(httpServer) {
-  const clientOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://study-sync-ten-lake.vercel.app",
+    ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
+  ];
 
   // Socket init
   const io = new Server(httpServer, {
     cors: {
-      origin: clientOrigin,
+      origin: allowedOrigins,
       credentials: true,
     },
   });

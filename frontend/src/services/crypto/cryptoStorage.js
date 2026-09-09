@@ -1,3 +1,5 @@
+import { arrayBufferToBase64, base64ToArrayBuffer } from "./cryptoService";
+
 const DB_NAME = "StudySyncCryptoDB";
 const DB_VERSION = 1;
 const STORE_KEYS = "userKeys";
@@ -5,6 +7,10 @@ const STORE_GROUP_KEYS = "groupKeys";
 
 function openDB() {
   return new Promise((resolve, reject) => {
+    if (typeof indexedDB === "undefined") {
+      return reject(new Error("IndexedDB is not supported in this environment"));
+    }
+
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = (event) => {
@@ -22,19 +28,25 @@ function openDB() {
   });
 }
 
+/**
+ * Persist user's RSA key pair locally in IndexedDB with JWK backup for maximum durability
+ */
 export async function saveUserKeyPair(userId, keyPair) {
-  if (!userId) return;
+  if (!userId || !keyPair) return false;
   try {
     const db = await openDB();
     const tx = db.transaction(STORE_KEYS, "readwrite");
     const store = tx.objectStore(STORE_KEYS);
+
     store.put({
-      userId,
+      userId: userId.toString(),
       privateKey: keyPair.privateKey,
       publicKey: keyPair.publicKey,
       publicKeyJwk: keyPair.publicKeyJwk,
+      privateKeyJwk: keyPair.privateKeyJwk || null,
       updatedAt: Date.now(),
     });
+
     return new Promise((resolve, reject) => {
       tx.oncomplete = () => resolve(true);
       tx.onerror = () => reject(tx.error);
@@ -45,37 +57,111 @@ export async function saveUserKeyPair(userId, keyPair) {
   }
 }
 
+/**
+ * Retrieve user's local RSA key pair, with automatic WebCrypto re-import fallback
+ */
 export async function getUserKeyPair(userId) {
   if (!userId) return null;
   try {
     const db = await openDB();
     const tx = db.transaction(STORE_KEYS, "readonly");
     const store = tx.objectStore(STORE_KEYS);
-    const request = store.get(userId);
-    return new Promise((resolve, reject) => {
+    const request = store.get(userId.toString());
+
+    const record = await new Promise((resolve, reject) => {
       request.onsuccess = () => resolve(request.result || null);
       request.onerror = () => reject(request.error);
     });
+
+    if (!record) return null;
+
+    let privateKey = record.privateKey;
+    let publicKey = record.publicKey;
+
+    // Verify or restore CryptoKey instances
+    if (!privateKey || !(privateKey instanceof CryptoKey)) {
+      if (record.privateKeyJwk) {
+        try {
+          privateKey = await window.crypto.subtle.importKey(
+            "jwk",
+            record.privateKeyJwk,
+            {
+              name: "RSA-OAEP",
+              hash: "SHA-256",
+            },
+            true,
+            ["unwrapKey"]
+          );
+        } catch (impErr) {
+          console.error("[CryptoStorage] Failed to restore privateKey from JWK:", impErr);
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    if (!publicKey || !(publicKey instanceof CryptoKey)) {
+      if (record.publicKeyJwk) {
+        try {
+          publicKey = await window.crypto.subtle.importKey(
+            "jwk",
+            record.publicKeyJwk,
+            {
+              name: "RSA-OAEP",
+              hash: "SHA-256",
+            },
+            true,
+            ["wrapKey"]
+          );
+        } catch {
+          // Public key can still be reconstructed or used as JWK
+        }
+      }
+    }
+
+    return {
+      privateKey,
+      publicKey,
+      publicKeyJwk: record.publicKeyJwk,
+      privateKeyJwk: record.privateKeyJwk,
+    };
   } catch (err) {
     console.error("[CryptoStorage] Error fetching user key pair:", err);
     return null;
   }
 }
 
+/**
+ * Persist group symmetric AES key in IndexedDB
+ */
 export async function saveGroupKey(groupId, keyVersion, cryptoKey) {
-  if (!groupId) return;
+  if (!groupId || !cryptoKey) return false;
   try {
+    const version = keyVersion || 1;
+    const id = `${groupId}_v${version}`;
+
+    let rawKeyBase64 = null;
+    try {
+      const exportedRaw = await window.crypto.subtle.exportKey("raw", cryptoKey);
+      rawKeyBase64 = arrayBufferToBase64(exportedRaw);
+    } catch {
+      // Export may not be necessary if CryptoKey clone succeeds
+    }
+
     const db = await openDB();
     const tx = db.transaction(STORE_GROUP_KEYS, "readwrite");
     const store = tx.objectStore(STORE_GROUP_KEYS);
-    const id = `${groupId}_v${keyVersion || 1}`;
+
     store.put({
       id,
-      groupId,
-      keyVersion: keyVersion || 1,
+      groupId: groupId.toString(),
+      keyVersion: version,
       cryptoKey,
+      rawKeyBase64,
       updatedAt: Date.now(),
     });
+
     return new Promise((resolve, reject) => {
       tx.oncomplete = () => resolve(true);
       tx.onerror = () => reject(tx.error);
@@ -86,18 +172,51 @@ export async function saveGroupKey(groupId, keyVersion, cryptoKey) {
   }
 }
 
+/**
+ * Retrieve group symmetric AES key from IndexedDB with auto re-import fallback
+ */
 export async function getGroupKey(groupId, keyVersion) {
   if (!groupId) return null;
   try {
+    const version = keyVersion || 1;
+    const id = `${groupId}_v${version}`;
+
     const db = await openDB();
     const tx = db.transaction(STORE_GROUP_KEYS, "readonly");
     const store = tx.objectStore(STORE_GROUP_KEYS);
-    const id = `${groupId}_v${keyVersion || 1}`;
     const request = store.get(id);
-    return new Promise((resolve, reject) => {
-      request.onsuccess = () => resolve(request.result?.cryptoKey || null);
+
+    const record = await new Promise((resolve, reject) => {
+      request.onsuccess = () => resolve(request.result || null);
       request.onerror = () => reject(request.error);
     });
+
+    if (!record) return null;
+
+    if (record.cryptoKey && record.cryptoKey instanceof CryptoKey) {
+      return record.cryptoKey;
+    }
+
+    if (record.rawKeyBase64) {
+      try {
+        const rawBuffer = base64ToArrayBuffer(record.rawKeyBase64);
+        return await window.crypto.subtle.importKey(
+          "raw",
+          rawBuffer,
+          {
+            name: "AES-GCM",
+            length: 256,
+          },
+          true,
+          ["encrypt", "decrypt"]
+        );
+      } catch (impErr) {
+        console.error("[CryptoStorage] Failed to restore groupKey from raw buffer:", impErr);
+        return null;
+      }
+    }
+
+    return null;
   } catch (err) {
     console.error("[CryptoStorage] Error fetching group key:", err);
     return null;

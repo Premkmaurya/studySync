@@ -347,7 +347,7 @@ const getGroupMembers = asyncHandler(async (req, res) => {
 
   const members = await userGroupModel
     .find({ groupId })
-    .populate("userId", "fullname profilePicture")
+    .populate("userId", "fullname profilePicture publicKey")
     .sort({ createdAt: -1 });
 
   if (!members) {

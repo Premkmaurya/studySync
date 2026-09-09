@@ -11,7 +11,7 @@ import Input from "../../components/design-system/Input";
 import Card from "../../components/design-system/Card";
 import Pill from "../../components/design-system/Pill";
 
-const GOOGLE_AUTH_URL = `${import.meta.env.API_URL || "http://localhost:3000/api"}/auth/google`;
+const GOOGLE_AUTH_URL = `${import.meta.env.API_URL || "https://studysync-zgwh.onrender.com/api"}/auth/google`;
 
 const Register = () => {
   const navigate = useNavigate();
@@ -152,10 +152,10 @@ const Register = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 text-[#757575] hover:text-[#111111] transition-colors"
+                    className="absolute right-3 text-[#332e2e] hover:text-[#111111] transition-colors"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.password && (

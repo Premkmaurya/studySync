@@ -7,15 +7,38 @@ const asyncHandler = require("../utils/asyncHandler");
 // 1. Update User Public Key
 const updatePublicKey = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const { publicKey } = req.body;
+  let { publicKey } = req.body;
 
   if (!publicKey) {
     return res.status(400).json({ message: "Public key is required" });
   }
 
+  // Parse if sent as JSON string
+  if (typeof publicKey === "string") {
+    try {
+      publicKey = JSON.parse(publicKey);
+    } catch {
+      return res.status(400).json({ message: "Invalid public key JSON format" });
+    }
+  }
+
+  if (typeof publicKey !== "object" || !publicKey.n || !publicKey.e) {
+    return res.status(400).json({ message: "Invalid RSA-OAEP public key JWK structure" });
+  }
+
+  // Sanitize standard JWK properties
+  const sanitizedPublicKey = {
+    kty: "RSA",
+    n: publicKey.n,
+    e: publicKey.e,
+    alg: "RSA-OAEP-256",
+    ext: true,
+    key_ops: ["wrapKey"],
+  };
+
   const updatedUser = await userModel.findByIdAndUpdate(
     userId,
-    { publicKey },
+    { publicKey: sanitizedPublicKey },
     { new: true }
   ).select("-password");
 
@@ -42,35 +65,44 @@ const getGroupKeys = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: "Access denied: Not a member of this group" });
   }
 
-  // Get current user's envelope
+  // Get current user's envelope from latest key record
   const groupKeyRecord = await groupKeyModel.findOne({ group: groupId }).sort({ keyVersion: -1 });
 
   let myEnvelope = null;
-  if (groupKeyRecord && groupKeyRecord.envelopes) {
-    const found = groupKeyRecord.envelopes.find(
-      (env) => env.userId.toString() === userId.toString()
-    );
-    if (found) {
-      myEnvelope = {
-        keyVersion: groupKeyRecord.keyVersion,
-        encryptedGroupKey: found.encryptedGroupKey,
-      };
+  const existingEnvelopeUserIds = [];
+
+  if (groupKeyRecord && Array.isArray(groupKeyRecord.envelopes)) {
+    for (const env of groupKeyRecord.envelopes) {
+      if (env.userId) {
+        existingEnvelopeUserIds.push(env.userId.toString());
+        if (env.userId.toString() === userId.toString()) {
+          myEnvelope = {
+            keyVersion: groupKeyRecord.keyVersion,
+            encryptedGroupKey: env.encryptedGroupKey,
+          };
+        }
+      }
     }
   }
 
-  // Fetch all group members' public keys so client can wrap key for new/missing members if needed
+  // Fetch all group members' public keys so client can wrap key for new/missing members
   const memberDocs = await joinGroupModel.find({ groupId }).select("userId");
-  const memberUserIds = memberDocs.map((m) => m.userId);
-  if (group.owner) memberUserIds.push(group.owner);
+  const memberUserIds = memberDocs.map((m) => m.userId.toString());
+  if (group.owner) {
+    memberUserIds.push(group.owner.toString());
+  }
+  const uniqueUserIds = Array.from(new Set(memberUserIds));
 
   const membersWithKeys = await userModel
-    .find({ _id: { $in: memberUserIds } })
+    .find({ _id: { $in: uniqueUserIds } })
     .select("_id fullname publicKey");
 
   return res.status(200).json({
     groupId,
+    hasGroupKey: Boolean(groupKeyRecord),
     keyVersion: groupKeyRecord ? groupKeyRecord.keyVersion : 1,
     myEnvelope,
+    existingEnvelopeUserIds,
     members: membersWithKeys,
   });
 });
