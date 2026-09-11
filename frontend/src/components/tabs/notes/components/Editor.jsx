@@ -115,23 +115,24 @@ const Editor = ({
               Summarize with AI
             </button>
           )}
-          <button
-            type="button"
-            onClick={handleSave}
-            disabled={isSaving || isViewOnly}
-            className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-8 py-2 text-md font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSaving ? (
-              <>
-                <LoaderCircle className="w-4 h-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                Save
-              </>
-            )}
-          </button>
+          {!isViewOnly && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={isSaving || isViewOnly}
+              className="inline-flex items-center gap-2 rounded-[10px] bg-[#0075de] text-white px-8 py-2 text-md font-semibold shadow-sm hover:bg-[#0068c7] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSaving ? (
+                <>
+                  <LoaderCircle className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  Save
+                </>
+              )}
+            </button>)}
         </div>
       </div>
 

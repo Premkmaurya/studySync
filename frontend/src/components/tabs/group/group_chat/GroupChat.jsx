@@ -230,7 +230,7 @@ const GroupChat = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] p-6 max-w-5xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-80px)] w-full max-w-5xl overflow-hidden mx-auto p-3 sm:p-6 min-w-0">
       {/* Workspace Header */}
       <PageHeader
         title={group?.name ? `${group.name} Chat` : "Group Chat"}
@@ -263,7 +263,7 @@ const GroupChat = () => {
       {/* Messages Feed */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto my-6 p-4 bg-white border border-black/[0.08] rounded-[12px] flex flex-col justify-end min-h-[330px]"
+        className="flex-1 w-full min-w-0 overflow-y-auto my-4 sm:my-6 p-3 sm:p-4 pb-24 sm:pb-28 bg-white border border-black/[0.08] rounded-[12px] flex flex-col justify-end min-h-[330px]"
       >
         <div className="space-y-4 h-full py-3">
           {messages.length > 0 ? (
@@ -285,7 +285,7 @@ const GroupChat = () => {
       </div>
 
       {/* Message Composer */}
-      <div className="mt-auto relative">
+      <div className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-1rem)] max-w-5xl -translate-x-1/2 min-w-0 sm:w-[calc(100%-2rem)]">
         {showEmojiPicker && (
           <div className="absolute bottom-full right-0 mb-3 z-50">
             <Suspense fallback={
@@ -304,7 +304,7 @@ const GroupChat = () => {
           </div>
         )}
 
-        <div className="flex items-center gap-2 p-2 bg-white border border-black/[0.12] rounded-[12px] min-h-[64px]">
+        <div className="flex w-full min-w-0 items-center gap-1.5 sm:gap-2 p-2 bg-white border border-black/[0.12] rounded-[12px] min-h-[64px]">
           <input
             type="text"
             placeholder={
@@ -318,14 +318,14 @@ const GroupChat = () => {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1 bg-transparent px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px] disabled:opacity-50"
+            className="flex-1 min-w-0 bg-transparent px-2 sm:px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px] disabled:opacity-50"
           />
 
           <button
             type="button"
             disabled={e2eeState.status !== "ready"}
             onClick={() => setShowEmojiPicker((prev) => !prev)}
-            className="p-2 text-[#757575] hover:text-black rounded-[6px] hover:bg-black/5 transition-colors disabled:opacity-50"
+            className="shrink-0 p-2 text-[#757575] hover:text-black rounded-[6px] hover:bg-black/5 transition-colors disabled:opacity-50"
             aria-label="Insert emoji"
           >
             <Smile className="w-5 h-5" />
@@ -337,6 +337,7 @@ const GroupChat = () => {
             icon={Send}
             disabled={e2eeState.status !== "ready" || newMessage.trim() === ""}
             onClick={handleSendMessage}
+            className="shrink-0"
           >
             Send
           </Button>

@@ -60,6 +60,7 @@ const CreateGroupForm = () => {
   return (
     <div className="w-full max-w-5xl mx-auto">
       <PageHeader
+        className="pt-[5rem] sm:pt-0"
         title="Create a study group"
         description="Set up a shared workspace for your course, project, or study topic."
         badge={<Pill variant="sky" size="sm">New Group</Pill>}

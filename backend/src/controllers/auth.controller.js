@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
 
   return res.status(201).json({
@@ -85,7 +85,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   if (isPersistent) {
@@ -107,7 +107,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
   return res.status(200).json({
     message: "user logged out successfully",
@@ -151,7 +151,10 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
 
   let oldFileId = null;
   if (existingUser.profilePicture) {
-    if (typeof existingUser.profilePicture === "object" && existingUser.profilePicture.fileId) {
+    if (
+      typeof existingUser.profilePicture === "object" &&
+      existingUser.profilePicture.fileId
+    ) {
       oldFileId = existingUser.profilePicture.fileId;
     }
   }
@@ -163,7 +166,8 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
   } catch (uploadError) {
     console.error("ImageKit upload error:", uploadError);
     return res.status(500).json({
-      message: "Failed to upload image to storage. Existing profile picture preserved.",
+      message:
+        "Failed to upload image to storage. Existing profile picture preserved.",
     });
   }
 
@@ -185,7 +189,7 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
       .findByIdAndUpdate(
         id,
         { profilePicture: newProfilePicture },
-        { new: true }
+        { new: true },
       )
       .select("-password");
   } catch (dbError) {
@@ -208,7 +212,10 @@ const updateProfilePicture = asyncHandler(async (req, res) => {
     try {
       await deleteImage(oldFileId);
     } catch (oldDeleteErr) {
-      console.error("Failed to delete old profile picture from ImageKit:", oldDeleteErr);
+      console.error(
+        "Failed to delete old profile picture from ImageKit:",
+        oldDeleteErr,
+      );
     }
   }
 
@@ -237,13 +244,19 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 
   const updateData = {
     fullname: {
-      firstname: firstname ? firstname.trim() : existingUser.fullname?.firstname,
+      firstname: firstname
+        ? firstname.trim()
+        : existingUser.fullname?.firstname,
       lastname: lastname ? lastname.trim() : existingUser.fullname?.lastname,
     },
   };
 
   const updatedUser = await userModel
-    .findByIdAndUpdate(userId, { $set: updateData }, { new: true, runValidators: true })
+    .findByIdAndUpdate(
+      userId,
+      { $set: updateData },
+      { new: true, runValidators: true },
+    )
     .select("-password");
 
   return res.status(200).json({
@@ -263,8 +276,14 @@ const googleCallback = asyncHandler(async (req, res) => {
     });
   }
 
-  const firstname = googleUser.name?.givenName || googleUser.displayName?.split(" ")[0] || "Google";
-  const lastname = googleUser.name?.familyName || googleUser.displayName?.split(" ").slice(1).join(" ") || "User";
+  const firstname =
+    googleUser.name?.givenName ||
+    googleUser.displayName?.split(" ")[0] ||
+    "Google";
+  const lastname =
+    googleUser.name?.familyName ||
+    googleUser.displayName?.split(" ").slice(1).join(" ") ||
+    "User";
   const profilePicture = googleUser.photos?.[0]?.value || "";
 
   let user = await userModel.findOne({
@@ -296,14 +315,13 @@ const googleCallback = asyncHandler(async (req, res) => {
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
 
   return res.redirect(
     `${process.env.FRONTEND_URL || "http://localhost:5173"}/dashboard/home`,
   );
 });
-
 
 module.exports = {
   registerUser,

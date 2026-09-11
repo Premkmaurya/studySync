@@ -56,10 +56,10 @@ const Login = () => {
       {/* Left side: Editorial product statement panel */}
       <div className="hidden md:flex w-1/2 bg-[#02093a] text-white p-12 lg:p-16 flex-col justify-between relative overflow-hidden">
         <Link to="/" className="flex items-center gap-2.5 z-10">
-          <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
-            <BookOpen className="w-16 h-16" />
+          <div className="w-7 h-7 rounded-[8px] text-white flex items-center justify-center font-bold overflow-hidden">
+            <img src="/img/icon.png" alt="StudySync icon" className="w-full h-full object-cover" />
           </div>
-          <span className="font-bold text-[20px] tracking-[-0.3px] text-white">
+          <span className="relative inline-block font-bold text-[20px] tracking-[-0.3px] text-white after:absolute after:left-1/2 after:right-1/2 after:-bottom-1 after:h-[2px] after:bg-white after:content-[''] after:transition-all after:duration-300 hover:after:left-0 hover:after:right-0">
             studySync
           </span>
         </Link>
@@ -87,10 +87,10 @@ const Login = () => {
           {/* Mobile Logo Header */}
           <div className="md:hidden flex items-center gap-2.5 mb-8">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-[8px] bg-[#0075de] text-white flex items-center justify-center font-bold">
-                <BookOpen className="w-16 h-16" />
+              <div className="w-7 h-7 rounded-[8px] text-white flex items-center justify-center font-bold overflow-hidden">
+                <img src="/img/icon.png" alt="StudySync icon" className="w-full h-full object-cover" />
               </div>
-              <span className="font-bold text-[18px] text-[#000000]">studySync</span>
+              <span className="relative inline-block font-bold text-[18px] text-[#000000] after:absolute after:left-1/2 after:right-1/2 after:-bottom-1 after:h-[2px] after:bg-[#000000] after:content-[''] after:transition-all after:duration-300 hover:after:left-0 hover:after:right-0">studySync</span>
             </Link>
           </div>
 
