@@ -82,9 +82,14 @@ export async function getUserKeyPair(userId) {
     if (!privateKey || !(privateKey instanceof CryptoKey)) {
       if (record.privateKeyJwk) {
         try {
+          const privJwk = {
+            ...record.privateKeyJwk,
+            alg: "RSA-OAEP-256",
+            key_ops: ["unwrapKey"],
+          };
           privateKey = await window.crypto.subtle.importKey(
             "jwk",
-            record.privateKeyJwk,
+            privJwk,
             {
               name: "RSA-OAEP",
               hash: "SHA-256",
@@ -104,9 +109,14 @@ export async function getUserKeyPair(userId) {
     if (!publicKey || !(publicKey instanceof CryptoKey)) {
       if (record.publicKeyJwk) {
         try {
+          const pubJwk = {
+            ...record.publicKeyJwk,
+            alg: "RSA-OAEP-256",
+            key_ops: ["wrapKey"],
+          };
           publicKey = await window.crypto.subtle.importKey(
             "jwk",
-            record.publicKeyJwk,
+            pubJwk,
             {
               name: "RSA-OAEP",
               hash: "SHA-256",

@@ -70,15 +70,22 @@ const getGroupKeys = asyncHandler(async (req, res) => {
 
   let myEnvelope = null;
   const existingEnvelopeUserIds = [];
+  const envelopesMap = {};
 
   if (groupKeyRecord && Array.isArray(groupKeyRecord.envelopes)) {
     for (const env of groupKeyRecord.envelopes) {
       if (env.userId) {
-        existingEnvelopeUserIds.push(env.userId.toString());
-        if (env.userId.toString() === userId.toString()) {
+        const uidStr = env.userId.toString();
+        existingEnvelopeUserIds.push(uidStr);
+        envelopesMap[uidStr] = {
+          encryptedGroupKey: env.encryptedGroupKey,
+          publicKeyFingerprint: env.publicKeyFingerprint || null,
+        };
+        if (uidStr === userId.toString()) {
           myEnvelope = {
             keyVersion: groupKeyRecord.keyVersion,
             encryptedGroupKey: env.encryptedGroupKey,
+            publicKeyFingerprint: env.publicKeyFingerprint || null,
           };
         }
       }
@@ -102,6 +109,7 @@ const getGroupKeys = asyncHandler(async (req, res) => {
     hasGroupKey: Boolean(groupKeyRecord),
     keyVersion: groupKeyRecord ? groupKeyRecord.keyVersion : 1,
     myEnvelope,
+    envelopesMap,
     existingEnvelopeUserIds,
     members: membersWithKeys,
   });
@@ -146,10 +154,14 @@ const saveGroupKeys = asyncHandler(async (req, res) => {
     );
     if (existingIndex !== -1) {
       record.envelopes[existingIndex].encryptedGroupKey = newEnv.encryptedGroupKey;
+      if (newEnv.publicKeyFingerprint) {
+        record.envelopes[existingIndex].publicKeyFingerprint = newEnv.publicKeyFingerprint;
+      }
     } else {
       record.envelopes.push({
         userId: newEnv.userId,
         encryptedGroupKey: newEnv.encryptedGroupKey,
+        publicKeyFingerprint: newEnv.publicKeyFingerprint || null,
       });
     }
   }

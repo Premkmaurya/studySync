@@ -10,6 +10,10 @@ const groupKeyEnvelopeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  publicKeyFingerprint: {
+    type: String,
+    default: null,
+  },
 });
 
 const groupKeySchema = new mongoose.Schema(

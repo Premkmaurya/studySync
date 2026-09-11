@@ -5,8 +5,9 @@
  */
 
 export function arrayBufferToBase64(buffer) {
-  let binary = "";
+  if (!buffer) return "";
   const bytes = new Uint8Array(buffer);
+  let binary = "";
   const len = bytes.byteLength;
   for (let i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i]);
@@ -15,7 +16,17 @@ export function arrayBufferToBase64(buffer) {
 }
 
 export function base64ToArrayBuffer(base64) {
-  const binaryString = window.atob(base64);
+  if (!base64 || typeof base64 !== "string") {
+    throw new Error("Invalid base64 input for decoding");
+  }
+
+  // Normalize base64url to standard base64 and strip whitespace
+  let cleanBase64 = base64.trim().replace(/-/g, "+").replace(/_/g, "/");
+  while (cleanBase64.length % 4 !== 0) {
+    cleanBase64 += "=";
+  }
+
+  const binaryString = window.atob(cleanBase64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
   for (let i = 0; i < len; i++) {
@@ -25,7 +36,7 @@ export function base64ToArrayBuffer(base64) {
 }
 
 /**
- * Validates and normalizes an RSA-OAEP public key JWK from any format (JSON string or object)
+ * Validates and normalizes an RSA-OAEP public key JWK from any format (JSON string or object).
  * Ensures required fields exist and normalizes metadata for WebCrypto import.
  */
 export function validateAndNormalizePublicKeyJwk(publicKeyJwk) {
@@ -56,6 +67,40 @@ export function validateAndNormalizePublicKeyJwk(publicKeyJwk) {
   };
 }
 
+/**
+ * Computes a safe, non-sensitive 8-character SHA-256 uppercase hex fingerprint for an RSA public key JWK.
+ */
+export async function getPublicKeyFingerprint(publicKeyJwk) {
+  if (!publicKeyJwk) return "NONE";
+  const clean = validateAndNormalizePublicKeyJwk(publicKeyJwk);
+  if (!clean || !clean.n || !clean.e) return "NONE";
+
+  try {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(`${clean.n}:${clean.e}`);
+    const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 8).toUpperCase();
+  } catch {
+    return "UNKNOWN";
+  }
+}
+
+/**
+ * Computes a safe, non-sensitive 8-character SHA-256 uppercase hex fingerprint for a symmetric group key.
+ */
+export async function getGroupKeyFingerprint(groupKey) {
+  if (!groupKey) return "NONE";
+  try {
+    const rawKeyBuffer = await window.crypto.subtle.exportKey("raw", groupKey);
+    const hashBuffer = await window.crypto.subtle.digest("SHA-256", rawKeyBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 8).toUpperCase();
+  } catch {
+    return "UNKNOWN";
+  }
+}
+
 // 1. User Local Keypair Generation
 export async function generateUserKeyPair() {
   const keyPair = await window.crypto.subtle.generateKey(
@@ -71,6 +116,10 @@ export async function generateUserKeyPair() {
 
   const publicKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
   const privateKeyJwk = await window.crypto.subtle.exportKey("jwk", keyPair.privateKey);
+
+  // Ensure normalized alg
+  publicKeyJwk.alg = "RSA-OAEP-256";
+  privateKeyJwk.alg = "RSA-OAEP-256";
 
   return {
     privateKey: keyPair.privateKey,
@@ -152,7 +201,7 @@ export async function unwrapGroupKeyForUser(wrappedGroupKeyBase64, userPrivateKe
       ["encrypt", "decrypt"]
     );
   } catch (rawErr) {
-    // Backward compatibility: try JWK unwrapping if envelope was wrapped in older JWK format
+    // Backward compatibility 1: try JWK unwrapping if envelope was wrapped in older JWK format
     try {
       return await window.crypto.subtle.unwrapKey(
         "jwk",
@@ -169,7 +218,26 @@ export async function unwrapGroupKeyForUser(wrappedGroupKeyBase64, userPrivateKe
         ["encrypt", "decrypt"]
       );
     } catch {
-      throw new Error(`Failed to unwrap group key: ${rawErr.message || "Decryption failed"}`);
+      // Backward compatibility 2: try direct RSA-OAEP decrypt + raw import
+      try {
+        const decryptedRaw = await window.crypto.subtle.decrypt(
+          { name: "RSA-OAEP" },
+          userPrivateKey,
+          wrappedBuffer
+        );
+        return await window.crypto.subtle.importKey(
+          "raw",
+          decryptedRaw,
+          {
+            name: "AES-GCM",
+            length: 256,
+          },
+          true,
+          ["encrypt", "decrypt"]
+        );
+      } catch {
+        throw new Error(`Failed to unwrap group key: ${rawErr.message || "Decryption failed"}`);
+      }
     }
   }
 }
@@ -232,16 +300,3 @@ export async function decryptMessage(encryptedPayload, groupKey) {
   return decoder.decode(decryptedBuffer);
 }
 
-// 7. Safe Non-Sensitive Group Key Fingerprint Generator (8-character SHA-256 Hex)
-export async function getGroupKeyFingerprint(groupKey) {
-  if (!groupKey) return "NONE";
-  try {
-    const rawKeyBuffer = await window.crypto.subtle.exportKey("raw", groupKey);
-    const hashBuffer = await window.crypto.subtle.digest("SHA-256", rawKeyBuffer);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-    return hashHex.slice(0, 8).toUpperCase();
-  } catch {
-    return "UNKNOWN";
-  }
-}

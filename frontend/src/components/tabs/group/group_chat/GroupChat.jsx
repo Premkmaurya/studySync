@@ -203,30 +203,23 @@ const GroupChat = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (newMessage.trim() === "" || !groupId || e2eeState.status !== "ready") return;
+    if (newMessage.trim() === "" || !groupId || e2eeState.status !== "ready" || !e2eeState.groupKey) return;
 
     const text = newMessage.trim();
 
-    if (e2eeState.groupKey) {
-      try {
-        const encrypted = await encryptMessage(text, e2eeState.groupKey, e2eeState.keyVersion);
-        sendGroupMessage({
-          groupId,
-          ciphertext: encrypted.ciphertext,
-          iv: encrypted.iv,
-          keyVersion: encrypted.keyVersion,
-          isEncrypted: true,
-        });
-        setNewMessage("");
-        return;
-      } catch (err) {
-        console.error("[E2EE] Message encryption error:", err?.message || err);
-      }
+    try {
+      const encrypted = await encryptMessage(text, e2eeState.groupKey, e2eeState.keyVersion);
+      sendGroupMessage({
+        groupId,
+        ciphertext: encrypted.ciphertext,
+        iv: encrypted.iv,
+        keyVersion: encrypted.keyVersion,
+        isEncrypted: true,
+      });
+      setNewMessage("");
+    } catch (err) {
+      console.error("[E2EE] Message encryption error:", err?.message || err);
     }
-
-    // Fallback if encryption key error occurred
-    sendGroupMessage({ groupId, message: text });
-    setNewMessage("");
   };
 
   return (

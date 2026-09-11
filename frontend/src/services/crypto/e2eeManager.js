@@ -13,6 +13,7 @@ import {
   unwrapGroupKeyForUser,
   decryptMessage,
   getGroupKeyFingerprint,
+  getPublicKeyFingerprint,
   validateAndNormalizePublicKeyJwk,
 } from "./cryptoService";
 import {
@@ -23,13 +24,13 @@ import {
 } from "./cryptoStorage";
 
 // In-memory singletons to prevent concurrent duplicate initializations
-let userInitPromise = null;
+const userInitPromises = new Map(); // userId -> Promise
 let currentLoadedUserKeys = null;
 let currentLoadedUserId = null;
 
-const groupInitPromises = new Map(); // groupId -> Promise
+const groupInitPromises = new Map(); // `${groupId}_${userId}` -> Promise
 const groupKeyMemoryCache = new Map(); // `${groupId}_v${version}` -> CryptoKey
-const decryptedMessageCache = new Map(); // messageId -> FormattedMessage
+const decryptedMessageCache = new Map(); // `${messageId}_${status}` -> FormattedMessage
 
 /**
  * Ensures user's local RSA key pair is generated, persisted in IndexedDB,
@@ -43,11 +44,11 @@ export async function ensureUserE2EE(userId, userDoc = null) {
     return currentLoadedUserKeys;
   }
 
-  if (userInitPromise && currentLoadedUserId === normalizedUserId) {
-    return await userInitPromise;
+  if (userInitPromises.has(normalizedUserId)) {
+    return await userInitPromises.get(normalizedUserId);
   }
 
-  userInitPromise = (async () => {
+  const promise = (async () => {
     try {
       console.log("[E2EE] Initialization started for user:", normalizedUserId);
 
@@ -60,22 +61,33 @@ export async function ensureUserE2EE(userId, userDoc = null) {
         await saveUserKeyPair(normalizedUserId, newKeyPair);
         userKeys = newKeyPair;
 
+        const localFp = await getPublicKeyFingerprint(newKeyPair.publicKeyJwk);
+        console.log(`[E2EE] Generated new local key pair for user ${normalizedUserId} [pub:${localFp}]`);
+
         // Register public key JWK on the server
         try {
           await api.put("/auth/public-key", { publicKey: newKeyPair.publicKeyJwk });
-          console.log("[E2EE] Public key registered for user:", normalizedUserId);
+          console.log(`[E2EE] Public key registered on server for user: ${normalizedUserId} [pub:${localFp}]`);
         } catch (apiErr) {
           console.error("[E2EE] Failed to register public key on server:", apiErr?.response?.data?.message || apiErr?.message);
         }
       } else {
-        console.log("[E2EE] Local key pair loaded for user:", normalizedUserId);
-        // If server user object is known to lack publicKey, sync it up
-        if (userDoc && !userDoc.publicKey) {
+        const localFp = await getPublicKeyFingerprint(userKeys.publicKeyJwk);
+        console.log(`[E2EE] Local key pair loaded for user: ${normalizedUserId} [pub:${localFp}]`);
+
+        // Check if server user object lacks publicKey or has mismatched key
+        let serverFp = null;
+        if (userDoc?.publicKey) {
+          serverFp = await getPublicKeyFingerprint(userDoc.publicKey);
+        }
+
+        // If server lacks public key or server key doesn't match our local key, sync our active public key
+        if (!userDoc?.publicKey || (serverFp && serverFp !== "NONE" && serverFp !== localFp)) {
           try {
             await api.put("/auth/public-key", { publicKey: userKeys.publicKeyJwk });
-            console.log("[E2EE] Synced existing local public key to server for user:", normalizedUserId);
-          } catch {
-            // Silently ignore sync errors if server already has it
+            console.log(`[E2EE] Synced active local public key to server for user: ${normalizedUserId} [pub:${localFp}]`);
+          } catch (syncErr) {
+            console.warn("[E2EE] Public key sync notice:", syncErr?.response?.data?.message || syncErr?.message);
           }
         }
       }
@@ -87,16 +99,17 @@ export async function ensureUserE2EE(userId, userDoc = null) {
       console.error("[E2EE] User key initialization error:", err?.message || err);
       throw err;
     } finally {
-      userInitPromise = null;
+      userInitPromises.delete(normalizedUserId);
     }
   })();
 
-  return await userInitPromise;
+  userInitPromises.set(normalizedUserId, promise);
+  return await promise;
 }
 
 /**
  * Resolves the active group AES encryption key for a given group.
- * Handles unwrapping, auto-provisioning, and envelope wrapping for members.
+ * Handles unwrapping, auto-provisioning, and envelope wrapping/auto-healing for members.
  */
 export async function resolveGroupE2EE(groupId, userId, userDoc = null) {
   if (!groupId || !userId) {
@@ -137,6 +150,7 @@ export async function resolveGroupE2EE(groupId, userId, userDoc = null) {
         hasGroupKey,
         keyVersion: serverKeyVer,
         myEnvelope,
+        envelopesMap = {},
         existingEnvelopeUserIds = [],
         members = [],
       } = keysRes.data || {};
@@ -173,7 +187,7 @@ export async function resolveGroupE2EE(groupId, userId, userDoc = null) {
         await saveGroupKey(normalizedGroupId, currentVersion, groupKey);
       }
 
-      // 7. If group key exists on server, but current user lacks an envelope
+      // 7. If group key exists on server, but current user lacks a valid unwrapped key
       if (!groupKey && hasGroupKey && !myEnvelope) {
         console.log(`[E2EE] Member public key registered, waiting for group key envelope in group ${normalizedGroupId}`);
         return {
@@ -198,33 +212,35 @@ export async function resolveGroupE2EE(groupId, userId, userDoc = null) {
       // Store in memory cache
       groupKeyMemoryCache.set(memCacheId, groupKey);
 
-      // 8. Auto-wrap canonical group key for any members who are missing envelopes
+      // 8. Auto-wrap/heal canonical group key for members who are missing envelopes or have outdated keys
       if (Array.isArray(members) && members.length > 0) {
         const envelopeSet = new Set(existingEnvelopeUserIds.map((id) => id.toString()));
         const newEnvelopes = [];
 
         for (const member of members) {
           const mId = member._id?.toString();
-          if (!mId) continue;
+          if (!mId || !member.publicKey) continue;
 
-          // If member does not already have an envelope on the server
-          if (!envelopeSet.has(mId)) {
-            if (!member.publicKey) {
-              console.log(`[E2EE] Member ${mId} has not initialized E2EE public key yet`);
-              continue;
-            }
+          const cleanJwk = validateAndNormalizePublicKeyJwk(member.publicKey);
+          if (!cleanJwk) continue;
 
-            const cleanJwk = validateAndNormalizePublicKeyJwk(member.publicKey);
-            if (!cleanJwk) {
-              console.warn(`[E2EE] Member ${mId} has invalid or incompatible public key`);
-              continue;
-            }
+          const memberPubFp = await getPublicKeyFingerprint(cleanJwk);
+          const existingEnv = envelopesMap[mId];
+          const hasExistingEnvelope = envelopeSet.has(mId);
 
+          // Re-wrap if member has no envelope, or existing envelope fingerprint is missing/mismatched
+          const needsWrap =
+            !hasExistingEnvelope ||
+            !existingEnv?.publicKeyFingerprint ||
+            existingEnv.publicKeyFingerprint !== memberPubFp;
+
+          if (needsWrap) {
             try {
               const wrapped = await wrapGroupKeyForRecipient(groupKey, cleanJwk);
               newEnvelopes.push({
                 userId: mId,
                 encryptedGroupKey: wrapped,
+                publicKeyFingerprint: memberPubFp,
               });
             } catch (wrapErr) {
               console.warn(`[E2EE] Failed to wrap key for member ${mId}:`, wrapErr?.message || wrapErr);
@@ -238,7 +254,7 @@ export async function resolveGroupE2EE(groupId, userId, userDoc = null) {
               keyVersion: currentVersion,
               envelopes: newEnvelopes,
             });
-            console.log(`[E2EE] Successfully published ${newEnvelopes.length} new group key envelopes`);
+            console.log(`[E2EE] Successfully published ${newEnvelopes.length} updated group key envelopes`);
           } catch (postErr) {
             console.error("[E2EE] Failed to save member envelopes:", postErr?.response?.data?.message || postErr?.message);
           }
@@ -247,7 +263,6 @@ export async function resolveGroupE2EE(groupId, userId, userDoc = null) {
 
       // 9. Compute diagnostic fingerprint
       const fingerprint = await getGroupKeyFingerprint(groupKey);
-
       console.log(`[E2EE] Group key active for group ${normalizedGroupId} [v${currentVersion}:${fingerprint}]`);
 
       return {
@@ -291,7 +306,7 @@ export async function formatAndDecryptMessage(msgDoc, groupKey, cryptoStatus, cu
 
   // Check cache for already decrypted message
   const cached = decryptedMessageCache.get(cacheKey);
-  if (cached && (cached.decryptionStatus === "success" || cached.decryptionStatus === "failed")) {
+  if (cached && cached.decryptionStatus === "success") {
     return { ...cached, isYou };
   }
 
@@ -352,7 +367,7 @@ export async function formatAndDecryptMessage(msgDoc, groupKey, cryptoStatus, cu
     createdAt: msgDoc.createdAt || new Date().toISOString(),
   };
 
-  if (dStatus === "success" || dStatus === "failed") {
+  if (dStatus === "success") {
     decryptedMessageCache.set(cacheKey, result);
   }
 
@@ -380,8 +395,9 @@ export async function batchFormatAndDecryptMessages(messagesList, groupKey, cryp
 export function clearE2EEMemoryCache() {
   currentLoadedUserKeys = null;
   currentLoadedUserId = null;
-  userInitPromise = null;
+  userInitPromises.clear();
   groupInitPromises.clear();
   groupKeyMemoryCache.clear();
   decryptedMessageCache.clear();
 }
+
