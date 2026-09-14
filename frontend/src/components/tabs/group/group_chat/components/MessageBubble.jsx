@@ -1,11 +1,10 @@
 import React from "react";
 import Avatar from "../../../../design-system/Avatar";
-import { Lock, Loader2, AlertCircle } from "lucide-react";
 
 const MessageBubble = ({ message }) => {
   const isYou = message.isYou;
   const fullName = `${message.sender?.firstname || ""} ${message.sender?.lastname || ""}`.trim() || "Member";
-  const status = message.decryptionStatus || "success";
+  const messageText = message.message || message.text || "";
 
   return (
     <div className={`flex w-full mb-4 ${isYou ? "justify-end" : "justify-start"}`}>
@@ -29,19 +28,7 @@ const MessageBubble = ({ message }) => {
                 : "bg-white text-[#111111] max-w-[280px] sm:max-w-md"
             }`}
           >
-            {status === "loading" ? (
-              <span className="inline-flex items-center gap-1.5 text-[13px] text-[#757575] font-medium py-0.5">
-                <Loader2 className="w-3.5 h-3.5 text-[#0075de] animate-spin flex-shrink-0" />
-                <span>Decrypting message...</span>
-              </span>
-            ) : status === "failed" ? (
-              <span className="inline-flex items-center gap-1.5 text-[12px] text-amber-700 bg-amber-50/80 px-2.5 py-1 rounded-[8px] border border-amber-200/70 font-medium">
-                <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
-                <span>{message.errorMessage || "Unable to decrypt message"}</span>
-              </span>
-            ) : (
-              <span className="whitespace-pre-wrap break-words">{message.text}</span>
-            )}
+            <span className="whitespace-pre-wrap break-words">{messageText}</span>
           </div>
           <span className="text-[11px] text-[#757575] mt-1 px-1">
             {new Date(message.createdAt || Date.now()).toLocaleTimeString([], {

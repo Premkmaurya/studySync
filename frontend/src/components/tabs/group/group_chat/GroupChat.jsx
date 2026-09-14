@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { useSelector } from "react-redux";
-import { Send, Smile, MessageSquare, Lock, Loader2, AlertTriangle, Key } from "lucide-react";
+import { Send, Smile, MessageSquare, Loader2 } from "lucide-react";
 import api from "../../../../services/api";
 import { useOutletContext } from "react-router-dom";
 import {
@@ -9,19 +9,12 @@ import {
   leaveGroupRoom,
   sendGroupMessage,
 } from "../../../../services/socket";
-import {
-  resolveGroupE2EE,
-  formatAndDecryptMessage,
-  batchFormatAndDecryptMessages,
-} from "../../../../services/crypto/e2eeManager";
-import { encryptMessage } from "../../../../services/crypto/cryptoService";
 
 // Lazy-load EmojiPicker — only downloads when user opens the picker
 const EmojiPicker = lazy(() => import("emoji-picker-react"));
 
 import MessageBubble from "./components/MessageBubble";
 import Button from "../../../design-system/Button";
-import Pill from "../../../design-system/Pill";
 import { PageHeader } from "../../../design-system/SectionHeader";
 
 const GroupChat = () => {
@@ -34,84 +27,46 @@ const GroupChat = () => {
   const [newMessage, setNewMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-  // Consolidated E2EE state
-  const [e2eeState, setE2EEState] = useState({
-    status: "initializing", // "initializing" | "ready" | "waiting_for_key" | "error"
-    groupKey: null,
-    keyVersion: 1,
-    fingerprint: "INITIALIZING",
-    errorMessage: "",
-  });
+  // Format message helper
+  const formatMessage = (msg, currentUserId) => {
+    if (!msg) return null;
+    const senderObj = typeof msg.user === "object" && msg.user !== null ? msg.user : null;
+    const senderId = senderObj?._id ? senderObj._id.toString() : msg.user ? msg.user.toString() : "";
+    const isYou = Boolean(currentUserId && senderId && currentUserId.toString() === senderId);
 
-  // Ref to always provide the latest E2EE state to asynchronous socket callbacks without stale closures
-  const e2eeStateRef = useRef(e2eeState);
-  useEffect(() => {
-    e2eeStateRef.current = e2eeState;
-  }, [e2eeState]);
+    const firstname = senderObj?.fullname?.firstname || senderObj?.firstname || (isYou ? "You" : "Member");
+    const lastname = senderObj?.fullname?.lastname || senderObj?.lastname || "";
 
-  // 1. Resolve Group E2EE Keys
-  useEffect(() => {
-    if (!groupId || !userId) return;
+    const textContent = msg.message || (msg.ciphertext ? "Encrypted message from legacy E2EE session" : "");
 
-    let isMounted = true;
-
-    const initE2EE = async () => {
-      setE2EEState((prev) => ({
-        ...prev,
-        status: "initializing",
-        fingerprint: "INITIALIZING",
-      }));
-
-      try {
-        const result = await resolveGroupE2EE(groupId, userId, user);
-        if (isMounted) {
-          setE2EEState({
-            status: result.status,
-            groupKey: result.groupKey,
-            keyVersion: result.keyVersion,
-            fingerprint: result.fingerprint,
-            errorMessage: result.error || "",
-          });
-        }
-      } catch (err) {
-        console.error("[E2EE] Group resolution error:", err?.message || err);
-        if (isMounted) {
-          setE2EEState({
-            status: "error",
-            groupKey: null,
-            keyVersion: 1,
-            fingerprint: "NONE",
-            errorMessage: err?.message || "E2EE error",
-          });
-        }
-      }
+    return {
+      id: msg._id || msg.id || `${Date.now()}_${Math.random()}`,
+      sender: {
+        id: senderId,
+        firstname,
+        lastname,
+      },
+      text: textContent,
+      message: textContent,
+      isYou,
+      createdAt: msg.createdAt || new Date().toISOString(),
     };
+  };
 
-    initE2EE();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [groupId, userId]);
-
-  // 2. Fetch Message History & Real-Time Socket Listener
+  // 1. Fetch Message History & Real-Time Socket Listener
   useEffect(() => {
     if (!groupId) return;
 
     let isMounted = true;
 
-    // Fetch initial chat history
     const fetchHistory = async () => {
       try {
         const res = await api.get(`/messages/${groupId}`);
         const chatDocs = res.data?.chat || [];
 
-        const formattedList = await batchFormatAndDecryptMessages(
-          chatDocs,
-          e2eeStateRef.current.groupKey,
-          e2eeStateRef.current.status,
-          userId
-        );
+        const formattedList = chatDocs
+          .map((doc) => formatMessage(doc, userId))
+          .filter(Boolean);
 
         if (isMounted) {
           setMessages(formattedList);
@@ -128,17 +83,11 @@ const GroupChat = () => {
     const s = getSocket();
     joinGroupRoom(groupId);
 
-    // Socket message listener (reads current group key from e2eeStateRef to avoid stale closures)
-    const handleNewMessage = async (message) => {
+    // Socket message listener
+    const handleNewMessage = (message) => {
       if (!message || !isMounted) return;
 
-      const formatted = await formatAndDecryptMessage(
-        message,
-        e2eeStateRef.current.groupKey,
-        e2eeStateRef.current.status,
-        userId
-      );
-
+      const formatted = formatMessage(message, userId);
       if (!formatted) return;
 
       setMessages((prev) => {
@@ -158,40 +107,6 @@ const GroupChat = () => {
     };
   }, [groupId, userId]);
 
-  // 3. Batch Decrypt Pending Messages when E2EE key resolution completes or transitions
-  useEffect(() => {
-    if (e2eeState.status === "initializing") return;
-
-    let isMounted = true;
-
-    const updatePendingMessages = async () => {
-      setMessages((prevMessages) => {
-        const hasPending = prevMessages.some((m) => m.decryptionStatus === "loading");
-        if (!hasPending) return prevMessages;
-
-        // Decrypt pending messages concurrently outside the state setter
-        batchFormatAndDecryptMessages(
-          prevMessages,
-          e2eeState.groupKey,
-          e2eeState.status,
-          userId
-        ).then((updatedList) => {
-          if (isMounted) {
-            setMessages(updatedList);
-          }
-        });
-
-        return prevMessages;
-      });
-    };
-
-    updatePendingMessages();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [e2eeState.status, e2eeState.groupKey, userId]);
-
   // Auto-scroll on new messages
   useEffect(() => {
     if (scrollRef.current) {
@@ -202,24 +117,15 @@ const GroupChat = () => {
     }
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (newMessage.trim() === "" || !groupId || e2eeState.status !== "ready" || !e2eeState.groupKey) return;
+  const handleSendMessage = () => {
+    if (newMessage.trim() === "" || !groupId) return;
 
     const text = newMessage.trim();
-
-    try {
-      const encrypted = await encryptMessage(text, e2eeState.groupKey, e2eeState.keyVersion);
-      sendGroupMessage({
-        groupId,
-        ciphertext: encrypted.ciphertext,
-        iv: encrypted.iv,
-        keyVersion: encrypted.keyVersion,
-        isEncrypted: true,
-      });
-      setNewMessage("");
-    } catch (err) {
-      console.error("[E2EE] Message encryption error:", err?.message || err);
-    }
+    sendGroupMessage({
+      groupId,
+      message: text,
+    });
+    setNewMessage("");
   };
 
   return (
@@ -227,30 +133,7 @@ const GroupChat = () => {
       {/* Workspace Header */}
       <PageHeader
         title={group?.name ? `${group.name} Chat` : "Group Chat"}
-        description="End-to-end encrypted private chat for group members."
-        badge={
-          e2eeState.status === "initializing" ? (
-            <Pill variant="sky" size="sm" className="flex items-center gap-1.5 font-mono text-[11px]">
-              <Loader2 className="w-3 h-3 text-[#0075de] animate-spin" />
-              <span>E2EE • Securing connection...</span>
-            </Pill>
-          ) : e2eeState.status === "ready" ? (
-            <Pill variant="sky" size="sm" className="flex items-center gap-1 font-mono text-[11px]">
-              <Lock className="w-3 h-3 text-[#0075de]" />
-              <span>E2EE Active • Key v{e2eeState.keyVersion} [{e2eeState.fingerprint}]</span>
-            </Pill>
-          ) : e2eeState.status === "waiting_for_key" ? (
-            <Pill variant="amber" size="sm" className="flex items-center gap-1 font-mono text-[11px]">
-              <Key className="w-3 h-3 text-amber-600" />
-              <span>E2EE • Key Sync Pending</span>
-            </Pill>
-          ) : (
-            <Pill variant="amber" size="sm" className="flex items-center gap-1 font-mono text-[11px]">
-              <AlertTriangle className="w-3 h-3 text-amber-600" />
-              <span>E2EE Unavailable</span>
-            </Pill>
-          )
-        }
+        description="Connect and discuss in real-time with group members."
       />
 
       {/* Messages Feed */}
@@ -281,11 +164,13 @@ const GroupChat = () => {
       <div className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-1rem)] max-w-5xl -translate-x-1/2 min-w-0 sm:w-[calc(100%-2rem)]">
         {showEmojiPicker && (
           <div className="absolute bottom-full right-0 mb-3 z-50">
-            <Suspense fallback={
-              <div className="w-[350px] h-[400px] bg-white border border-black/[0.08] rounded-[12px] flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-[#0075de]" />
-              </div>
-            }>
+            <Suspense
+              fallback={
+                <div className="w-[350px] h-[400px] bg-white border border-black/[0.08] rounded-[12px] flex items-center justify-center">
+                  <Loader2 className="w-6 h-6 animate-spin text-[#0075de]" />
+                </div>
+              }
+            >
               <EmojiPicker
                 theme="light"
                 onEmojiClick={(emojiObject) => {
@@ -300,25 +185,17 @@ const GroupChat = () => {
         <div className="flex w-full min-w-0 items-center gap-1.5 sm:gap-2 p-2 bg-white border border-black/[0.12] rounded-[12px] min-h-[64px]">
           <input
             type="text"
-            placeholder={
-              e2eeState.status === "initializing"
-                ? "Securing connection..."
-                : e2eeState.status === "waiting_for_key"
-                ? "Waiting for group key sync..."
-                : "Type your message..."
-            }
-            disabled={e2eeState.status !== "ready"}
+            placeholder="Type your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1 min-w-0 bg-transparent px-2 sm:px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px] disabled:opacity-50"
+            className="flex-1 min-w-0 bg-transparent px-2 sm:px-3 py-3 text-[14px] text-[#000000] placeholder-[#757575] outline-none min-h-[44px]"
           />
 
           <button
             type="button"
-            disabled={e2eeState.status !== "ready"}
             onClick={() => setShowEmojiPicker((prev) => !prev)}
-            className="shrink-0 p-2 text-[#757575] hover:text-black rounded-[6px] hover:bg-black/5 transition-colors disabled:opacity-50"
+            className="shrink-0 p-2 text-[#757575] hover:text-black rounded-[6px] hover:bg-black/5 transition-colors"
             aria-label="Insert emoji"
           >
             <Smile className="w-5 h-5" />
@@ -328,7 +205,7 @@ const GroupChat = () => {
             variant="primary"
             size="sm"
             icon={Send}
-            disabled={e2eeState.status !== "ready" || newMessage.trim() === ""}
+            disabled={newMessage.trim() === ""}
             onClick={handleSendMessage}
             className="shrink-0"
           >

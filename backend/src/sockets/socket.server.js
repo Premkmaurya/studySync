@@ -11,6 +11,8 @@ const joinGroupModel = require("../models/joinGroup.model");
 const { generateResponse } = require("../services/ai.service");
 const { invalidateByPrefix } = require("../services/cache.service");
 
+let ioInstance = null;
+
 function setSocketServer(httpServer) {
   const allowedOrigins = [
     "http://localhost:5173",
@@ -25,6 +27,7 @@ function setSocketServer(httpServer) {
       credentials: true,
     },
   });
+  ioInstance = io;
 
   // 🔐 Middleware (auth)
   io.use((socket, next) => {
@@ -93,19 +96,13 @@ function setSocketServer(httpServer) {
       }
     });
 
-    // // New Message (E2EE Ciphertext Opaque Handler)
+    // // New Message (Standard Group Chat)
     socket.on("newMessage", async (payload) => {
       try {
-        const ciphertext = payload?.ciphertext || null;
-        const iv = payload?.iv || null;
-        const keyVersion = payload?.keyVersion || 1;
-        const isEncrypted = Boolean(payload?.isEncrypted || ciphertext);
-
-        // Fallback for legacy / unencrypted messages
         const rawText = typeof payload === "string" ? payload : (payload?.message || payload?.text);
-        const legacyMessage = rawText ? String(rawText).trim() : null;
+        const messageText = rawText ? String(rawText).trim() : null;
 
-        if (!ciphertext && !legacyMessage) {
+        if (!messageText) {
           return socket.emit("messageError", { message: "Message content cannot be empty" });
         }
 
@@ -130,15 +127,11 @@ function setSocketServer(httpServer) {
           return socket.emit("messageError", { message: "Access denied: Not a member of this group" });
         }
 
-        // Persist opaque ciphertext message
+        // Persist message
         const createMsg = await messageModel.create({
           user: userId,
           group: roomId,
-          ciphertext: ciphertext,
-          iv: iv,
-          keyVersion: keyVersion,
-          isEncrypted: isEncrypted,
-          message: legacyMessage || undefined,
+          message: messageText,
         });
 
         const populatedMsg = await messageModel
@@ -147,9 +140,7 @@ function setSocketServer(httpServer) {
 
         await invalidateByPrefix(`messages:group:${roomId}`);
 
-        console.log(`[Socket E2EE] Encrypted message persisted and broadcasted by user ${userId} in room ${roomId}`);
-
-        // Broadcast ciphertext to everyone in the room (server never decrypts)
+        // Broadcast to everyone in the room
         io.to(roomId).emit("newMessage", populatedMsg);
       } catch (err) {
         console.error("[Socket] newMessage error:", err);
@@ -259,5 +250,12 @@ function setSocketServer(httpServer) {
   });
 }
 
-module.exports = setSocketServer;
+function getIO() {
+  return ioInstance;
+}
+
+module.exports = {
+  setSocketServer,
+  getIO,
+};
 

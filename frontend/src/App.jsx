@@ -11,7 +11,6 @@ import {
   selectSuggestedGroups,
 } from "./features/groups/groupsSelectors";
 import { useState } from "react";
-import { ensureUserE2EE } from "./services/crypto/e2eeManager";
 
 const GroupNavigation = ({ groupId }) => {
   const joinedGroups = useSelector(selectJoinedGroups) || [];
@@ -158,15 +157,6 @@ function App() {
 
     fetchUser();
   }, [dispatch, navigate]);
-
-  // Background initialization of current user's E2EE key pair
-  useEffect(() => {
-    if (userId) {
-      ensureUserE2EE(userId, user).catch((err) => {
-        console.warn("[E2EE] Background user key init:", err?.message || err);
-      });
-    }
-  }, [userId]);
 
   const shouldHideNavbar = location.pathname.startsWith("/group") || hideNavbarRoutes.includes(location.pathname);
 

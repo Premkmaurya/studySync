@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginApi, registerApi, fetchCurrentApi, logoutApi, updateProfilePictureApi, updateUserProfileApi } from './authApi';
-import { clearE2EEMemoryCache } from '../../services/crypto/e2eeManager';
 
 // Thunks
 export const registerUser = createAsyncThunk(
@@ -159,7 +158,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.isInitializing = false;
         state.user = null;
-        clearE2EEMemoryCache();
       })
       .addCase(logoutUser.rejected, (state, action) => {
         // Even if the backend fails, we usually want to clear the local state
@@ -167,7 +165,6 @@ const authSlice = createSlice({
         state.isInitializing = false;
         state.user = null;
         state.error = action.payload;
-        clearE2EEMemoryCache();
       })
       
       // Update Profile Picture

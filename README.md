@@ -2,7 +2,7 @@
 
 StudySync is a collaborative learning platform built for students to create and organize study groups, write and share notes, communicate in real time, and use an AI study assistant while learning.
 
-The project is a full-stack application with a React/Vite frontend and an Express/MongoDB backend. It also includes Redis caching, Socket.IO real-time communication, ImageKit image storage, Google OAuth, and client-side end-to-end encryption for group chat messages.
+The project is a full-stack application with a React/Vite frontend and an Express/MongoDB backend. It also includes Redis caching, Socket.IO real-time communication, ImageKit image storage, and Google OAuth.
 
 ## Features
 
@@ -29,10 +29,7 @@ The project is a full-stack application with a React/Vite frontend and an Expres
 
 StudySync includes an AI assistant named **Syncie**, powered by Google Gemini.
 
-Syncie supports two main workflows:
-
-- **AI note generation:** turn a topic or prompt into structured study notes
-- **Note-based conversations:** ask questions about a specific note, with the assistant instructed to use the note content as its knowledge source
+Syncie supports **Note-based conversations** ask questions about a specific note, with the assistant instructed to use the note content as its knowledge source
 
 AI interactions are handled through Socket.IO and stored as AI chat history.
 
@@ -43,19 +40,6 @@ AI interactions are handled through Socket.IO and stored as AI chat history.
 - Group membership verification before joining a chat room
 - Persistent message history in MongoDB
 - Real-time message broadcasting to group members
-
-### 🔐 End-to-End Encrypted Chat
-
-The frontend contains a dedicated cryptography layer for group chat encryption.
-
-- User key-pair initialization and local key storage
-- RSA-OAEP public-key handling
-- Group-key envelopes for individual members
-- Group key versions for key rotation
-- Messages can be sent as ciphertext with an IV and key version
-- The Socket.IO server persists and broadcasts encrypted payloads without decrypting the message content
-
-> Encryption is implemented at the application level. Review the cryptographic implementation and threat model before treating it as a security guarantee for production use.
 
 ### 🔑 Authentication
 
@@ -134,8 +118,7 @@ StudySync
 │       │   └── theme/
 │       ├── pages/            # Application pages
 │       ├── routes/            # React Router configuration
-│       ├── services/          # API, Socket.IO and crypto services
-│       │   └── crypto/        # E2EE implementation
+│       ├── services/          # API and Socket.IO services
 │       └── App.jsx
 │
 └── backend/                  # Express API and Socket.IO server
@@ -377,10 +360,8 @@ StudySync uses several application-level security mechanisms:
 - Protected REST routes
 - Socket authentication using the JWT cookie
 - Group membership authorization for REST and Socket.IO operations
-- Client-side encryption for group chat payloads
-- Server-side storage of encrypted message payloads
 
-For production deployment, use strong secrets, HTTPS, restricted CORS origins, secure database credentials, and carefully review the E2EE implementation and key lifecycle.
+For production deployment, use strong secrets, HTTPS, restricted CORS origins, and secure database credentials.
 
 ## Current Development Status
 

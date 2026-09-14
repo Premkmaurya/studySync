@@ -14,7 +14,7 @@ const groupChatSchema = new mongoose.Schema(
     },
     message: {
       type: String,
-      required: false,
+      required: true,
       trim: true,
       maxlength: 2000,
     },
@@ -25,14 +25,6 @@ const groupChatSchema = new mongoose.Schema(
     iv: {
       type: String,
       default: null,
-    },
-    keyVersion: {
-      type: Number,
-      default: 1,
-    },
-    isEncrypted: {
-      type: Boolean,
-      default: true,
     },
   },
   { timestamps: true },
