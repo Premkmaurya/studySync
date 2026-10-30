@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { Trash2, AlertCircle } from "lucide-react";
 import { deleteGroup } from "../../../../../features/groups/groupsSlice";
+import { selectUser } from "../../../../../features/auth/authSelectors";
 import Card from "../../../../design-system/Card";
 import Button from "../../../../design-system/Button";
 
 const Danger = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const currentUser = useSelector(selectUser);
   const context = useOutletContext();
   const group = context?.group;
+  const groupOwnerId = group?.owner?._id || group?.owner;
+  const currentUserId = currentUser?._id || currentUser?.id;
 
   const [deleteError, setDeleteError] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -56,17 +60,16 @@ const Danger = () => {
             Once deleted, all notes, messages, and member access will be permanently removed.
           </p>
         </div>
-
-        <Button
-          variant="danger"
-          size="md"
-          icon={Trash2}
-          loading={isDeleting}
-          onClick={handleDeleteGroup}
-          className="px-8"
-        >
-          Delete Group
-        </Button>
+          <Button
+            variant="danger"
+            size="md"
+            icon={Trash2}
+            loading={isDeleting}
+            onClick={handleDeleteGroup}
+            className="px-8"
+          >
+            Delete Group
+          </Button>
       </div>
 
       {deleteError && (

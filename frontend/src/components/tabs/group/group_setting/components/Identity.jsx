@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Check, AlertCircle } from "lucide-react";
 import { updateGroup } from "../../../../../features/groups/groupsSlice";
+import { selectUser } from "../../../../../features/auth/authSelectors";
 import Input from "../../../../design-system/Input";
 import Button from "../../../../design-system/Button";
 import Card from "../../../../design-system/Card";
@@ -12,6 +13,13 @@ const Identity = () => {
   const { group, setGroup } = context || {};
 
   const dispatch = useDispatch();
+  const currentUser = useSelector(selectUser);
+  const groupOwnerId = group?.owner?._id || group?.owner;
+  const currentUserId = currentUser?._id || currentUser?.id;
+  const isGroupAdmin =
+    groupOwnerId != null &&
+    currentUserId != null &&
+    String(groupOwnerId) === String(currentUserId);
 
   const [formData, setFormData] = useState({
     name: group?.name || "",
@@ -42,7 +50,7 @@ const Identity = () => {
 
   const handleSaveChanges = async (e) => {
     e.preventDefault();
-    if (!group?._id) return;
+    if (!isGroupAdmin || !group?._id) return;
 
     setIsSaving(true);
     setSaveError(null);
@@ -86,6 +94,7 @@ const Identity = () => {
         <Input
           label="Group Name"
           value={formData.name}
+          disabled={!isGroupAdmin}
           onChange={(e) => handleInputChange("name", e.target.value)}
         />
 
@@ -95,6 +104,7 @@ const Identity = () => {
           </label>
           <select
             value={formData.field}
+            disabled={!isGroupAdmin}
             onChange={(e) => handleInputChange("field", e.target.value)}
             className="w-full bg-white text-[#111111] text-[14px] px-3.5 py-2 rounded-[8px] border border-black/[0.12] outline-none focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20"
           >
@@ -115,6 +125,7 @@ const Identity = () => {
           <textarea
             rows={3}
             value={formData.description}
+            disabled={!isGroupAdmin}
             onChange={(e) => handleInputChange("description", e.target.value)}
             className="w-full bg-white text-[#111111] placeholder-[#757575] text-[14px] px-3.5 py-2 rounded-[8px] border border-black/[0.12] outline-none focus:border-[#0075de] focus:ring-2 focus:ring-[#0075de]/20 resize-none"
           />
@@ -134,9 +145,11 @@ const Identity = () => {
             )}
           </div>
 
-          <Button type="submit" variant="primary" loading={isSaving} className="px-8">
-            Save Changes
-          </Button>
+          {isGroupAdmin && (
+            <Button type="submit" variant="primary" loading={isSaving} className="px-8">
+              Save Changes
+            </Button>
+          )}
         </div>
       </form>
     </Card>
