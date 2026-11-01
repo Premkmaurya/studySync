@@ -37,8 +37,8 @@ const SavedNote = () => {
   if (!savedNotes || savedNotes.length === 0) {
     return (
       <div className="bg-white rounded-[20px] border border-black/[0.08] p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 shadow-2xs my-4">
-        <div className="w-12 h-12 rounded-full bg-[#10b981]/10 text-[#10b981] flex items-center justify-center">
-          <Bookmark className="w-16 h-16 fill-[#10b981]" />
+        <div className="rounded-full bg-[#10b981]/10 text-[#10b981] flex items-center justify-center">
+          <Bookmark className="w-10 h-10 fill-[#10b981]" />
         </div>
         <h3 className="text-[18px] sm:text-[20px] font-bold text-[#111111]">
           Nothing Saved Yet

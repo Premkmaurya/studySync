@@ -40,8 +40,8 @@ const GroupSection = () => {
   if (!joinedGroups || joinedGroups.length === 0) {
     return (
       <div className="bg-white rounded-[20px] border border-black/[0.08] p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 shadow-2xs my-4">
-        <div className="w-12 h-12 rounded-full bg-[#0075de]/10 text-[#0075de] flex items-center justify-center">
-          <Users className="w-6 h-6" />
+        <div className="rounded-full bg-[#0075de]/10 text-[#0075de] flex items-center justify-center">
+          <Users className="w-10 h-10" />
         </div>
         <h3 className="text-[18px] sm:text-[20px] font-bold text-[#111111]">
           Your learning community starts here.

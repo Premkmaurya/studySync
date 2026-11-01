@@ -137,7 +137,7 @@ const StudyGroupCard = ({ group, isSuggested = false, isDominant = false }) => {
           <button
             onClick={handleJoin}
             data-cursor-ignore="true"
-            className="py-2 px-4 bg-[#0075de] hover:bg-[#097fe8] text-white text-[12px] font-semibold rounded-[8px] transition-colors flex items-center justify-center gap-1 cursor-pointer shrink-0"
+            className="py-2.5 px-5 bg-[#0075de] hover:bg-[#097fe8] text-white text-[12px] font-semibold rounded-[8px] transition-colors flex items-center justify-center gap-1 cursor-pointer shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Join</span>

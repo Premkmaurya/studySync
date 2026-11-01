@@ -40,8 +40,8 @@ const NoteSection = () => {
   if (!myNotes || myNotes.length === 0) {
     return (
       <div className="bg-white rounded-[20px] border border-black/[0.08] p-8 sm:p-12 text-center flex flex-col items-center justify-center space-y-4 shadow-2xs my-4">
-        <div className="w-12 h-12 rounded-full bg-[#ffb110]/15 text-[#b18164] flex items-center justify-center">
-          <FileText className="w-6 h-6" />
+        <div className="rounded-full bg-[#ffb110]/15 text-[#b18164] flex items-center justify-center">
+          <FileText className="w-10 h-10" />
         </div>
         <h3 className="text-[18px] sm:text-[20px] font-bold text-[#111111]">
           No Notes Created Yet
