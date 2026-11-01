@@ -33,7 +33,7 @@ const GroupNavigation = ({ groupId }) => {
 
   return (
     <>
-      <div className="md:hidden flex items-center justify-between px-6 py-3 bg-[#f6f5f4] border-b border-black/[0.08] sticky top-0 z-30">
+      <div className="md:hidden flex shrink-0 items-center justify-between px-6 py-3 bg-[#f6f5f4] border-b border-black/[0.08] sticky top-0 z-30">
         <span className="font-bold text-[16px] text-[#000000] truncate max-w-[200px]">
           {group?.name || "Workspace"}
         </span>
@@ -69,8 +69,14 @@ function App() {
   const navigate = useNavigate();
   const theme = useSelector((state) => state.theme.mode);
   const groupMatch = location.pathname.match(/^\/group\/([^/]+)/);
+  const isGroupChat = Boolean(groupMatch && /\/chats\/?$/.test(location.pathname));
   const publicPaths = ["/", "/about", "/contact", "/features"];
   const isPublicPage = publicPaths.includes(location.pathname);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("group-chat-viewport", isGroupChat);
+    return () => document.documentElement.classList.remove("group-chat-viewport");
+  }, [isGroupChat]);
 
   const hideNavbarRoutes = [
     "/login",
@@ -164,9 +170,19 @@ function App() {
     <>
       {isPublicPage && <div className="cursor" />}
       {!shouldHideNavbar && <Navbar />}
-      <div className={groupMatch ? "min-h-screen flex flex-col md:flex-row bg-[#f6f5f4]" : ""}>
+      <div className={groupMatch
+        ? isGroupChat
+          ? "h-dvh min-h-0 flex flex-col md:flex-row overflow-hidden bg-[#f6f5f4]"
+          : "min-h-screen flex flex-col md:flex-row bg-[#f6f5f4]"
+        : ""}
+      >
         {groupMatch && <GroupNavigation groupId={groupMatch[1]} />}
-        <div className={groupMatch ? "flex-1 min-w-0" : "w-full"}>
+        <div className={groupMatch
+          ? isGroupChat
+            ? "flex-1 min-w-0 min-h-0 overflow-hidden"
+            : "flex-1 min-w-0"
+          : "w-full"}
+        >
           <AppRoutes />
         </div>
       </div>

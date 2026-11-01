@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   useParams,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,6 +17,7 @@ import { UserPlus } from "lucide-react";
 
 const SingleGroupPage = () => {
   const { groupId } = useParams();
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
 
   const joinedGroups = useSelector(selectJoinedGroups) || [];
@@ -101,8 +103,14 @@ const SingleGroupPage = () => {
     };
   }, [groupId, dispatch]);
 
+  const isGroupChat = /\/chats\/?$/.test(pathname);
+
   return (
-      <main className="relative min-h-screen overflow-y-auto bg-[#f6f5f4] text-[#000000]">
+      <main className={`relative bg-[#f6f5f4] text-[#000000] ${
+        isGroupChat
+          ? "flex h-full min-h-0 flex-col overflow-hidden"
+          : "min-h-screen overflow-y-auto"
+      }`}>
         {membershipResolved && !isJoined && group && (
           <button
             type="button"

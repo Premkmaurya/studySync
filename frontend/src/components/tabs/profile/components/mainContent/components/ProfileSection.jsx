@@ -107,10 +107,10 @@ const ProfileSection = () => {
                   </div>
 
                   <div
-                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-[8px] ${m.indicatorBg} flex items-center justify-center shrink-0`}
+                    className={`w-9 h-9 rounded-[8px] ${m.indicatorBg} flex items-center justify-center shrink-0`}
                     style={{ color: m.color }}
                   >
-                    <Icon className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
+                    <Icon className="w-4.5 h-4.5" />
                   </div>
                 </div>
               </div>

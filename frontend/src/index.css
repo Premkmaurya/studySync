@@ -173,6 +173,19 @@ html, body, #root {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.group-chat-viewport {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+html.group-chat-viewport body,
+html.group-chat-viewport #root {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
 /* Base Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;

@@ -161,7 +161,7 @@ const GroupChat = () => {
       </div>
 
       {/* Message Composer */}
-      <div className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-1rem)] max-w-5xl -translate-x-1/2 min-w-0 sm:w-[calc(100%-2rem)]">
+      <div className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-1rem)] max-w-5xl -translate-x-1/2 min-w-0 sm:w-[calc(100%-2rem)] md:left-[calc(50%+8rem)] md:w-[calc(100%-18rem)] lg:left-[calc(50%+9rem)] lg:w-[calc(100%-20rem)]">
         {showEmojiPicker && (
           <div className="absolute bottom-full right-0 mb-3 z-50">
             <Suspense
