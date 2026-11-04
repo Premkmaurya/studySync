@@ -3,6 +3,7 @@ import { ArrowLeft, FileText, MessageSquare, Settings, Users, X } from "lucide-r
 import { NavLink, Link } from "react-router-dom";
 import Avatar from "../../design-system/Avatar";
 import Pill from "../../design-system/Pill";
+import NotificationBell from "../../notifications/NotificationBell";
 
 const SubNavItem = ({ to, icon: Icon, label, end = false, onNavigate }) => (
   <NavLink
@@ -33,6 +34,8 @@ const Sidebar = ({ group, groupId, isOpen, onClose }) => (
           <ArrowLeft className="w-5 h-5" />
           <span>All Groups</span>
         </Link>
+        <div className="flex items-center gap-1">
+          <NotificationBell />
         <button
           onClick={onClose}
           className="md:hidden p-1.5 rounded-[6px] text-[#757575] hover:text-[#000000] hover:bg-black/5"
@@ -40,6 +43,7 @@ const Sidebar = ({ group, groupId, isOpen, onClose }) => (
         >
           <X className="w-5 h-5" />
         </button>
+        </div>
       </div>
 
       <div className="flex items-start gap-3 pb-4 border-b border-black/[0.08]">

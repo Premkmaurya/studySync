@@ -1,8 +1,10 @@
 import AppRoutes from "./routes/AppRoutes";
 import Navbar from "./components/common/Navbar";
 import Sidebar from "./components/tabs/group/Sidebar";
+import NotificationProvider from "./components/notifications/NotificationProvider";
+import NotificationBell from "./components/notifications/NotificationBell";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser } from "./features/auth/authSlice";
 import {
@@ -10,7 +12,6 @@ import {
   selectJoinedGroups,
   selectSuggestedGroups,
 } from "./features/groups/groupsSelectors";
-import { useState } from "react";
 
 const GroupNavigation = ({ groupId }) => {
   const joinedGroups = useSelector(selectJoinedGroups) || [];
@@ -21,9 +22,6 @@ const GroupNavigation = ({ groupId }) => {
     allGroups.find((group) => group._id === groupId) ||
     suggestedGroups.find((group) => group._id === groupId);
 
-  // Use Redux group data directly. SingleGroup.jsx fetches the group from the
-  // API and calls dispatch(upsertFetchedGroup(...)) which populates the store,
-  // so this component does NOT need to make its own duplicate API call.
   const group = reduxGroup || null;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -37,13 +35,16 @@ const GroupNavigation = ({ groupId }) => {
         <span className="font-bold text-[16px] text-[#000000] truncate max-w-[200px]">
           {group?.name || "Workspace"}
         </span>
-        <button
-          onClick={() => setIsSidebarOpen((open) => !open)}
-          className="p-2 rounded-[6px] text-[#111111] hover:bg-black/5"
-          aria-label="Toggle navigation menu"
-        >
-          {isSidebarOpen ? "Close" : "Menu"}
-        </button>
+        <div className="flex items-center gap-2">
+          <NotificationBell />
+          <button
+            onClick={() => setIsSidebarOpen((open) => !open)}
+            className="p-2 rounded-[6px] text-[#111111] hover:bg-black/5"
+            aria-label="Toggle navigation menu"
+          >
+            {isSidebarOpen ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
       {isSidebarOpen && (
         <div
@@ -135,10 +136,8 @@ function App() {
     const htmlElement = document.documentElement;
     htmlElement.classList.remove('light', 'dark');
 
-    // Add the theme class to the html element
     if (theme === 'light') {
       htmlElement.classList.add('light');
-      // Also add the Tailwind dark: class to allow dark: utility classes to work
       htmlElement.classList.remove('dark');
     } else {
       htmlElement.classList.add('dark');
@@ -147,7 +146,6 @@ function App() {
   }, [theme]);
 
   const user = useSelector((state) => state.auth.user);
-  const userId = user?._id || user?.id;
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -167,7 +165,7 @@ function App() {
   const shouldHideNavbar = location.pathname.startsWith("/group") || hideNavbarRoutes.includes(location.pathname);
 
   return (
-    <>
+    <NotificationProvider>
       {isPublicPage && <div className="cursor" />}
       {!shouldHideNavbar && <Navbar />}
       <div className={groupMatch
@@ -186,7 +184,7 @@ function App() {
           <AppRoutes />
         </div>
       </div>
-    </>
+    </NotificationProvider>
   );
 }
 

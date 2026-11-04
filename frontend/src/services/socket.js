@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { dispatchToast } from "../utils/toastDispatcher";
 
 let socket = null;
 let currentRoomId = null;
@@ -19,7 +20,7 @@ export const getSocket = () => {
       autoConnect: true,
       transports: ["websocket", "polling"],
       reconnection: true,
-      reconnectionAttempts: 10,
+      reconnectionAttempts: 15,
       reconnectionDelay: 1000,
     });
 
@@ -31,7 +32,7 @@ export const getSocket = () => {
     });
 
     socket.on("connect_error", (error) => {
-      console.error("❌ [Socket Service] Connection error:", error?.message || error);
+      console.warn("⚠️ [Socket Service] Connection error:", error?.message || error);
     });
 
     socket.on("disconnect", (reason) => {
@@ -39,7 +40,13 @@ export const getSocket = () => {
     });
 
     socket.on("messageError", (err) => {
-      console.error("⚠️ [Socket Service] Server error event:", err?.message || err);
+      const msg = err?.message || "Failed to process real-time request";
+      dispatchToast({
+        title: "Action Failed",
+        message: msg,
+        variant: "error",
+        category: "system",
+      });
     });
   }
 
@@ -63,7 +70,12 @@ export const sendGroupMessage = (payload) => {
   if (s.connected) {
     s.emit("newMessage", payload);
   } else {
-    console.error("[Socket Service] Cannot send message: Socket disconnected");
+    dispatchToast({
+      title: "Message Delivery Failed",
+      message: "Real-time socket connection is currently reconnecting. Please try again in a moment.",
+      variant: "warning",
+      category: "system",
+    });
   }
 };
 

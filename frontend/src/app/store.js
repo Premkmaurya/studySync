@@ -5,6 +5,7 @@ import groupsReducer from '../features/groups/groupsSlice';
 import chatReducer from '../features/chat/chatSlice';
 import themeReducer from '../features/theme/themeSlice';
 import messagesReducer from '../features/messages/messagesSlice';
+import notificationsReducer from '../features/notifications/notificationsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,11 +15,11 @@ export const store = configureStore({
     chat: chatReducer,
     theme: themeReducer,
     messages: messagesReducer,
+    notifications: notificationsReducer,
   },
-  // Adding middleware example if you needed it for specific things
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // In case any object isn't strictly serializable in some rapid prototyping
+      serializableCheck: false,
     }),
   devTools: import.meta.env.MODE !== 'production',
-});
+});

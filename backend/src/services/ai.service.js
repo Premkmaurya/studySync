@@ -1,12 +1,14 @@
 const { GoogleGenAI } = require("@google/genai");
 const config = require("../config/config");
 
-if (!config.GEMINI_API_KEY) {
-  console.log(GEMINI_API_KEY)
-  throw new Error("GEMINI_API_KEY is not configured");
-}
+const apiKey = config.GEMINI_API_KEY || process.env.GEMINI_API_KEY;
 
-const ai = new GoogleGenAI({});
+let ai = null;
+if (apiKey) {
+  ai = new GoogleGenAI({ apiKey });
+} else {
+  console.warn("⚠️ [AI Service] GEMINI_API_KEY is not configured.");
+}
 
 const persona = `You are Syncie, an AI assistant inside the StudySync app.
 
@@ -259,10 +261,13 @@ and enjoy studying through clean, structured,
 easy-to-read responses.
 `;
 
-
 async function generateResponse(prompt, mode, noteContent) {
+  if (!ai) {
+    throw new Error("GEMINI_API_KEY is not configured on this server");
+  }
+
   const response = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
+    model: "gemini-2.5-flash",
     contents: prompt,
     config: {
       systemInstruction:
@@ -274,10 +279,6 @@ async function generateResponse(prompt, mode, noteContent) {
 
   return response.text;
 }
-
-
-
-
 
 module.exports = {
   generateResponse,

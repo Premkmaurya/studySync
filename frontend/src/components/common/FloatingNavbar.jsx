@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import StaggeredMenu from "../ui/StaggeredMenu";
+import NotificationBell from "../notifications/NotificationBell";
 import { logoutUser } from "../../features/auth/authSlice";
 
 /**
@@ -129,6 +130,7 @@ const FloatingNavbar = ({ variant = "public" }) => {
         openMenuButtonColor="#0075de"
         accentColor="#0075de"
         colors={["#eaf4ff", "#0075de"]}
+        rightAction={user ? <NotificationBell /> : null}
         logoUrl={
           <Link to={user ? "/dashboard/home" : "/"} className="flex items-center gap-2 group">
             <img

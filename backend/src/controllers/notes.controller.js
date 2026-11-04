@@ -1,5 +1,8 @@
 const noteModel = require("../models/note.model");
 const savedNoteModel = require("../models/savedNote.model");
+const groupModel = require("../models/group.model");
+const userModel = require("../models/user.model");
+const notificationService = require("../services/notification.service");
 const {
   buildCacheKey,
   getCachedData,
@@ -12,12 +15,35 @@ const createNote = asyncHandler(async (req, res) => {
   const user = req.user;
   const { content, title, groupId } = req.body;
 
-  await noteModel.create({
+  const note = await noteModel.create({
     userId: user.id,
     groupId,
     content,
     title,
   });
+
+  // Distribute notification if associated with a group
+  if (groupId) {
+    const group = await groupModel.findById(groupId).select("name").lean();
+    const groupName = group?.name || "Study Group";
+    const authorName = user.fullname?.firstname || "A member";
+
+    notificationService.notifyGroupMembers({
+      groupId,
+      excludeUserId: user.id,
+      type: "note_create",
+      category: "notes",
+      title: `New note in ${groupName}`,
+      message: `${authorName} added a new note: "${title}".`,
+      resourceType: "note",
+      resourceId: note._id.toString(),
+      metadata: {
+        actionUrl: `/group/${groupId}`,
+        groupName,
+        noteTitle: title,
+      },
+    });
+  }
 
   await Promise.all([
     invalidateByPrefix("notes:latest"),
@@ -28,6 +54,179 @@ const createNote = asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     message: "your note created successfully.",
+    note,
+  });
+});
+
+const updateNote = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const { id } = req.params;
+  const { title, content } = req.body;
+
+  const note = await noteModel.findById(id);
+  if (!note) {
+    return res.status(404).json({ message: "Note not found" });
+  }
+
+  if (title) note.title = title;
+  if (content) note.content = content;
+  await note.save();
+
+  if (note.groupId) {
+    const group = await groupModel.findById(note.groupId).select("name").lean();
+    const groupName = group?.name || "Study Group";
+    const authorName = user.fullname?.firstname || "A member";
+
+    notificationService.notifyGroupMembers({
+      groupId: note.groupId,
+      excludeUserId: user.id,
+      type: "note_update",
+      category: "notes",
+      title: `Note updated: "${note.title}"`,
+      message: `${authorName} updated notes in ${groupName}.`,
+      resourceType: "note",
+      resourceId: note._id.toString(),
+      metadata: {
+        actionUrl: `/group/${note.groupId}`,
+        groupName,
+        noteTitle: note.title,
+      },
+    });
+  }
+
+  await Promise.all([
+    invalidateByPrefix("notes:latest"),
+    invalidateByPrefix(`notes:group:${note.groupId}`),
+    invalidateByPrefix(`notes:user:${user.id}`),
+    invalidateByPrefix("notes:search"),
+  ]);
+
+  return res.status(200).json({
+    message: "Note updated successfully",
+    note,
+  });
+});
+
+const deleteNote = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const { id } = req.params;
+
+  const note = await noteModel.findById(id);
+  if (!note) {
+    return res.status(404).json({ message: "Note not found" });
+  }
+
+  const groupId = note.groupId;
+  const noteTitle = note.title;
+
+  await noteModel.findByIdAndDelete(id);
+  await savedNoteModel.deleteMany({ noteId: id });
+
+  if (groupId) {
+    const group = await groupModel.findById(groupId).select("name").lean();
+    const groupName = group?.name || "Study Group";
+
+    notificationService.notifyGroupMembers({
+      groupId,
+      excludeUserId: user.id,
+      type: "note_delete",
+      category: "notes",
+      title: `Note deleted in ${groupName}`,
+      message: `"${noteTitle}" was deleted from ${groupName}.`,
+      resourceType: "note",
+      resourceId: id,
+      metadata: {
+        actionUrl: `/group/${groupId}`,
+        groupName,
+        noteTitle,
+      },
+    });
+  }
+
+  await Promise.all([
+    invalidateByPrefix("notes:latest"),
+    invalidateByPrefix(`notes:group:${groupId}`),
+    invalidateByPrefix(`notes:user:${user.id}`),
+    invalidateByPrefix("notes:search"),
+  ]);
+
+  return res.status(200).json({
+    message: "Note deleted successfully",
+  });
+});
+
+const shareNote = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const { id } = req.params;
+  const { targetUserId } = req.body;
+
+  const note = await noteModel.findById(id);
+  if (!note) {
+    return res.status(404).json({ message: "Note not found" });
+  }
+
+  const targetUser = await userModel.findById(targetUserId);
+  if (!targetUser) {
+    return res.status(404).json({ message: "Recipient user not found" });
+  }
+
+  const senderName = user.fullname?.firstname || "A peer";
+
+  notificationService.notifyUser({
+    userId: targetUserId,
+    type: "note_share",
+    category: "notes",
+    title: "Note shared with you",
+    message: `${senderName} shared "${note.title}" with you.`,
+    resourceType: "note",
+    resourceId: note._id.toString(),
+    senderId: user.id,
+    priority: "medium",
+    metadata: {
+      actionUrl: `/dashboard/notes`,
+      noteTitle: note.title,
+      senderName,
+    },
+  });
+
+  return res.status(200).json({
+    message: "Note shared successfully",
+  });
+});
+
+const createAcademicActivity = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const { groupId, type = "academic_resource", title, message, actionUrl } = req.body;
+
+  if (!groupId) {
+    return res.status(400).json({ message: "GroupId is required" });
+  }
+
+  const group = await groupModel.findById(groupId).select("name").lean();
+  if (!group) {
+    return res.status(404).json({ message: "Group not found" });
+  }
+
+  const senderName = user.fullname?.firstname || "A member";
+
+  await notificationService.notifyGroupMembers({
+    groupId,
+    excludeUserId: user.id,
+    type,
+    category: "academic",
+    title: title || `New academic resource in ${group.name}`,
+    message: message || `${senderName} shared new study materials in ${group.name}.`,
+    resourceType: "academic",
+    resourceId: groupId,
+    metadata: {
+      actionUrl: actionUrl || `/group/${groupId}`,
+      groupName: group.name,
+      senderName,
+    },
+  });
+
+  return res.status(201).json({
+    message: "Academic activity broadcasted successfully",
   });
 });
 
@@ -44,7 +243,6 @@ const getNotes = asyncHandler(async (req, res) => {
 
   let filter = {};
   if (field) {
-    const groupModel = require("../models/group.model");
     const groups = await groupModel.find({ field }).select("_id");
     const groupIds = groups.map((g) => g._id);
     filter.groupId = { $in: groupIds };
@@ -147,7 +345,6 @@ const searchNotes = asyncHandler(async (req, res) => {
   }
 
   if (field) {
-    const groupModel = require("../models/group.model");
     const groups = await groupModel.find({ field }).select("_id");
     const groupIds = groups.map((g) => g._id);
     filter.groupId = { $in: groupIds };
@@ -235,6 +432,10 @@ const getSavedNotes = asyncHandler(async (req, res) => {
 
 module.exports = {
   createNote,
+  updateNote,
+  deleteNote,
+  shareNote,
+  createAcademicActivity,
   getNotes,
   getMyNotes,
   saveNote,

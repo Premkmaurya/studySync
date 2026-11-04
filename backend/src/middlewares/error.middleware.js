@@ -50,6 +50,24 @@ const errorHandler = (err, req, res, next) => {
   // Server-side logging for unexpected internal server errors
   if (statusCode === 500) {
     console.error("Unhandled Server Error:", err);
+
+    // If an authenticated user encountered a 500 error or database outage, notify them safely
+    if (req.user?.id) {
+      try {
+        const notificationService = require("../services/notification.service");
+        notificationService.notifyUser({
+          userId: req.user.id,
+          type: "system_error",
+          category: "system",
+          title: "System operation error",
+          message: "An internal request error occurred. Please try again in a few moments.",
+          priority: "high",
+          metadata: { path: req.originalUrl },
+        }).catch(() => {});
+      } catch (notifyErr) {
+        // Safe ignore
+      }
+    }
   }
 
   const response = {

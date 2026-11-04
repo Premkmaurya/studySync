@@ -5,6 +5,7 @@ const aiMessageModel = require("../models/aiMessage.model");
 const groupChatsModel = require("../models/groupChats.model");
 const savedNoteModel = require("../models/savedNote.model");
 const uploadImage = require("../services/image.service");
+const notificationService = require("../services/notification.service");
 const {
   buildCacheKey,
   getCachedData,
@@ -140,7 +141,7 @@ const createGroup = asyncHandler(async (req, res) => {
       group,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({
       message: "Error creating group",
       error: error.message,
@@ -179,6 +180,21 @@ const deleteGroup = asyncHandler(async (req, res) => {
       message: "Group not found or you are not the owner",
     });
   }
+
+  // Notify group members of deletion before wiping
+  await notificationService.notifyGroupMembers({
+    groupId,
+    excludeUserId: user.id,
+    type: "group_delete",
+    category: "group",
+    title: `Group deleted: ${group.name}`,
+    message: `${group.name} was deleted by its owner.`,
+    priority: "high",
+    metadata: {
+      actionUrl: "/dashboard/home",
+      groupName: group.name,
+    },
+  });
 
   const notes = await noteModel.find({ groupId }, "_id");
   const noteIds = notes.map((note) => note._id);
@@ -238,6 +254,20 @@ const updateGroup = asyncHandler(async (req, res) => {
     });
   }
 
+  // Notify members about settings update
+  notificationService.notifyGroupMembers({
+    groupId,
+    excludeUserId: user.id,
+    type: "group_update",
+    category: "group",
+    title: `${group.name} settings updated`,
+    message: `Group details or settings were updated.`,
+    metadata: {
+      actionUrl: `/group/${groupId}`,
+      groupName: group.name,
+    },
+  });
+
   await Promise.all([
     invalidateByPrefix("groups:all"),
     invalidateByPrefix("groups:search"),
@@ -280,6 +310,23 @@ const joinGroup = asyncHandler(async (req, res) => {
     { new: true },
   );
 
+  // Notify group members that a new user joined
+  if (group) {
+    const actorName = user.fullname?.firstname || "A new member";
+    notificationService.notifyGroupMembers({
+      groupId,
+      excludeUserId: user.id,
+      type: "group_join",
+      category: "group",
+      title: `New member in ${group.name}`,
+      message: `${actorName} joined ${group.name}.`,
+      metadata: {
+        actionUrl: `/group/${groupId}/members`,
+        groupName: group.name,
+      },
+    });
+  }
+
   await Promise.all([
     invalidateByPrefix("groups:all"),
     invalidateByPrefix("groups:search"),
@@ -293,6 +340,60 @@ const joinGroup = asyncHandler(async (req, res) => {
     message: "Joined group successfully",
     group,
   });
+});
+
+const leaveGroup = asyncHandler(async (req, res) => {
+  const { groupId } = req.params;
+  const user = req.user;
+
+  const group = await groupModel.findById(groupId);
+  if (!group) {
+    return res.status(404).json({ message: "Group not found" });
+  }
+
+  if (group.owner && group.owner.toString() === user.id) {
+    return res.status(400).json({
+      message: "Group owners cannot leave their own group. Delete the group instead.",
+    });
+  }
+
+  const membership = await userGroupModel.findOneAndDelete({
+    userId: user.id,
+    groupId,
+  });
+
+  if (!membership) {
+    return res.status(400).json({ message: "You are not a member of this group" });
+  }
+
+  await groupModel.findByIdAndUpdate(groupId, {
+    $inc: { members: -1 },
+  });
+
+  const actorName = user.fullname?.firstname || "A member";
+  notificationService.notifyGroupMembers({
+    groupId,
+    excludeUserId: user.id,
+    type: "group_leave",
+    category: "group",
+    title: `Member left ${group.name}`,
+    message: `${actorName} left ${group.name}.`,
+    metadata: {
+      actionUrl: `/group/${groupId}/members`,
+      groupName: group.name,
+    },
+  });
+
+  await Promise.all([
+    invalidateByPrefix("groups:all"),
+    invalidateByPrefix("groups:search"),
+    invalidateByPrefix(`groups:single:${groupId}`),
+    invalidateByPrefix(`groups:joined:${user.id}`),
+    invalidateByPrefix(`groups:suggested:${user.id}`),
+    invalidateByPrefix(`groups:members:${groupId}`),
+  ]);
+
+  return res.status(200).json({ message: "Left group successfully" });
 });
 
 const joinedGroup = asyncHandler(async (req, res) => {
@@ -464,6 +565,34 @@ const removeMember = asyncHandler(async (req, res) => {
     $inc: { members: -1, keyVersion: 1 },
   });
 
+  // Notify the removed member directly
+  notificationService.notifyUser({
+    userId,
+    type: "group_member_remove",
+    category: "group",
+    title: `Removed from ${group.name}`,
+    message: `You were removed from ${group.name} by the group owner.`,
+    priority: "high",
+    metadata: {
+      actionUrl: "/dashboard/home",
+      groupName: group.name,
+    },
+  });
+
+  // Notify remaining group members
+  notificationService.notifyGroupMembers({
+    groupId,
+    excludeUserId: user.id,
+    type: "group_leave",
+    category: "group",
+    title: `Member removed from ${group.name}`,
+    message: `A member was removed from ${group.name}.`,
+    metadata: {
+      actionUrl: `/group/${groupId}/members`,
+      groupName: group.name,
+    },
+  });
+
   await Promise.all([
     invalidateByPrefix(`groups:members:${groupId}`),
     invalidateByPrefix(`groups:joined:${userId}`),
@@ -480,6 +609,7 @@ module.exports = {
   getAllGroups,
   updateGroup,
   joinGroup,
+  leaveGroup,
   searchGroup,
   joinedGroup,
   getGroupMembers,

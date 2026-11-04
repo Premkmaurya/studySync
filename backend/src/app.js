@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth.routes");
 const groupRoutes = require("./routes/group.routes");
 const noteRoutes = require("./routes/notes.routes");
 const messageRoutes = require("./routes/messages.routes");
+const notificationRoutes = require("./routes/notification.routes");
 
 const cors = require("cors");
 const authMiddleware = require("./middlewares/auth.middleware");
@@ -24,12 +25,10 @@ app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://study-sync-ten-lake.vercel.app"],
+    origin: ["http://localhost:5173", "https://study-sync-ten-lake.vercel.app"],
     credentials: true,
   }),
 );
-
-app.use(passport.initialize());
 
 passport.use(
   new GoogleStrategy(
@@ -44,6 +43,7 @@ passport.use(
   ),
 );
 
+app.use(passport.initialize());
 app.use(cookieParser());
 app.use(express.json());
 app.use(compression());
@@ -57,6 +57,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
